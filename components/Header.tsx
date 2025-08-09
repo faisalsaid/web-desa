@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const Header = () => {
   return (
-    <header className="flex items-center justify-between p-4 bg-amber-800 text-white ">
+    <header className="sticky z-50 top-0 flex items-center justify-between p-4 bg-amber-800 text-white ">
       <div className="flex gap-4 items-center justify-center">
         <div>
           <Image

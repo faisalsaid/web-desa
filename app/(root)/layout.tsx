@@ -10,7 +10,7 @@ export default function RootLayout({
     <div className="relative min-h-screen">
       <Header />
       {children}
-      <div className="sticky bottom-0 w-full p-2">
+      <div className="sticky bottom-0 w-full p-2 z-50">
         <MobileNavigation />
       </div>
     </div>

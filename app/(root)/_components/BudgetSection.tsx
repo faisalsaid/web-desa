@@ -48,8 +48,8 @@ const BudgetCard = ({ title, value, icon }: FeatureCardProps) => {
   const Icon = icon;
   const style =
     title === 'Pendapatan' || title === 'Penerimaan'
-      ? 'bg-green-100 text-green-800'
-      : 'bg-red-100 text-red-800';
+      ? 'bg-green-100 text-green-800 border-green-300'
+      : 'bg-red-100 text-red-800 border-red-300';
 
   const styleText =
     title === 'Pendapatan' || title === 'Penerimaan'

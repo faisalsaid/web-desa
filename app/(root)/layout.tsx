@@ -1,5 +1,6 @@
-import Header from '@/components/Header';
+import Header from '@/app/(root)/_components/Header';
 import MobileNavigation from './_components/MobileNavigation';
+import Footer from './_components/Footer';
 
 export default function RootLayout({
   children,
@@ -10,6 +11,7 @@ export default function RootLayout({
     <div className="relative min-h-screen">
       <Header />
       {children}
+      <Footer />
       <div className="sticky bottom-0 w-full p-2 z-50">
         <MobileNavigation />
       </div>

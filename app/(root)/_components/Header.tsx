@@ -1,5 +1,5 @@
 import { AlignJustify } from 'lucide-react';
-import ThemeSwitcher from './ThemeSwitcher';
+import ThemeSwitcher from '../../../components/ThemeSwitcher';
 import Image from 'next/image';
 
 const Header = () => {

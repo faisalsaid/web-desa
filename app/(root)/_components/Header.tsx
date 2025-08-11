@@ -16,8 +16,8 @@ const Header = () => {
           />
         </div>
         <div>
-          <h1 className="text-xl">Desa Torino</h1>
-          <p>Kabupaten Italia Timur</p>
+          <h1 className="text-xl font-semibold">Desa Torino</h1>
+          <p className="text-slate-300">Kabupaten Italia Timur</p>
         </div>
       </div>
       <div className="flex items-center justify-center gap-4">

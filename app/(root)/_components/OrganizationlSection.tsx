@@ -17,6 +17,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import { Image } from 'lucide-react';
+import Link from 'next/link';
 
 const OrganizationlSection = () => {
   return (
@@ -25,7 +26,7 @@ const OrganizationlSection = () => {
         <div className=" text-2xl font-semibold text-amber-600">SOTK</div>
         <p>Struktur Organisasi dan Tata Kerja Desa Torino</p>
       </div>
-      <div className="text-shadow-amber-800">
+      <div>
         <Swiper
           // install Swiper modules
           modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
@@ -53,6 +54,11 @@ const OrganizationlSection = () => {
             </SwiperSlide>
           ))}
         </Swiper>
+      </div>
+      <div className="flex items-center justify-end text-sm ">
+        <Link className="text-muted-foreground" href={'/'}>
+          See All
+        </Link>
       </div>
     </div>
   );

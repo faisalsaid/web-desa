@@ -19,8 +19,11 @@ import 'swiper/css/scrollbar';
 import { Calendar, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { MdMoney } from 'react-icons/md';
+import { swiperLenght } from '../_lib/SwiperLength';
 
 const ShopSection = () => {
+  const length = swiperLenght();
+
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
@@ -36,8 +39,8 @@ const ShopSection = () => {
         <Swiper
           // install Swiper modules
           modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-          spaceBetween={170}
-          slidesPerView={'auto'}
+          spaceBetween={16}
+          slidesPerView={length}
           loop={true}
           //   navigation
           pagination={{ clickable: true }}
@@ -74,7 +77,7 @@ export default ShopSection;
 
 const ShopCard = () => {
   return (
-    <div className="w-80 rounded-xl overflow-hidden bg-muted">
+    <div className=" rounded-xl overflow-hidden bg-muted">
       <div className="bg-amber-600 w-full h-56 flex items-center justify-center rounded-xl">
         Image
       </div>

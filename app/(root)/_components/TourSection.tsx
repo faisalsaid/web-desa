@@ -18,8 +18,10 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import Link from 'next/link';
+import { swiperLenght } from '../_lib/SwiperLength';
 
 const TourSection = () => {
+  const length = swiperLenght();
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
@@ -33,8 +35,8 @@ const TourSection = () => {
         <Swiper
           // install Swiper modules
           modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-          spaceBetween={0}
-          slidesPerView={'auto'}
+          spaceBetween={16}
+          slidesPerView={length}
           loop={true}
           //   navigation
           pagination={{ clickable: true }}
@@ -71,7 +73,7 @@ export default TourSection;
 
 const TourCard = () => {
   return (
-    <div className="w-80 rounded-xl overflow-hidden bg-muted">
+    <div className="rounded-xl overflow-hidden bg-muted">
       <div className="bg-amber-600 w-full h-56 flex items-center justify-center rounded-xl">
         Image
       </div>

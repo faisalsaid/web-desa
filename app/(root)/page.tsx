@@ -7,6 +7,8 @@ import MapLocationSection from './_components/MapLocationSection';
 import NewsSection from './_components/NewsSection';
 import OrganizationlSection from './_components/OrganizationlSection';
 import PotentialSection from './_components/PotentialSection';
+import ShopSection from './_components/ShopSection';
+import TourSection from './_components/TourSection';
 
 import WelcomeSentenceSection from './_components/WelcomeSentenceSection';
 
@@ -22,6 +24,8 @@ export default function Home() {
       <BudgetSection />
       <NewsSection />
       <PotentialSection />
+      <TourSection />
+      <ShopSection />
       <ImagesSection />
     </div>
   );

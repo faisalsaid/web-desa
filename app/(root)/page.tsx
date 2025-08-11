@@ -1,8 +1,8 @@
 import AbstractionSection from './_components/AbstractionSection';
 import BudgetSection from './_components/BudgetSection';
 import FeatureSection from './_components/FeatureSection';
+import GalerySection from './_components/GalerySection';
 import HeroSection from './_components/HeroSection';
-import ImagesSection from './_components/ImagesSection';
 import MapLocationSection from './_components/MapLocationSection';
 import NewsSection from './_components/NewsSection';
 import OrganizationlSection from './_components/OrganizationlSection';
@@ -26,7 +26,7 @@ export default function Home() {
       <PotentialSection />
       <TourSection />
       <ShopSection />
-      <ImagesSection />
+      <GalerySection />
     </div>
   );
 }

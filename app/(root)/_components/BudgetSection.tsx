@@ -16,14 +16,19 @@ const BudgetSection = () => {
     },
   ];
   return (
-    <div className="space-y-4">
-      <div className="text-center ">
-        <h5 className="text-2xl font-semibold text-amber-800">APB DESA 2024</h5>
-        <p className="text-muted-foreground">
-          Akses cepat dan transparan terhadap APB Desa serta proyek pembangunan
-        </p>
+    <div className="space-y-4 md:flex gap-4">
+      <div className="text-center md:w-1/2 md:flex items-center justify-center ">
+        <div>
+          <h5 className="text-2xl font-semibold text-amber-800 md:text-6xl">
+            APB DESA 2024
+          </h5>
+          <p className="text-muted-foreground md:text-xl">
+            Akses cepat dan transparan terhadap APB Desa serta proyek
+            pembangunan
+          </p>
+        </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:w-1/2">
         {data.map((item) => (
           <BudgetCard
             key={item.title}
@@ -56,14 +61,14 @@ const BudgetCard = ({ title, value, icon }: FeatureCardProps) => {
       ? ' text-green-800'
       : ' text-red-800';
   return (
-    <div className="space-y-2 text-center flex flex-col items-center">
+    <div className="space-y-2 text-center flex flex-col items-center w-full">
       <div
-        className={`flex items-center flex-col p-4 border w-fit rounded-lg min-w-26 ${style}`}
+        className={`flex items-center flex-col p-4 border w-fit rounded-lg min-w-26 md:w-full ${style}`}
       >
-        <Icon size={30} />
-        <p className="text-xs">{title}</p>
+        <Icon className="w-[30px] h-[30px] md:h-[120px] md:w-[120px]" />
+        <p className="text-xs md:text-2xl">{title}</p>
       </div>
-      <p className={`font-bold text-lg ${styleText}`}>{value}</p>
+      <p className={`font-bold text-sm md:text-2xl ${styleText}`}>{value}</p>
     </div>
   );
 };

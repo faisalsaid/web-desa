@@ -19,7 +19,33 @@ import 'swiper/css/scrollbar';
 import { Image } from 'lucide-react';
 import Link from 'next/link';
 
+import { useState, useEffect } from 'react';
+
 const OrganizationlSection = () => {
+  const [nilai, setNilai] = useState<number>(2);
+
+  useEffect(() => {
+    function updateNilai() {
+      if (window.matchMedia('(min-width: 1536px)').matches) {
+        setNilai(6); // 2xl
+      } else if (window.matchMedia('(min-width: 1280px)').matches) {
+        setNilai(6); // xl
+      } else if (window.matchMedia('(min-width: 1024px)').matches) {
+        setNilai(6); // lg
+      } else if (window.matchMedia('(min-width: 768px)').matches) {
+        setNilai(4); // md
+      } else if (window.matchMedia('(min-width: 640px)').matches) {
+        setNilai(2); // sm
+      } else {
+        setNilai(2); // default
+      }
+    }
+
+    updateNilai();
+    window.addEventListener('resize', updateNilai);
+    return () => window.removeEventListener('resize', updateNilai);
+  }, []);
+
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
@@ -30,8 +56,8 @@ const OrganizationlSection = () => {
         <Swiper
           // install Swiper modules
           modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-          spaceBetween={50}
-          slidesPerView={2}
+          spaceBetween={10}
+          slidesPerView={nilai}
           loop={true}
           //   navigation
           pagination={{ clickable: true }}
@@ -48,7 +74,7 @@ const OrganizationlSection = () => {
             momentum: false,
           }}
         >
-          {Array.from({ length: 6 }, (_, i) => (
+          {Array.from({ length: 7 }, (_, i) => (
             <SwiperSlide key={i}>
               <ProfileCard />
             </SwiperSlide>
@@ -68,10 +94,10 @@ export default OrganizationlSection;
 
 const ProfileCard = () => {
   return (
-    <div className="w-48 bg-amber-50/5 rounded-xl">
+    <div className="bg-amber-500/20 rounded-xl">
       <div className="p-2 rounded-lg overflow-hidden w-full">
-        <div className="w-full min-h-56 bg-amber-200/5 rounded-lg flex items-center justify-center">
-          <Image size={50} className="text-amber-200/30" />
+        <div className="w-full min-h-56 bg-amber-700/20 rounded-lg flex items-center justify-center">
+          <Image size={50} className="text-amber-800" />
         </div>
       </div>
       <div className="text-center p-2 ">

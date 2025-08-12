@@ -43,7 +43,7 @@ const AbstractionSection = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
-        <h5 className="text-xl font-semibold text-amber-600">
+        <h5 className="text-xl font-semibold text-amber-600 md:text-5xl">
           Abstraksi Penduduk
         </h5>
         <p className="text-muted-foreground">

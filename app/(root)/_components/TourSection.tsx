@@ -25,7 +25,9 @@ const TourSection = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
-        <div className=" text-2xl font-semibold text-amber-600">Pariwisata</div>
+        <div className=" text-2xl font-semibold text-amber-600  md:text-5xl">
+          Pariwisata
+        </div>
         <p>
           Layanan yang mempermudah promosi wisata Desa sehingga dapat menarik
           pengunjung Desa

@@ -49,7 +49,9 @@ const OrganizationlSection = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
-        <div className=" text-2xl font-semibold text-amber-600">SOTK</div>
+        <div className=" text-2xl font-semibold text-amber-600 md:text-5xl">
+          SOTK
+        </div>
         <p>Struktur Organisasi dan Tata Kerja Desa Torino</p>
       </div>
       <div>

@@ -14,19 +14,21 @@ import WelcomeSentenceSection from './_components/WelcomeSentenceSection';
 
 export default function Home() {
   return (
-    <div className="p-4 space-y-12">
+    <div className="space-y-12">
       <HeroSection />
-      <FeatureSection />
-      <WelcomeSentenceSection />
-      <MapLocationSection />
-      <OrganizationlSection />
-      <AbstractionSection />
-      <BudgetSection />
-      <NewsSection />
-      <PotentialSection />
-      <TourSection />
-      <ShopSection />
-      <GalerySection />
+      <div className="p-4 space-y-12">
+        <FeatureSection />
+        <WelcomeSentenceSection />
+        <MapLocationSection />
+        <OrganizationlSection />
+        <AbstractionSection />
+        <BudgetSection />
+        <NewsSection />
+        <PotentialSection />
+        <TourSection />
+        <ShopSection />
+        <GalerySection />
+      </div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ export default function RootLayout({
       <Header />
       {children}
       <Footer />
-      <div className="sticky bottom-0 w-full p-2 z-50">
+      <div className="sticky bottom-0 w-full p-2 z-50 md:hidden">
         <MobileNavigation />
       </div>
     </div>

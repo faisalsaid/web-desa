@@ -2,7 +2,7 @@ import { CarouselDemo } from './CorouselHero';
 
 const HeroSection = () => {
   return (
-    <div className="px-10">
+    <div className="">
       <CarouselDemo />
     </div>
   );

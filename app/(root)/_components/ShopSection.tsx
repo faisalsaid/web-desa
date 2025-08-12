@@ -16,9 +16,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
-import { Calendar, Eye } from 'lucide-react';
 import Link from 'next/link';
-import { MdMoney } from 'react-icons/md';
 import { swiperLenght } from '../_lib/SwiperLength';
 
 const ShopSection = () => {

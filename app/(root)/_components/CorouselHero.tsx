@@ -1,40 +1,61 @@
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
+import React, { useRef, useState } from 'react';
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
 
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+// import './styles.css';
+
+// import required modules
+import { Navigation, Autoplay } from 'swiper/modules';
+import Image from 'next/image';
 export function CarouselDemo() {
   return (
-    <Carousel
-      className="w-full "
-      plugins={[
-        Autoplay({
-          delay: 3000,
-        }),
-      ]}
-    >
-      <CarouselContent>
-        {Array.from({ length: 3 }).map((_, index) => (
-          <CarouselItem key={index}>
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex h-64 items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+    <>
+      <Swiper
+        navigation={true}
+        modules={[Navigation, Autoplay]}
+        autoplay={{
+          delay: 2000,
+          disableOnInteraction: false,
+        }}
+        speed={8000}
+      >
+        <SwiperSlide className="w-full">
+          <div className="aspect-video">
+            <Image
+              src={'/img/hut_ri_80.png'}
+              width={1537}
+              height={1024}
+              alt="image hero"
+            />
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="aspect-video">
+            <Image
+              src={'/img/hut_ri_80.png'}
+              width={1537}
+              height={1024}
+              alt="image hero"
+            />
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="aspect-video">
+            <Image
+              src={'/img/hut_ri_80.png'}
+              width={1537}
+              height={1024}
+              alt="image hero"
+            />
+          </div>
+        </SwiperSlide>
+      </Swiper>
+    </>
   );
 }

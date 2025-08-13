@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 
 const GalerySection = () => {
@@ -28,9 +29,18 @@ const GalerySection = () => {
 export default GalerySection;
 
 const ImagesCard = () => {
+  const source =
+    'https://images.unsplash.com/photo-1517427294546-5aa121f68e8a?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
   return (
-    <div className="w-full aspect-video bg-amber-500 rounded-lg flex items-center justify-center">
-      Image
+    <div className="w-full aspect-video bg-amber-500 rounded-lg flex items-center justify-center relative overflow-hidden">
+      <Image
+        src={source}
+        alt="Portrait"
+        // width={300}
+        // height={700}
+        className="object-cover w-full h-full"
+        fill
+      />
     </div>
   );
 };

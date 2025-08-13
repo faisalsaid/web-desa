@@ -19,6 +19,8 @@ import 'swiper/css/scrollbar';
 
 import Link from 'next/link';
 import { swiperLenght } from '../_lib/SwiperLength';
+import { Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 
 const TourSection = () => {
   const length = swiperLenght();
@@ -74,10 +76,23 @@ const TourSection = () => {
 export default TourSection;
 
 const TourCard = () => {
+  const source =
+    'https://images.unsplash.com/photo-1611952327309-a739d089f5ad?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
   return (
     <div className="rounded-xl overflow-hidden bg-muted">
-      <div className="bg-amber-600 w-full h-56 flex items-center justify-center rounded-xl">
-        Image
+      <div className="w-full min-h-48 bg-amber-700/20 rounded-lg relative overflow-hidden">
+        {source ? (
+          <Image
+            src={source}
+            alt="Portrait"
+            // width={300}
+            // height={700}
+            className="object-cover w-full h-full"
+            fill
+          />
+        ) : (
+          <ImageIcon size={50} className="text-amber-800" />
+        )}
       </div>
     </div>
   );

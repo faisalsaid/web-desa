@@ -1,6 +1,19 @@
 import { AlignJustify } from 'lucide-react';
 import ThemeSwitcher from '../../../components/ThemeSwitcher';
 import Image from 'next/image';
+import Link from 'next/link';
+import MenuSheet from './MenuSheet';
+
+const listMenu = [
+  { key: '/#', value: 'Beranda' },
+  { key: '/#', value: 'Profil Desa' },
+  { key: '/#', value: 'Infografis' },
+  { key: '/#', value: 'Listing' },
+  { key: '/#', value: 'IMD' },
+  { key: '/#', value: 'Berita' },
+  { key: '/#', value: 'Belanjar' },
+  { key: '/#', value: 'PPID' },
+];
 
 const Header = () => {
   return (
@@ -20,9 +33,25 @@ const Header = () => {
           <p className="text-slate-300">Kabupaten Italia Timur</p>
         </div>
       </div>
-      <div className="flex items-center justify-center gap-4">
-        <ThemeSwitcher />
-        <AlignJustify />
+      <div className="flex items-center justify-center gap-6">
+        <nav className="hidden lg:flex gap-4 ">
+          {listMenu.map((item) => (
+            <ul
+              key={item.value}
+              className="border-b-2 border-b-transparent hover:border-b-white"
+            >
+              <li>
+                <Link href={item.key}>{item.value}</Link>
+              </li>
+            </ul>
+          ))}
+        </nav>
+        <div className="flex gap-2 items-center">
+          <ThemeSwitcher />
+          <div className="lg:hidden">
+            <MenuSheet />
+          </div>
+        </div>
       </div>
     </header>
   );

@@ -16,10 +16,11 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
-import { Image } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 const OrganizationlSection = () => {
   const [nilai, setNilai] = useState<number>(2);
@@ -95,11 +96,24 @@ const OrganizationlSection = () => {
 export default OrganizationlSection;
 
 const ProfileCard = () => {
+  const source =
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
   return (
     <div className="bg-amber-500/20 rounded-xl">
       <div className="p-2 rounded-lg overflow-hidden w-full">
-        <div className="w-full min-h-56 bg-amber-700/20 rounded-lg flex items-center justify-center">
-          <Image size={50} className="text-amber-800" />
+        <div className="w-full min-h-48 bg-amber-700/20 rounded-lg relative overflow-hidden">
+          {source ? (
+            <Image
+              src={source}
+              alt="Portrait"
+              // width={300}
+              // height={700}
+              className="object-cover w-full h-full"
+              fill
+            />
+          ) : (
+            <ImageIcon size={50} className="text-amber-800" />
+          )}
         </div>
       </div>
       <div className="text-center p-2 ">

@@ -13,7 +13,7 @@ import Image from 'next/image';
 
 const Footer = () => {
   return (
-    <footer className="bg-amber-800 text-white p-4 text-sm space-y-6">
+    <footer className="bg-amber-800 text-white p-4 text-sm space-y-6 md:flex gap-8 justify-between">
       <div>
         <div className="flex items-center gap-2 ">
           <Image
@@ -29,7 +29,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 md:flex gap-6">
         <div className="space-y-2">
           <div>Kontak</div>
           <div className="space-y-1">

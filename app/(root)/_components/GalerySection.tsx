@@ -11,8 +11,8 @@ const GalerySection = () => {
         </div>
         <p>Menampilkan kegiatan-kegiatan yang berlangsung di Desa</p>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        {Array.from({ length: 6 }, (_, i) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 12 }, (_, i) => (
           <ImagesCard key={i} />
         ))}
       </div>

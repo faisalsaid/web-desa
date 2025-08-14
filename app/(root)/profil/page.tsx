@@ -29,10 +29,14 @@ const batasDesa = [
 const ProfilPage = () => {
   return (
     <div className="p-4 space-y-4">
-      <ProfilCard title={visi.title} content={visi.content} />
-      <ProfilCard title={misi.title} content={misi.content} />
-      <ProfilCard title={'Bagan Desa'} content={'Tidak ada data'} />
-      <ProfilCard title={'Sejarah Desa'} content={'Tidak ada data'} />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <ProfilCard title={visi.title} content={visi.content} />
+        <ProfilCard title={misi.title} content={misi.content} />
+      </div>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <ProfilCard title={'Bagan Desa'} content={'Tidak ada data'} />
+        <ProfilCard title={'Sejarah Desa'} content={'Tidak ada data'} />
+      </div>
       <div className="p-4 bg-muted rounded-xl space-y-5">
         <h1 className="text-amber-600 text-lg font-semibold text-center">
           Peta Lokasi

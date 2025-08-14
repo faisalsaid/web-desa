@@ -14,7 +14,7 @@ interface ProfilCardPorps {
 
 const ProfilCard = ({ title, content }: ProfilCardPorps) => {
   return (
-    <div className="bg-muted px-4 rounded-xl">
+    <div className="bg-muted px-4 rounded-xl h-fit">
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
           <AccordionTrigger>

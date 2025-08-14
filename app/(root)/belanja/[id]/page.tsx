@@ -13,7 +13,7 @@ const ProductDetailPage = () => {
       <div className="p-4 space-y-4 bg-muted rounded-xl lg:grid grid-cols-2 gap-4">
         <div className="space-y-4">
           <div className="relative w-full aspect-square rounded-lg overflow-hidden">
-            <Image alt="product" src={souce} fill />
+            <Image alt="product" src={souce} fill className="object-cover" />
           </div>
           <div className="flex items-center justify-center gap-2">
             {Array.from({ length: 4 }, (_m, i) => (
@@ -21,7 +21,12 @@ const ProductDetailPage = () => {
                 key={i}
                 className="relative w-full aspect-square rounded-md overflow-hidden"
               >
-                <Image alt="product" src={souce} fill />
+                <Image
+                  alt="product"
+                  src={souce}
+                  fill
+                  className="object-cover"
+                />
               </div>
             ))}
           </div>

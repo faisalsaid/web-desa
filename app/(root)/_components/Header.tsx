@@ -1,19 +1,8 @@
-import { AlignJustify } from 'lucide-react';
 import ThemeSwitcher from '../../../components/ThemeSwitcher';
 import Image from 'next/image';
 import Link from 'next/link';
 import MenuSheet from './MenuSheet';
-
-const listMenu = [
-  { key: '/', value: 'Beranda' },
-  { key: '/#', value: 'Profil Desa' },
-  { key: '/#', value: 'Infografis' },
-  { key: '/#', value: 'Listing' },
-  { key: '/#', value: 'IMD' },
-  { key: '/berita', value: 'Berita' },
-  { key: '/belanja', value: 'Belanja' },
-  { key: '/#', value: 'PPID' },
-];
+import { listMenu } from '../_lib/statics';
 
 const Header = () => {
   return (

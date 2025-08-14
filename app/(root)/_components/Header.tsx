@@ -5,13 +5,13 @@ import Link from 'next/link';
 import MenuSheet from './MenuSheet';
 
 const listMenu = [
-  { key: '/#', value: 'Beranda' },
+  { key: '/', value: 'Beranda' },
   { key: '/#', value: 'Profil Desa' },
   { key: '/#', value: 'Infografis' },
   { key: '/#', value: 'Listing' },
   { key: '/#', value: 'IMD' },
-  { key: '/#', value: 'Berita' },
-  { key: '/#', value: 'Belanjar' },
+  { key: '/berita', value: 'Berita' },
+  { key: '/belanja', value: 'Belanja' },
   { key: '/#', value: 'PPID' },
 ];
 

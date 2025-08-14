@@ -12,13 +12,13 @@ import { Menu } from 'lucide-react';
 import Link from 'next/link';
 
 const listMenu = [
-  { key: '/#', value: 'Beranda' },
+  { key: '/', value: 'Beranda' },
   { key: '/#', value: 'Profil Desa' },
   { key: '/#', value: 'Infografis' },
   { key: '/#', value: 'Listing' },
   { key: '/#', value: 'IMD' },
-  { key: '/#', value: 'Berita' },
-  { key: '/#', value: 'Belanjar' },
+  { key: '/berita', value: 'Berita' },
+  { key: '/belanja', value: 'Belanja' },
   { key: '/#', value: 'PPID' },
 ];
 
@@ -39,7 +39,7 @@ const MenuSheet = () => {
 
         <div className="p-4 space-y-4 text-lg font-semibold">
           {listMenu.map((item) => (
-            <ul>
+            <ul key={item.value}>
               <li>
                 <Link href={item.key}>{item.value}</Link>
               </li>

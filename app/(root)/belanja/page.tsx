@@ -69,8 +69,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <div>
       <Link href={`/belanja/${product.id}`}>
-        <div className="flex   bg-muted rounded-lg shadow overflow-hidden items-stretch">
-          <div className="w-1/3 relative rounded-lg overflow-hidden bg-amber-500 ">
+        <div className="flex   bg-muted rounded-lg shadow overflow-hidden items-stretch sm:block">
+          <div className="w-1/3 relative rounded-lg overflow-hidden bg-amber-500 sm:w-full sm:aspect-video ">
             <Image
               alt="product"
               src={product.image}

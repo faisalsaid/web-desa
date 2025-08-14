@@ -8,10 +8,10 @@ import { RiCustomerService2Line } from 'react-icons/ri';
 import { TbSpeakerphone } from 'react-icons/tb';
 
 const menu = [
-  { title: 'Beranda', link: 'beranda', icon: IoHomeOutline },
-  { title: 'Pengaduan', link: 'pengaduan', icon: RiCustomerService2Line },
-  { title: 'Belanja', link: 'belanja', icon: BsBagCheck },
-  { title: 'Berita', link: 'berita', icon: TbSpeakerphone },
+  { title: 'Beranda', link: '/', icon: IoHomeOutline },
+  { title: 'Pengaduan', link: '/pengaduan', icon: RiCustomerService2Line },
+  { title: 'Belanja', link: '/belanja', icon: BsBagCheck },
+  { title: 'Berita', link: '/berita', icon: TbSpeakerphone },
 ];
 
 const MobileNavigation = () => {

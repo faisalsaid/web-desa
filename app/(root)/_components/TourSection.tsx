@@ -18,12 +18,12 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import Link from 'next/link';
-import { swiperLenght } from '../_lib/SwiperLength';
+import { useSwiperLength } from '../_lib/SwiperLength';
 import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
 const TourSection = () => {
-  const length = swiperLenght();
+  const length = useSwiperLength();
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">

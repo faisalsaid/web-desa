@@ -18,12 +18,12 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import { Calendar, Eye } from 'lucide-react';
 import Link from 'next/link';
-import { swiperLenght } from '../_lib/SwiperLength';
+import { useSwiperLength } from '../_lib/SwiperLength';
 import Image from 'next/image';
 import { Image as ImageIcon } from 'lucide-react';
 
 const NewsSection = () => {
-  const length = swiperLenght();
+  const length = useSwiperLength();
 
   return (
     <div className="space-y-4">

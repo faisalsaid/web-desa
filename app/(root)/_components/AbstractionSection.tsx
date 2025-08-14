@@ -1,4 +1,3 @@
-import { Icon } from 'lucide-react';
 import { IconType } from 'react-icons';
 import { FaPeopleGroup } from 'react-icons/fa6';
 import { IoIosMan, IoIosWoman } from 'react-icons/io';

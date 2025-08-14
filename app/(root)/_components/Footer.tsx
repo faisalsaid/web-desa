@@ -6,7 +6,6 @@ import {
   Pin,
   Timer,
   Twitter,
-  X,
   Youtube,
 } from 'lucide-react';
 import Image from 'next/image';

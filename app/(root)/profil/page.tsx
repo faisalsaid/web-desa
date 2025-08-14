@@ -1,13 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import ProfilCard from './ProfilCard';
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-
 const visi = {
   title: 'Visi',
   content:

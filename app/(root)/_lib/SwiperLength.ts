@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
-export function swiperLenght() {
+// Gunakan awalan "use" agar dikenali sebagai hook
+export function useSwiperLength() {
   const [nilai, setNilai] = useState<number>(1);
 
   useEffect(() => {

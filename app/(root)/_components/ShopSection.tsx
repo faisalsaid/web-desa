@@ -17,12 +17,12 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import Link from 'next/link';
-import { swiperLenght } from '../_lib/SwiperLength';
+import { useSwiperLength } from '../_lib/SwiperLength';
 import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
 const ShopSection = () => {
-  const length = swiperLenght();
+  const length = useSwiperLength();
 
   return (
     <div className="space-y-4">

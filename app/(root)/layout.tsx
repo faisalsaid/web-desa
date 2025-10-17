@@ -8,9 +8,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative min-h-screen container mx-auto">
+    <div className="relative min-h-screen ">
       <Header />
-      {children}
+      <div className="container mx-auto">{children}</div>
       <Footer />
       <div className="sticky bottom-0 w-full p-2 z-50 md:hidden">
         <MobileNavigation />

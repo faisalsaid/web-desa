@@ -9,8 +9,10 @@ const layout = async ({
     <>
       <SidebarProvider>
         <AppSidebar />
-        <CPNavbar />
-        {children}
+        <main className="w-full">
+          <CPNavbar />
+          <div className="p-4">{children}</div>
+        </main>
       </SidebarProvider>
     </>
   );

@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Dialog } from '@radix-ui/react-dialog';
 import { Plus } from 'lucide-react';
 
 const CreatedUserForm = () => {

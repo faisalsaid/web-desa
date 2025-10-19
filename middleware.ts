@@ -23,7 +23,8 @@ export function middleware(req: NextRequest) {
   // ambil cookie session token dari NextAuth
   const token =
     req.cookies.get('authjs.session-token')?.value ||
-    req.cookies.get('__Secure-next-auth.session-token')?.value;
+    req.cookies.get('__Secure-next-auth.session-token')?.value ||
+    req.cookies.get('_vercel_jwt')?.value;
 
   // --- basic login check ---
   const isLoggedIn = !!token;

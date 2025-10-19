@@ -24,6 +24,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SigninSchema } from '../_lib/auth.types';
 import { loginSchema } from '../_lib/auth.zod';
 import Link from 'next/link';
+import { Spinner } from '@/components/ui/spinner';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -162,7 +163,10 @@ const LoginForm = () => {
               </div>
 
               <Button type="submit" className="w-full">
-                {form.formState.isSubmitting ? 'Proccessing...' : 'Sign In'}
+                {form.formState.isSubmitting ? <Spinner /> : null}
+                <span>
+                  {form.formState.isSubmitting ? 'Proccessing...' : 'Sign In'}
+                </span>
               </Button>
               {/* <p className="text-xs text-center text-muted-foreground">
                 <span>{`${t('DONT-HAVE-ACCOUNT?')} `}</span>

@@ -86,8 +86,8 @@ const LoginForm = () => {
             <AlertDescription className="text-green-800 flex items-center justify-center">
               <Check />
               <span>
-                "Your password has been updated. Please log in with your new
-                password."
+                Your password has been updated. Please log in with your new
+                password
               </span>
             </AlertDescription>
           </Alert>

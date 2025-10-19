@@ -17,7 +17,7 @@ import {
   CreaterUserSchema,
   createUserSchema,
   userRoles,
-} from '../_lib/user.zod';
+} from '../_lib/users.zod';
 import {
   Form,
   FormControl,

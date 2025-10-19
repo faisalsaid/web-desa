@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { Prisma, UserRole } from '@prisma/client';
 import { CreaterUserSchema, createUserSchema } from './users.zod';
 import crypto from 'crypto';

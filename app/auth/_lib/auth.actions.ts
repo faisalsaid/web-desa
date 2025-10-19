@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { hashSync } from 'bcrypt-ts';
 
 // Handle set password

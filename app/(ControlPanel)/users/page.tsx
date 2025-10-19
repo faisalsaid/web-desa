@@ -4,9 +4,11 @@ import CreatedUserForm from './_component/CreatedUserForm';
 const UsersPages = () => {
   return (
     <div className="space-y-4">
-      <ContentCard className="flex gap-4 items-center justify-between ">
-        <h2 className="text-xl font-semibold">All User</h2>
-        <CreatedUserForm />
+      <ContentCard className=" ">
+        <div className="flex gap-4 items-center justify-between">
+          <h2 className="text-xl font-semibold">All User</h2>
+          <CreatedUserForm />
+        </div>
       </ContentCard>
 
       <div className="bg-primary-foreground p-4 rounded-xl space-y-4">

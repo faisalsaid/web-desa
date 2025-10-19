@@ -50,7 +50,7 @@ export async function registerNewUser({
     });
 
     await transporter.sendMail({
-      from: `"Compay Profile App" <${process.env.SMTP_USER}>`,
+      from: `"Website Desa" <${process.env.SMTP_USER}>`,
       to: email,
       subject: 'Verify your acount',
       html: `<p> Hello!, </p>

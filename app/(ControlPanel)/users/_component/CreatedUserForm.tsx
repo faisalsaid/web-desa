@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { registerNewUser } from '../_lib/users.action';
 
 const CreatedUserForm = () => {
   const [open, setOpen] = useState(false);
@@ -52,23 +53,23 @@ const CreatedUserForm = () => {
 
   const onSubmit = async (data: CreaterUserSchema) => {
     const id = toast.loading('Register new user...');
-    // const res = await registerNewUser({ data });
+    const res = await registerNewUser({ data });
 
     console.log(data);
 
     toast.dismiss(id);
 
-    // if (!res.ok) {
-    //   // Error validasi field level
-    //   if ('fieldErrors' in res) {
-    //     Object.values(res.fieldErrors)
-    //       .flat()
-    //       .forEach((msg) => toast.error(msg));
-    //     return;
-    //   }
-    //   toast.error(res.error);
-    //   return;
-    // }
+    if (!res.ok) {
+      // Error validasi field level
+      if ('fieldErrors' in res) {
+        Object.values(res.fieldErrors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+        return;
+      }
+      toast.error(res.error);
+      return;
+    }
 
     toast.success('Account created successfully!');
 

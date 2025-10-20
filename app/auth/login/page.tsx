@@ -1,6 +1,7 @@
 import { webTitle } from '@/lib/staticData';
 import Link from 'next/link';
 import LoginForm from '../_components/login-form';
+import { Suspense } from 'react';
 // import { auth } from '@/auth';
 
 const LoginPage = async () => {
@@ -14,7 +15,9 @@ const LoginPage = async () => {
           <h1 className="text-2xl text-center">{webTitle}</h1>
         </Link>
       </div>
-      <LoginForm />
+      <Suspense fallback={<div>Loading login form...</div>}>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 };

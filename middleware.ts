@@ -1,66 +1,59 @@
 // middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-// daftar role redaksi
-const roleRedaksi = ['ADMIN', 'OPERATOR', 'EDITOR'];
+const accessRules: Record<string, string[]> = {
+  '/dashboard': ['ADMIN', 'OPERATOR', 'EDITOR'],
+  '/users': ['ADMIN', 'OPERATOR'],
+  '/settings': ['ADMIN'],
+};
 
-// daftar route yang dilindungi dan role-nya
-const protectedRoutes = [
-  { prefix: '/dashboard', roles: roleRedaksi },
-  { prefix: '/posts', roles: roleRedaksi },
-  { prefix: '/asset', roles: roleRedaksi },
-  { prefix: '/profile', roles: roleRedaksi },
-  { prefix: '/projects', roles: roleRedaksi },
-];
+// halaman yang tidak boleh diakses jika sudah login
+const blockedWhenLoggedIn = ['/auth', '/auth/login', '/auth/register'];
 
-// route yang tidak boleh diakses kalau sudah login
-const blockedWhenLoggedIn = ['/auth'];
+function getRequiredRoles(pathname: string): string[] | null {
+  for (const prefix in accessRules) {
+    if (pathname.startsWith(prefix)) return accessRules[prefix];
+  }
+  return null;
+}
 
-export function middleware(req: NextRequest) {
-  const { pathname, origin } = req.nextUrl;
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
-  // ambil cookie session token dari NextAuth
-  const token =
-    req.cookies.get('authjs.session-token')?.value ||
-    req.cookies.get('__Secure-next-auth.session-token')?.value ||
-    req.cookies.get('_vercel_jwt')?.value;
-
-  // --- basic login check ---
   const isLoggedIn = !!token;
+  const userRole = token?.role || 'USER';
 
-  // cek apakah route termasuk yang dilindungi
-  const matchedRoute = protectedRoutes.find((r) =>
-    pathname.startsWith(r.prefix),
-  );
-  const isBlockedRoute = blockedWhenLoggedIn.some((prefix) =>
-    pathname.startsWith(prefix),
-  );
-
-  // 🔒 belum login, tapi masuk route dilindungi
-  if (!isLoggedIn && matchedRoute) {
-    return NextResponse.redirect(`${origin}/auth/login`);
+  // 🚫 Sudah login tapi masuk ke /auth/*
+  if (
+    isLoggedIn &&
+    blockedWhenLoggedIn.some((path) => pathname.startsWith(path))
+  ) {
+    return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  // 🚫 sudah login tapi ke halaman /auth
-  if (isLoggedIn && isBlockedRoute) {
-    return NextResponse.redirect(`${origin}/dashboard`);
+  // 🔒 Belum login, coba masuk ke halaman yang butuh login
+  if (!isLoggedIn && pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/auth/login', req.url));
   }
 
-  // ✅ sudah login dan masuk route dilindungi
-  // ❗ catatan: di edge middleware kita tidak bisa baca role dari token (karena isinya dienkripsi)
-  // jadi role-based check sebaiknya dilakukan di server (layout/page)
+  // 🔐 Cek role user
+  const allowedRoles = getRequiredRoles(pathname);
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    console.warn(`🚫 Role ${userRole} tidak diizinkan ke ${pathname}`);
+    return NextResponse.redirect(new URL('/unauthorized', req.url));
+  }
+
   return NextResponse.next();
 }
 
-// batasi middleware hanya jalan di route ini
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/posts/:path*',
-    '/asset/:path*',
-    '/profile/:path*',
-    '/projects/:path*',
-    '/auth/:path*',
+    '/users/:path*',
+    '/settings/:path*',
+    '/auth/:path*', // 👈 tambahkan agar middleware juga jalan di /auth
   ],
 };

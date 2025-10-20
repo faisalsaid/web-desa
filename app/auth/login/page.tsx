@@ -1,7 +1,7 @@
 import { webTitle } from '@/lib/staticData';
 import Link from 'next/link';
 import LoginForm from '../_components/login-form';
-import { auth } from '@/auth';
+// import { auth } from '@/auth';
 
 const LoginPage = async () => {
   // const session = await auth();

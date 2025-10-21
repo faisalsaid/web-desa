@@ -9,7 +9,7 @@ const accessRules: Record<string, string[]> = {
   '/settings': ['ADMIN'],
 };
 
-// halaman yang tidak boleh diakses jika sudah login
+// halaman yang tidak boleh diakses kalau sudah login
 const blockedWhenLoggedIn = ['/auth', '/auth/login', '/auth/register'];
 
 function getRequiredRoles(pathname: string): string[] | null {
@@ -22,44 +22,55 @@ function getRequiredRoles(pathname: string): string[] | null {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const isLoggedIn =
+  // 1️⃣ Deteksi login via cookie (fallback)
+  const cookieSession =
     req.cookies.get('__Secure-authjs.session-token')?.value ||
     req.cookies.get('authjs.session-token')?.value ||
     req.cookies.get('_vercel_jwt')?.value;
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
-  // const isLoggedIn = !!token;
+  const isLoggedIn = Boolean(cookieSession);
+
+  // 2️⃣ Ambil token lengkap dari NextAuth (jika bisa)
+  let token: any = null;
+  try {
+    token = await getToken({
+      req,
+      secret: process.env.AUTH_SECRET,
+      secureCookie: true,
+    });
+  } catch (err) {
+    console.warn('⚠️ getToken gagal decode:', (err as Error).message);
+  }
+
   const userRole = token?.role || 'USER';
-  console.log('isLoggedIn => ', isLoggedIn);
 
-  // 🚫 Sudah login tapi masuk ke /auth/*
-  if (
-    isLoggedIn &&
-    blockedWhenLoggedIn.some((path) => pathname.startsWith(path))
-  ) {
+  // 3️⃣ Proteksi route login/register (jika user sudah login)
+  if (isLoggedIn && blockedWhenLoggedIn.some((p) => pathname.startsWith(p))) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  // 🔒 Belum login, coba masuk ke halaman yang butuh login
-  if (!isLoggedIn && pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/auth/login', req.url));
-  }
+  // 4️⃣ Proteksi route private (dashboard & lainnya)
+  if (pathname.startsWith('/dashboard')) {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL('/auth/login', req.url));
+    }
 
-  // 🔐 Cek role user
-  const allowedRoles = getRequiredRoles(pathname);
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
-    console.warn(`🚫 Role ${userRole} tidak diizinkan ke ${pathname}`);
-    return NextResponse.redirect(new URL('/unauthorized', req.url));
+    const allowedRoles = getRequiredRoles(pathname);
+    if (allowedRoles && !allowedRoles.includes(userRole)) {
+      return NextResponse.redirect(new URL('/unauthorized', req.url));
+    }
   }
 
   return NextResponse.next();
 }
 
+// 🚀 Konfigurasi runtime & route match
 export const config = {
   matcher: [
     '/dashboard/:path*',
     '/users/:path*',
     '/settings/:path*',
-    '/auth/:path*', // 👈 tambahkan agar middleware juga jalan di /auth
+    '/auth/:path*',
   ],
+  runtime: 'nodejs', // gunakan Node.js agar getToken() full support di Vercel
 };

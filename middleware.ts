@@ -25,6 +25,7 @@ export async function middleware(req: NextRequest) {
 
   const isLoggedIn = !!token;
   const userRole = token?.role || 'USER';
+  console.log('isLoggedIn => ', isLoggedIn);
 
   // 🚫 Sudah login tapi masuk ke /auth/*
   if (

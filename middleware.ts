@@ -42,7 +42,7 @@ export async function middleware(req: NextRequest) {
     console.warn('⚠️ getToken gagal decode:', (err as Error).message);
   }
 
-  const userRole = token?.role || 'USER';
+  const userRole = token?.role;
 
   console.log('isLoging =>', isLoggedIn);
   console.log('userRole =>', userRole);

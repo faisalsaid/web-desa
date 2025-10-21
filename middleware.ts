@@ -44,6 +44,9 @@ export async function middleware(req: NextRequest) {
 
   const userRole = token?.role || 'USER';
 
+  console.log('isLoging =>', isLoggedIn);
+  console.log('userRole =>', userRole);
+
   // 3️⃣ Proteksi route login/register (jika user sudah login)
   if (isLoggedIn && blockedWhenLoggedIn.some((p) => pathname.startsWith(p))) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
@@ -57,7 +60,7 @@ export async function middleware(req: NextRequest) {
 
     const allowedRoles = getRequiredRoles(pathname);
     if (allowedRoles && !allowedRoles.includes(userRole)) {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
+      return NextResponse.redirect(new URL('/auth/login', req.url));
     }
   }
 

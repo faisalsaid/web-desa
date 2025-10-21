@@ -21,9 +21,14 @@ function getRequiredRoles(pathname: string): string[] | null {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  const isLoggedIn =
+    req.cookies.get('__Secure-authjs.session-token')?.value ||
+    req.cookies.get('authjs.session-token')?.value ||
+    req.cookies.get('_vercel_jwt')?.value;
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
-  const isLoggedIn = !!token;
+  // const isLoggedIn = !!token;
   const userRole = token?.role || 'USER';
   console.log('isLoggedIn => ', isLoggedIn);
 

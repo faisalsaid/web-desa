@@ -12,6 +12,7 @@ export async function middleware(req: NextRequest) {
   });
 
   const isLoggedIn = !!token;
+  console.log(isLoggedIn);
 
   // 🔒 Halaman yang butuh login
   const protectedRoutes = ['/dashboard', '/users', '/settings'];

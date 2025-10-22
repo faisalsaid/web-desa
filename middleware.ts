@@ -29,6 +29,7 @@ export async function middleware(req: NextRequest) {
   // 🔍 Status login & role
   const isLoggedIn = Boolean(token);
   const userRole = token?.role ?? null; // aman dari undefined
+  console.log('isLoggedIn => ', isLoggedIn);
 
   // 🔒 Halaman yang perlu login
   const protectedRoutes = Object.keys(accessRules);

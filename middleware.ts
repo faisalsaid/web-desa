@@ -3,38 +3,35 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
+// 🔐 Aturan role (akses per route prefix)
+const accessRules: Record<string, string[]> = {
+  '/dashboard': ['ADMIN', 'OPERATOR', 'EDITOR'],
+  '/users': ['ADMIN', 'OPERATOR'],
+  '/settings': ['ADMIN'],
+};
+
+// 🚫 Halaman yang tidak boleh diakses saat sudah login
+const blockedAuthRoutes = ['/auth/login', '/auth/register'];
+
+function getRequiredRoles(pathname: string): string[] | null {
+  for (const prefix in accessRules) {
+    if (pathname.startsWith(prefix)) return accessRules[prefix];
+  }
+  return null;
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Cek token dari cookie (semua kemungkinan environment)
-  // const token =
-  //   req.cookies.get('next-auth.session-token')?.value ||
-  //   req.cookies.get('authjs.session-token')?.value ||
-  //   req.cookies.get('__Secure-next-auth.session-token')?.value ||
-  //   req.cookies.get('_vercel_jwt')?.value;
+  // ✅ Ambil token JWT dari NextAuth (langsung dari cookie)
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  const isLoggedIn = !!token;
+  const userRole = token?.role || 'USER';
 
-  let tokenJWT: any = null;
-  try {
-    tokenJWT = await getToken({
-      req,
-      secret: process.env.AUTH_SECRET,
-      // secureCookie: true,
-    });
-  } catch (err) {
-    console.warn('⚠️ getToken gagal decode:', (err as Error).message);
-  }
+  // 🔒 Cek halaman yang butuh login (semua dari accessRules)
+  const protectedRoutes = Object.keys(accessRules);
 
-  const isLoggedIn = !!tokenJWT;
-  console.log('tokenJWT => ', tokenJWT);
-  console.log('isLoggedIn =>', isLoggedIn);
-
-  // 🔒 ROUTE yang hanya bisa diakses jika login
-  const protectedRoutes = ['/dashboard', '/users', '/settings'];
-
-  // 🚫 ROUTE yang tidak boleh diakses jika sudah login
-  const blockedAuthRoutes = ['/auth/login', '/auth/register'];
-
-  // 1️⃣ Jika belum login dan mencoba akses halaman yang dilindungi
+  // 1️⃣ Belum login tapi akses route yang butuh login
   if (
     !isLoggedIn &&
     protectedRoutes.some((route) => pathname.startsWith(route))
@@ -42,16 +39,23 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', req.url));
   }
 
-  // 2️⃣ Jika sudah login dan mencoba akses auth/login atau auth/register
+  // 2️⃣ Sudah login tapi akses halaman login/register
   if (isLoggedIn && blockedAuthRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  // ✅ Kalau tidak termasuk kondisi di atas, lanjutkan saja
+  // 3️⃣ Cek role user untuk halaman tertentu
+  const allowedRoles = getRequiredRoles(pathname);
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    console.warn(`🚫 Role ${userRole} tidak boleh akses ${pathname}`);
+    return NextResponse.redirect(new URL('/unauthorized', req.url));
+  }
+
+  // ✅ Jika semua aman → lanjutkan
   return NextResponse.next();
 }
 
-// Middleware aktif di path ini
+// Middleware aktif di path berikut
 export const config = {
   matcher: [
     '/dashboard/:path*',

@@ -25,8 +25,8 @@ export async function middleware(req: NextRequest) {
   }
 
   const isLoggedIn = !!tokenJWT;
-  // console.log('tokenJWT => ', tokenJWT);
-  // console.log('isLoggedIn =>', isLoggedIn);
+  console.log('tokenJWT => ', tokenJWT);
+  console.log('isLoggedIn =>', isLoggedIn);
 
   // 🔒 ROUTE yang hanya bisa diakses jika login
   const protectedRoutes = ['/dashboard', '/users', '/settings'];

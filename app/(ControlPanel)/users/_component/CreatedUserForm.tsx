@@ -85,7 +85,15 @@ const CreatedUserForm = () => {
   const isSubmitting = form.formState.isSubmitting;
 
   return (
-    <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o);
+        if (!o) {
+          form.reset();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button>
           <Plus /> New User

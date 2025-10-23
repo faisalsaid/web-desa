@@ -80,6 +80,10 @@ const CreatedUserForm = () => {
     setOpen(false);
   };
 
+  const emailValue = form.watch('email');
+  const isValid = form.formState.isValid;
+  const isSubmitting = form.formState.isSubmitting;
+
   return (
     <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
       <DialogTrigger asChild>
@@ -89,7 +93,7 @@ const CreatedUserForm = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle asChild>
             <h2 className="text-xl font-semibold">Add New User</h2>
           </DialogTitle>
         </DialogHeader>
@@ -141,7 +145,11 @@ const CreatedUserForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={!emailValue || emailValue.trim().length === 0}
+                    >
                       <FormControl className="w-full">
                         <SelectTrigger>
                           <SelectValue placeholder="Select Role" />
@@ -165,7 +173,11 @@ const CreatedUserForm = () => {
                     Close
                   </Button>
                 </DialogClose>
-                <Button type="submit" className="w-fit">
+                <Button
+                  type="submit"
+                  className="w-fit"
+                  disabled={!isValid || isSubmitting}
+                >
                   {form.formState.isSubmitting
                     ? 'Processing...'
                     : 'Register New User'}

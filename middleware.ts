@@ -15,8 +15,8 @@ export async function middleware(req: NextRequest) {
 
   const isLoggedIn = !!token;
   const userRole = token?.role || 'USER'; // default role kalau tidak ada
-  console.log('🔍 [Middleware] path:', pathname);
-  console.log('✅ [Middleware] isLoggedIn:', isLoggedIn, '| role:', userRole);
+  // console.log('🔍 [Middleware] path:', pathname);
+  // console.log('✅ [Middleware] isLoggedIn:', isLoggedIn, '| role:', userRole);
 
   // =========================
   // 🔒 ROUTE PROTECTION RULES

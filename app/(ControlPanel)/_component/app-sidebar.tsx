@@ -10,9 +10,20 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import CPSidebarGroup from './CPSidebarGroup';
-import { adminMenuList } from '../_lib/listSidebar';
+// import { adminMenuList } from '../_lib/listSidebar';
+import { auth } from '@/auth';
+import { getRoleBasedMenu } from '../_lib/menuUtils';
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  // console.log('SIDEBAR');
+
+  const session = await auth();
+  const role = session?.user?.role as string;
+
+  // console.log('USER ROLE', role);
+
+  const filteredMenu = getRoleBasedMenu(role.toUpperCase());
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="py-4">
@@ -26,7 +37,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarSeparator />
-        <CPSidebarGroup listMenu={adminMenuList} title="admin" />
+        <CPSidebarGroup listMenu={filteredMenu} title="admin" />
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

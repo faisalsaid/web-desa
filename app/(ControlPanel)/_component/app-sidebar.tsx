@@ -13,6 +13,7 @@ import CPSidebarGroup from './CPSidebarGroup';
 // import { adminMenuList } from '../_lib/listSidebar';
 import { auth } from '@/auth';
 import { getRoleBasedMenu } from '../_lib/menuUtils';
+import { GalleryVerticalEnd } from 'lucide-react';
 
 export async function AppSidebar() {
   // console.log('SIDEBAR');
@@ -30,7 +31,10 @@ export async function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href={'/dashboard'}>Website Desa</Link>
+              <div>
+                <GalleryVerticalEnd />
+                <Link href={'/dashboard'}>Website Desa</Link>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

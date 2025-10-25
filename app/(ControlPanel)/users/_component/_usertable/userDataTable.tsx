@@ -52,7 +52,11 @@ interface DataTableProps<TData, TValue> {
   };
 }
 
-export function UserDataTable<TData, TValue>({
+interface HasId {
+  id: string;
+}
+
+export function UserDataTable<TData extends HasId, TValue>({
   columns,
   data,
   currentUser,
@@ -67,7 +71,7 @@ export function UserDataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (row: any) => row.id,
+    getRowId: (row) => row.id,
     onRowSelectionChange: setRowSelection,
     meta: { currentUser },
     state: {

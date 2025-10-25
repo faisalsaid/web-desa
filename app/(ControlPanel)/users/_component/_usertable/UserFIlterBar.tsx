@@ -19,7 +19,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 
-const role = ['ADMIN', 'EDITOR', 'USER'] as const;
+const role = ['ADMIN', 'OPERATOR', 'EDITOR', 'USER'] as const;
 
 const UserFIlterBar = () => {
   const router = useRouter();

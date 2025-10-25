@@ -44,7 +44,7 @@ type Props = {
   } | null;
 };
 
-const role: UserRole[] = ['ADMIN', 'OPERATOR', 'EDITOR', 'USER'];
+const roles: UserRole[] = ['ADMIN', 'OPERATOR', 'EDITOR', 'USER'];
 
 const UserRolesCells = ({ user, currentUser }: Props) => {
   const [permission, setPermission] = useState(false);
@@ -53,9 +53,16 @@ const UserRolesCells = ({ user, currentUser }: Props) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingRole, setPendingRole] = useState<UserRole | null>(null);
 
+  const filterRole =
+    currentUser?.role === 'OPERATOR'
+      ? roles.filter((role) => role !== 'ADMIN' && role !== 'OPERATOR')
+      : roles;
+
   useEffect(() => {
     if (currentUser) {
-      setPermission(currentUser.role === 'ADMIN');
+      setPermission(
+        currentUser.role === 'ADMIN' || currentUser.role === 'OPERATOR',
+      );
     }
   }, [currentUser]);
 
@@ -79,13 +86,21 @@ const UserRolesCells = ({ user, currentUser }: Props) => {
 
   // console.log(pendingRole);
 
+  const canEdit = () => {
+    if (!permission) return false;
+    if (currentUser?.role === 'OPERATOR') {
+      return user.role !== 'ADMIN' && user.role !== 'OPERATOR';
+    }
+    return true; // Admin bebas
+  };
+
   return (
     <div className="flex  items-center">
       {/* <p>{user.role}</p> */}
       {/* <p className="capitalize">{user.role.toLocaleLowerCase()}</p> */}
 
-      <RoleBadge role={user.role} />
-      {permission && (
+      <RoleBadge role={selectedRole} />
+      {canEdit() && (
         <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -97,7 +112,7 @@ const UserRolesCells = ({ user, currentUser }: Props) => {
               <div className="space-y-2 p-2">
                 <Label>Change Role</Label>
                 <Select
-                  value={user.role}
+                  value={selectedRole}
                   onValueChange={(newRole: UserRole) => {
                     if (newRole !== selectedRole) setPendingRole(newRole);
                   }}
@@ -108,7 +123,7 @@ const UserRolesCells = ({ user, currentUser }: Props) => {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Role</SelectLabel>
-                      {role.map((item) => (
+                      {filterRole.map((item) => (
                         <SelectItem key={item} value={item}>
                           {item}
                         </SelectItem>

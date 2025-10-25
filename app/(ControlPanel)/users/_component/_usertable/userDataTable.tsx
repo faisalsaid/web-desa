@@ -67,6 +67,7 @@ export function UserDataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (row: any) => row.id,
     onRowSelectionChange: setRowSelection,
     meta: { currentUser },
     state: {

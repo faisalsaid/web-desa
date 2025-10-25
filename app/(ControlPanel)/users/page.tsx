@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Suspense } from 'react';
 import ContentCard from '../_component/ContentCard';
 import UserFIlterBar from './_component/_usertable/UserFIlterBar';

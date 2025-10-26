@@ -4,7 +4,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface ContentCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const ContentCard: React.FC<ContentCardProps> = ({
@@ -14,7 +14,10 @@ const ContentCard: React.FC<ContentCardProps> = ({
 }) => {
   return (
     <div
-      className={twMerge('bg-primary-foreground p-2 rounded-xl', className)}
+      className={twMerge(
+        'bg-primary-foreground py-2 px-4 rounded-xl',
+        className,
+      )}
       {...props}
     >
       {children}

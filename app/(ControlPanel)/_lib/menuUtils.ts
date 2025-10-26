@@ -1,4 +1,10 @@
-import { Settings, LayoutDashboard, Users, Newspaper } from 'lucide-react';
+import {
+  Settings,
+  LayoutDashboard,
+  Users,
+  Newspaper,
+  ClipboardPenLine,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 /**
@@ -20,6 +26,11 @@ const allMenuList: MenuItem[] = [
     title: 'Dashboard',
     url: '/dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    title: 'Web Profile',
+    url: '/web-profile',
+    icon: ClipboardPenLine,
   },
   {
     title: 'Article',
@@ -48,6 +59,7 @@ const allMenuList: MenuItem[] = [
 export function getRoleBasedMenu(role?: string): MenuItem[] {
   return allMenuList.filter((item) => {
     if (!item.roles) return true; // menu publik
+
     return role ? item.roles.includes(role) : false;
   });
 }

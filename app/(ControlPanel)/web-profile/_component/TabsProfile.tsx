@@ -4,15 +4,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const TabsProfile = () => {
   return (
-    <Tabs defaultValue="account" className="w-[400px]">
+    <Tabs defaultValue="general" className="w-[400px]">
       <TabsList>
-        <TabsTrigger value="account">General</TabsTrigger>
-        <TabsTrigger value="password">Visi Misi</TabsTrigger>
+        <TabsTrigger className="hover:cursor-pointer" value="general">
+          General
+        </TabsTrigger>
+        <TabsTrigger className="hover:cursor-pointer" value="visi-misi">
+          Visi Misi
+        </TabsTrigger>
       </TabsList>
-      <TabsContent value="account">
+      <TabsContent value="general">
         Make changes to your account here.
       </TabsContent>
-      <TabsContent value="password">Change your password here.</TabsContent>
+      <TabsContent value="visi-misi">Change your password here.</TabsContent>
     </Tabs>
   );
 };

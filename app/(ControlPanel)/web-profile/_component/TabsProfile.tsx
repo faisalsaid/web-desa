@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const TabsProfile = () => {
   return (
     <Tabs defaultValue="general" className="w-[400px]">
-      <TabsList>
+      <TabsList className="gap-4">
         <TabsTrigger className="hover:cursor-pointer" value="general">
           General
         </TabsTrigger>

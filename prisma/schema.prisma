@@ -97,6 +97,44 @@ model PasswordResetToken {
   @@index([userId])
 }
 
+model VillageProfile {
+  id            String    @id @default(cuid())
+  name          String                     // Nama desa
+  description   String?   @db.Text         // Deskripsi umum desa
+
+  // Informasi lokasi dasar
+  country       String?
+  province      String?
+  regency       String?                   // Kabupaten
+  district      String?                   // Kecamatan
+  village       String?                   // Desa / Kelurahan
+
+  // Geografi penting
+  latitude      Float?                    // Garis lintang
+  longitude     Float?                    // Garis bujur
+  areaKm2       Float?                    // Luas wilayah dalam km²
+  elevation     Int?                      // Ketinggian dari permukaan laut (opsional)
+  population    Int?                      // Jumlah penduduk
+
+  // Visi & misi
+  vision        String?   @db.Text
+  mission       String?   @db.Text
+
+  // Batas wilayah
+  northBorder   String?   @db.Text
+  eastBorder    String?   @db.Text
+  southBorder   String?   @db.Text
+  westBorder    String?   @db.Text
+
+  // Media
+  mapUrl        String?                   // URL embed Google Maps
+
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+
 
 enum UserRole {
     ADMIN

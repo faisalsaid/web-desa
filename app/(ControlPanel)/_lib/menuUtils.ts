@@ -28,7 +28,7 @@ const allMenuList: MenuItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: 'Web Profile',
+    title: 'Profile Desa',
     url: '/web-profile',
     icon: ClipboardPenLine,
   },

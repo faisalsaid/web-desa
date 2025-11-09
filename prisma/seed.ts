@@ -2,16 +2,12 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Import semua seed file
-// import seedReligion from "./seeds/religion";
-// import seedEducation from "./seeds/education";
-// import seedJobs from "./seeds/jobs";
+import seedAdminUser from './seeds/adminUser';
 
 async function main() {
   console.log('⏳ Running Seed...');
 
-  //   await seedReligion(prisma);
-  //   await seedEducation(prisma);
-  //   await seedJobs(prisma);
+  await seedAdminUser(prisma);
 
   console.log('✅ ALL SEED COMPLETED');
 }

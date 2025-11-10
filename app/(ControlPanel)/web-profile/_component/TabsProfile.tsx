@@ -7,26 +7,28 @@ import Image from 'next/image';
 const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
   return (
     <Tabs defaultValue="general" className="">
-      <TabsList className="gap-4">
-        <TabsTrigger className="hover:cursor-pointer" value="general">
-          General
-        </TabsTrigger>
-        <TabsTrigger className="hover:cursor-pointer" value="vision-mision">
-          Visi Misi
-        </TabsTrigger>
-        <TabsTrigger className="hover:cursor-pointer" value="location">
-          Lokasi
-        </TabsTrigger>
-        <TabsTrigger className="hover:cursor-pointer" value="geo">
-          Geografi
-        </TabsTrigger>
-        <TabsTrigger className="hover:cursor-pointer" value="border">
-          Batas Wilayah
-        </TabsTrigger>
-        <TabsTrigger className="hover:cursor-pointer" value="map">
-          Peta Lokasi
-        </TabsTrigger>
-      </TabsList>
+      <div className="overflow-x-auto whitespace-nowrap flex no-scrollbar pb-3">
+        <TabsList className="gap-4 ">
+          <TabsTrigger className="hover:cursor-pointer" value="general">
+            General
+          </TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="vision-mision">
+            Visi Misi
+          </TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="location">
+            Lokasi
+          </TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="geo">
+            Geografi
+          </TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="border">
+            Batas Wilayah
+          </TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="map">
+            Peta Lokasi
+          </TabsTrigger>
+        </TabsList>
+      </div>
       <TabsContent value="general">
         <div className="space-y-2 sm:grid sm:grid-flow-col sm:grid-rows-3 gap-4">
           <div className="sm:row-span-3">

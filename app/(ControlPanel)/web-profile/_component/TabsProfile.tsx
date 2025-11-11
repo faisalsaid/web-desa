@@ -69,9 +69,9 @@ const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
       </TabsContent>
       <TabsContent value="geo">
         <div className="space-y-2 sm:grid sm:grid-cols-2 gap-4">
-          <ProfileCard title="Laltitude" text={data?.province} />
-          <ProfileCard title="Longtititude" text={data?.regency} />
-          <ProfileCard title="Luas wilayah" text={data?.district} />
+          <ProfileCard title="Laltitude" text={data?.latitude} />
+          <ProfileCard title="Longtititude" text={data?.longitude} />
+          <ProfileCard title="Luas wilayah" text={data?.areaKm2} />
           <ProfileCard title="Ketinggian" text={data?.elevation} />
         </div>
       </TabsContent>
@@ -100,16 +100,26 @@ interface ProfileCardProps {
 }
 
 const ProfileCard = ({ title, text }: ProfileCardProps) => {
+  // const value = text ?? (
+  //   <span className="italic text-muted-foreground">Not set</span>
+  // );
+
+  // Tambahkan satuan jika field tertentu
+  const formattedValue =
+    text !== null && text !== undefined && text !== '' ? (
+      <>
+        {text}
+        {title.toLowerCase() === 'ketinggian' && ' mdpl'}
+        {title.toLowerCase() === 'luas wilayah' && ' m²'}
+      </>
+    ) : (
+      <span className="italic text-muted-foreground">Not set</span>
+    );
+
   return (
     <div className="p-2 bg-background rounded-lg">
       <p className="py-2">{title} :</p>
-      <p className="p-4 bg-muted rounded-lg">
-        {text ? (
-          text
-        ) : (
-          <span className="italic text-muted-foreground">Not set</span>
-        )}
-      </p>
+      <p className="p-4 bg-muted rounded-lg">{formattedValue}</p>
     </div>
   );
 };

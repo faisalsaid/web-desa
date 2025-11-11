@@ -14,7 +14,7 @@ export default async function seedVillageProfile(prisma: PrismaClient) {
 
   await prisma.villageProfile.create({
     data: {
-      name: 'Desa Contoh', // Hanya name
+      name: 'Torino', // Hanya name
     },
   });
 

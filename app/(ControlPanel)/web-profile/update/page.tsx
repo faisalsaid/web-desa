@@ -4,7 +4,7 @@ import { getVillageProfile } from '../_lib/vilageProvile.action';
 
 const WebProfilUpdatePage = async () => {
   const dataVillage = await getVillageProfile();
-  console.log(dataVillage);
+  // console.log(dataVillage);
 
   if (!dataVillage) {
     return <div>Info Desa Belum tersedia</div>;

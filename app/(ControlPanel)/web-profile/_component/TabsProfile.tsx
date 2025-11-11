@@ -72,7 +72,7 @@ const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
           <ProfileCard title="Laltitude" text={data?.province} />
           <ProfileCard title="Longtititude" text={data?.regency} />
           <ProfileCard title="Luas wilayah" text={data?.district} />
-          <ProfileCard title="Ketinggian" text={data?.village} />
+          <ProfileCard title="Ketinggian" text={data?.elevation} />
         </div>
       </TabsContent>
       <TabsContent value="border">
@@ -96,7 +96,7 @@ export default TabsProfile;
 
 interface ProfileCardProps {
   title: string;
-  text: string | undefined | null;
+  text: string | number | undefined | null;
 }
 
 const ProfileCard = ({ title, text }: ProfileCardProps) => {

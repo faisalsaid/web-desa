@@ -21,6 +21,36 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { updateVillageProfile } from '../_lib/vilageProvile.action';
+import { toast } from 'sonner';
+import { redirect } from 'next/navigation';
+
+function sanitizePayload(values: VillageProfileFormValues) {
+  return {
+    ...values,
+    logo: values.logo ?? null,
+    description: values.description ?? null,
+    vision: values.vision ?? null,
+    mission: values.mission ?? null,
+    country: values.country ?? null,
+    province: values.province ?? null,
+    regency: values.regency ?? null,
+    district: values.district ?? null,
+    village: values.village ?? null,
+    northBorder: values.northBorder ?? null,
+    eastBorder: values.eastBorder ?? null,
+    southBorder: values.southBorder ?? null,
+    westBorder: values.westBorder ?? null,
+    mapUrl: values.mapUrl ?? null,
+
+    // numeric fields
+    latitude: values.latitude ?? null,
+    longitude: values.longitude ?? null,
+    areaKm2: values.areaKm2 ?? null,
+    elevation: values.elevation ?? null,
+    population: values.population ?? null,
+  };
+}
 
 const WebProfileForm = ({ data }: { data: VillageProfileType }) => {
   const form = useForm<VillageProfileFormValues>({
@@ -28,9 +58,22 @@ const WebProfileForm = ({ data }: { data: VillageProfileType }) => {
     defaultValues: data,
   });
 
-  const onSubmit = (values: VillageProfileFormValues) => {
-    console.log('FORM SUBMIT:', values);
-    // nanti arahkan ke server action update
+  const onSubmit = async (values: VillageProfileFormValues) => {
+    // console.log('FORM SUBMIT:', values);
+
+    const payload = sanitizePayload(values);
+    const id = toast.loading('Update Village Profile...');
+    const res = await updateVillageProfile(payload);
+
+    toast.dismiss(id);
+
+    if (res.ok) {
+      toast.success('Data desa berhasil diperbahaui.');
+      redirect('/web-profile');
+    } else {
+      toast.error('Gagal perbahurui profil desa!');
+      return;
+    }
   };
 
   const isValid = form.formState.isValid;

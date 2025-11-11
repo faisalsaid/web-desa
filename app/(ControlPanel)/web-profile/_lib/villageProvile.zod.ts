@@ -2,6 +2,7 @@ import z from 'zod';
 
 export const villageProfileSchema = z.object({
   name: z.string().min(1, 'Nama wajib diisi'),
+  tagline: z.string().optional().nullable(),
   logo: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   vision: z.string().optional().nullable(),

@@ -100,6 +100,7 @@ model PasswordResetToken {
 model VillageProfile {
   id            String    @id @default(cuid())
   name          String                     // Nama desa
+  tagline       String?                    // Nama desa
   logo          String?                     // Nama desa
   description   String?   @db.Text         // Deskripsi umum desa
 

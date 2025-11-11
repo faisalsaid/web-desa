@@ -30,8 +30,8 @@ const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
         </TabsList>
       </div>
       <TabsContent value="general">
-        <div className="space-y-2 sm:grid sm:grid-flow-col sm:grid-rows-3 gap-4">
-          <div className="sm:row-span-3">
+        <div className="space-y-2 sm:grid sm:grid-flow-col sm:grid-rows-4 gap-y-2 gap-x-4">
+          <div className="sm:row-span-4">
             <div className="p-2 bg-background rounded-lg">
               <p className="py-2">Logo :</p>
               <p className="p-4 bg-muted rounded-lg flex items-center justify-center">
@@ -47,6 +47,9 @@ const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
           </div>
           <div className="col-span-2">
             <ProfileCard title={'Nama'} text={data?.name} />
+          </div>
+          <div className="col-span-2">
+            <ProfileCard title="Tagline" text={data?.tagline} />
           </div>
           <div className="sm:col-span-2 sm:row-span-2">
             <ProfileCard title="Deskripsi" text={data?.description} />

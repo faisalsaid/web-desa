@@ -5,6 +5,7 @@ export const getVillageProfileQuery =
     select: {
       id: true,
       name: true,
+      tagline: true,
       logo: true,
       description: true,
       vision: true,

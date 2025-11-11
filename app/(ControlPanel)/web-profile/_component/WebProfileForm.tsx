@@ -122,6 +122,24 @@ const WebProfileForm = ({ data }: { data: VillageProfileType }) => {
 
               <FormField
                 control={form.control}
+                name="tagline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tagline : </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g: Mandiri dan berdikari"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>

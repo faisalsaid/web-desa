@@ -19,6 +19,7 @@ export async function getVillageProfile(): Promise<VillageProfileType | null> {
     const data = await prisma.villageProfile.findFirst(getVillageProfileQuery);
     return data;
   } catch (err) {
+    console.log('getVillageProfile =>', err);
     throw new Error('Failed to fetch village profile');
   }
 }

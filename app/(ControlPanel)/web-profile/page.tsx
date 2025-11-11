@@ -14,7 +14,7 @@ const WebProfilePage = async () => {
   return (
     <div className="space-y-4">
       <ContentCard className="flex items-center justify-between">
-        <h1 className="text-2xl">
+        <h1 className="text-xl">
           Profile Desa : {vilageName ? vilageName : ''}
         </h1>
 

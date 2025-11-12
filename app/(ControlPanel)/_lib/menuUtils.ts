@@ -29,7 +29,7 @@ const allMenuList: MenuItem[] = [
   },
   {
     title: 'Profile Desa',
-    url: '/web-profile',
+    url: '/village',
     icon: ClipboardPenLine,
   },
   {

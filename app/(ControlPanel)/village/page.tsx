@@ -2,10 +2,11 @@ import { VillageConfig } from '@prisma/client';
 import ContentCard from '../_component/ContentCard';
 import { VillageConfigType } from './_lib/villageConfig.type';
 import { getVillageConfig } from './_lib/villageConfig.actions';
+import TabsVillageConfig from './_components/TabsVillageConfig';
 
 const VillagePage = async () => {
-  const vilageProfile: VillageConfigType | null = await getVillageConfig();
-  const vilageName = vilageProfile?.villageName;
+  const villageConfig: VillageConfigType | null = await getVillageConfig();
+  const vilageName = villageConfig?.villageName;
   return (
     <div className="space-y-4">
       <ContentCard className="flex items-center justify-between">
@@ -21,7 +22,9 @@ const VillagePage = async () => {
           </Link>
         </div> */}
       </ContentCard>
-      <ContentCard>{/* <TabsProfile data={vilageProfile} /> */}</ContentCard>
+      <ContentCard>
+        <TabsVillageConfig data={villageConfig} />
+      </ContentCard>
     </div>
   );
 };

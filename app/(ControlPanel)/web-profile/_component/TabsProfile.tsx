@@ -3,6 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VillageProfileType } from '../_lib/vilageProvile.type';
 import Image from 'next/image';
+import LogoForm from './LogoForm';
 
 const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
   return (
@@ -34,7 +35,7 @@ const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
           <div className="sm:row-span-4">
             <div className="p-2 bg-background rounded-lg">
               <p className="py-2">Logo :</p>
-              <p className="p-4 bg-muted rounded-lg flex items-center justify-center">
+              <div className="p-4 bg-muted rounded-lg flex items-center justify-center relative">
                 <Image
                   // className="bg-white rounded-full"
                   src={data?.logo ? data.logo : '/img/logo-desa-dummy.png'}
@@ -42,7 +43,10 @@ const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
                   width={200}
                   height={200}
                 />
-              </p>
+                <div className="absolute bottom-2 right-2">
+                  <LogoForm />
+                </div>
+              </div>
             </div>
           </div>
           <div className="col-span-2">

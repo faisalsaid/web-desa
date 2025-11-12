@@ -8,13 +8,18 @@ import {
 import { auth } from '@/auth';
 import { VillageProfileFormValues } from './villageProvile.zod';
 
-export async function getVillageProfile(): Promise<VillageProfileType | null> {
+export const hasLoggedin = async () => {
   const session = await auth();
 
   if (!session?.user) {
     throw new Error('Unauthorized');
   }
 
+  return session; // ✅ return session agar bisa dipakai di action
+};
+
+export async function getVillageProfile(): Promise<VillageProfileType | null> {
+  await hasLoggedin();
   try {
     const data = await prisma.villageProfile.findFirst(getVillageProfileQuery);
     return data;
@@ -25,11 +30,7 @@ export async function getVillageProfile(): Promise<VillageProfileType | null> {
 
 // UPDATE ONLY (NO CREATE)
 export async function updateVillageProfile(payload: VillageProfileFormValues) {
-  const session = await auth();
-
-  if (!session?.user) {
-    throw new Error('Unauthorized');
-  }
+  await hasLoggedin();
 
   try {
     // Ambil village profile tunggal
@@ -56,3 +57,7 @@ export async function updateVillageProfile(payload: VillageProfileFormValues) {
     throw new Error('Failed to update village profile');
   }
 }
+
+export const uploadVillageLogo = async () => {
+  await hasLoggedin();
+};

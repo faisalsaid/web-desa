@@ -1,13 +1,13 @@
 'use server';
 
-import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { getVillageConfigQuery, VillageConfigType } from './villageConfig.type';
+import { getCurrentUser } from '@/app/_lib/root.action';
 
 export async function getVillageConfig(): Promise<VillageConfigType | null> {
-  const session = await auth();
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!user) {
     throw new Error('Unauthorized');
   }
 

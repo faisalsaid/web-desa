@@ -97,6 +97,14 @@ export async function uploadVillageLogo(formData: FormData) {
 
   await writeFile(outputPath, processed);
 
+  const imageUrl = `/img/${fileName}`;
+
+  // ✅ Update field logo di database
+  // Asumsikan hanya ada satu VillageProfile aktif (misal yang pertama)
+  await prisma.villageProfile.updateMany({
+    data: { logo: imageUrl },
+  });
+
   // optional — untuk refresh data halaman
   revalidatePath('/web-profile');
 

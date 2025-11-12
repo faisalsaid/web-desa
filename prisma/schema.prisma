@@ -138,6 +138,55 @@ model VillageProfile {
 
 
 
+model VillageConfig {
+  id               Int       @id @default(autoincrement())
+  villageCode      String    @unique @db.VarChar(10)
+  villageName      String
+  districtCode     String?   @db.VarChar(6)
+  districtName     String?
+  regencyCode      String?   @db.VarChar(4)
+  regencyName      String?
+  provinceCode     String?   @db.VarChar(2)
+  provinceName     String?
+  officeAddress    String?
+  postalCode       String?   @db.VarChar(10)
+  phone            String?
+  email            String?
+  website          String?
+  establishedYear  Int?
+
+  // 📝 General description
+  description      String?   @db.Text
+
+  // 🌍 Geographic info
+  areaSize         Float?
+  areaUnit         String?   @default("km²")
+  populationTotal  Int?      @default(0)
+  hamletCount      Int?      @default(0)
+  rwCount          Int?      @default(0)
+  rtCount          Int?      @default(0)
+  borderNorth      String?
+  borderEast       String?
+  borderSouth      String?
+  borderWest       String?
+  elevation        Int?
+  latitude         Decimal?  @db.Decimal(10,8)
+  longitude        Decimal?  @db.Decimal(11,8)
+
+  // 🖼️ Visual identity
+  logoUrl          String?
+  officePhotoUrl   String?
+  vision           String?
+  mission          String?
+  slogan           String?
+
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+
+
 enum UserRole {
     ADMIN
     OPERATOR

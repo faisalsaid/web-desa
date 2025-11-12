@@ -7,6 +7,10 @@ import {
 } from '../_lib/vilageProvile.type';
 import { auth } from '@/auth';
 import { VillageProfileFormValues } from './villageProvile.zod';
+import { writeFile } from 'fs/promises';
+import { revalidatePath } from 'next/cache';
+import sharp from 'sharp';
+import path from 'path';
 
 export const hasLoggedin = async () => {
   const session = await auth();
@@ -58,6 +62,43 @@ export async function updateVillageProfile(payload: VillageProfileFormValues) {
   }
 }
 
-export const uploadVillageLogo = async () => {
+// export const uploadVillageLogo = async () => {
+//   await hasLoggedin();
+// };
+
+export async function uploadVillageLogo(formData: FormData) {
   await hasLoggedin();
-};
+
+  const file = formData.get('file') as File | null;
+
+  if (!file) {
+    throw new Error('No file uploaded');
+  }
+
+  const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+  if (!allowed.includes(file.type)) {
+    throw new Error('Only JPG, JPEG, PNG allowed');
+  }
+
+  // Convert ke Buffer
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  // Resize + set DPI + compress
+  const processed = await sharp(buffer)
+    .resize(700, 700, { fit: 'inside', withoutEnlargement: true })
+    .withMetadata({ density: 72 })
+    .toFormat('jpeg', { quality: 80 })
+    .toBuffer();
+
+  // 🔥 Nama file statis
+  const fileName = 'logo-desa.jpg';
+  const outputPath = path.join(process.cwd(), 'public/img', fileName);
+
+  await writeFile(outputPath, processed);
+
+  // optional — untuk refresh data halaman
+  revalidatePath('/web-profile');
+
+  return `/img/${fileName}`;
+}

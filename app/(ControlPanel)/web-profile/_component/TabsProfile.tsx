@@ -43,7 +43,7 @@ const TabsProfile = ({ data }: { data: VillageProfileType | null }) => {
                   width={200}
                   height={200}
                 />
-                <div className="absolute bottom-0 right-0">
+                <div className="absolute bottom-2 right-2">
                   <LogoForm />
                 </div>
               </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ImageUp } from 'lucide-react';
+import { Edit, ImageUp } from 'lucide-react';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import {
   Dialog,
@@ -82,8 +82,7 @@ const LogoForm = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <ImageUp />
-          Ganti
+          <Edit /> Ganti
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -117,6 +116,7 @@ const LogoForm = () => {
             />
 
             <Button type="submit" disabled={isPending}>
+              <ImageUp />
               {isPending ? 'Mengungah...' : 'Unggah'}
             </Button>
           </form>

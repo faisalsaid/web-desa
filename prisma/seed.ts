@@ -3,13 +3,15 @@ const prisma = new PrismaClient();
 
 // Import semua seed file
 import seedAdminUser from './seeds/adminUser';
-import seedVillageProfile from './seeds/villageProfile';
+import seedVillageConfige from './seeds/villageConfig';
+// import seedVillageProfile from './seeds/villageProfile';
 
 async function main() {
   console.log('⏳ Running Seed...');
 
   await seedAdminUser(prisma);
-  await seedVillageProfile(prisma);
+  // await seedVillageProfile(prisma);
+  await seedVillageConfige(prisma);
 
   console.log('✅ ALL SEED COMPLETED');
 }

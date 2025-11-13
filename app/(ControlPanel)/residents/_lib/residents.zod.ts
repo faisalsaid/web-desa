@@ -97,7 +97,7 @@ export const ResidentSchema = z.object({
   rw: z.string().nullable().optional(),
   rt: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
-  email: z.string().email().nullable().optional(),
+  email: z.email().nullable().optional(),
   populationStatus: PopulationStatus.default('PERMANENT'),
   familyId: z.number().int().nullable().optional(),
   isActive: z.boolean().default(true),

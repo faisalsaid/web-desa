@@ -20,8 +20,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { useTransition } from 'react';
+import { toast } from 'sonner';
+import { updateVillageConfig } from '../_lib/villageConfig.actions';
+import { useRouter } from 'next/navigation';
 
 const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(villageConfigUpdateSchema),
     defaultValues: data
@@ -34,7 +40,24 @@ const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
   });
 
   const onSubmit = async (values: villageConfigUpdateValues) => {
-    console.log('FORM SUBMIT:', values);
+    // console.log('FORM SUBMIT:', values);
+
+    startTransition(async () => {
+      const toastId = toast.loading('Menyimpan data desa...');
+
+      try {
+        await updateVillageConfig(values);
+
+        toast.success('Data desa berhasil diperbarui', {
+          id: toastId, // ✅ replace toast loading dengan success
+        });
+        router.push('/village');
+      } catch (err: any) {
+        toast.error(err.message || 'Gagal memperbarui data desa', {
+          id: toastId, // ✅ replace toast loading dengan error
+        });
+      }
+    });
   };
 
   const isValid = form.formState.isValid;
@@ -697,9 +720,11 @@ const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
             <Button
               type="submit"
               className="w-fit"
-              disabled={!isValid || isSubmitting}
+              disabled={!isValid || isSubmitting || isPending}
             >
-              {form.formState.isSubmitting ? 'Processing...' : 'Simpan'}
+              {form.formState.isSubmitting || isPending
+                ? 'Processing...'
+                : 'Simpan'}
             </Button>
           </div>
         </form>

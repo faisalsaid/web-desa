@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
   const form = useForm({
@@ -49,7 +50,7 @@ const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
             Identitias
           </TabsTrigger>
           <TabsTrigger className="hover:cursor-pointer" value="geo">
-            Geografi
+            Geografis
           </TabsTrigger>
         </TabsList>
       </div>
@@ -261,7 +262,7 @@ const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>No Telepon : </FormLabel>
+                    <FormLabel>Email : </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="e.g: office@desa.com"
@@ -319,7 +320,379 @@ const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
             </div>
           </TabsContent>
           {/* FORM GENRAL CONTENT */}
-          <TabsContent value="identity">halo</TabsContent>
+          <TabsContent value="identity">
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="slogan"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel> Slogan : </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g: Makmur Sejahtera"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="vision"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Visi : </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Masukan visi desa"
+                        {...field}
+                        value={field.value ?? ''}
+                        className="h-56 sm:h-44 resize-none"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="mission"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Misi : </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Masukan misi desa"
+                        {...field}
+                        value={field.value ?? ''}
+                        className="h-56 sm:h-44 resize-none"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Deskripsi : </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Deskripsikan desamu"
+                        {...field}
+                        value={field.value ?? ''}
+                        className="h-56 sm:h-44 resize-none"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </TabsContent>
+          <TabsContent value="geo">
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="areaSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Luas Area : </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 20.5"
+                        {...field}
+                        value={field.value ?? ''}
+                        // step={0.01}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="areaUnit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit Luas Area : </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g: km²"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="populationTotal"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Jumlah Penduduk : </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 100000"
+                        {...field}
+                        value={field.value ?? ''} // ✅ ubah null jadi string kosong
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="hamletCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Jumlah Dusun : </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 100"
+                        {...field}
+                        value={field.value ?? ''} // ✅ ubah null jadi string kosong
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rwCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Jumlah RW : </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 100"
+                        {...field}
+                        value={field.value ?? ''} // ✅ ubah null jadi string kosong
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rtCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Jumlah RT: </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 100"
+                        {...field}
+                        value={field.value ?? ''} // ✅ ubah null jadi string kosong
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="borderNorth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Batas Utara: </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g: Desa Utara"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="borderEast"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Batas Timur: </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g: Desa Timur"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="borderSouth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Batas Selatan: </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g: Desa Selatan"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="borderWest"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Batas Barat: </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g: Desa Barat"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="elevation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ketinggian : </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 1235"
+                        value={field.value ?? ''} // ✅ ubah null jadi string kosong
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="latitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Latitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 1.23456 or -1.23456"
+                        {...field}
+                        value={field.value ?? ''} // penting!
+                        onChange={(e) => {
+                          const val = e.target.value;
+
+                          // Jika kosong → null
+                          if (val === '' || val === null) {
+                            field.onChange(null);
+                          } else {
+                            // Jika tidak kosong → number
+                            field.onChange(Number(val));
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="longitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Longitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g: 1.23456 or -1.23456"
+                        {...field}
+                        value={field.value ?? ''} // penting!
+                        onChange={(e) => {
+                          const val = e.target.value;
+
+                          // Jika kosong → null
+                          if (val === '' || val === null) {
+                            field.onChange(null);
+                          } else {
+                            // Jika tidak kosong → number
+                            field.onChange(Number(val));
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </TabsContent>
           <div className="flex gap-4 items-center justify-end mt-4">
             <Button
               type="submit"

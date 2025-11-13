@@ -16,7 +16,7 @@ const TabsVillageConfig = ({ data }: { data: VillageConfigType | null }) => {
             Identitias
           </TabsTrigger>
           <TabsTrigger className="hover:cursor-pointer" value="geo">
-            Geografi
+            Geografis
           </TabsTrigger>
         </TabsList>
       </div>

@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { uploadVillageLogo } from '../_lib/vilageProvile.action';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 const LogoForm = () => {
   const [open, setOpen] = useState(false);
@@ -52,6 +53,7 @@ const LogoForm = () => {
 
         // tutup dialog
         setOpen(false);
+        // eslint-disable-next-line
       } catch (err: any) {
         console.error(err);
         toast.error(err.message || 'Upload gagal, coba lagi.', {
@@ -99,7 +101,7 @@ const LogoForm = () => {
           {preview && (
             <div className="space-y-2 text-center">
               <div className="text-sm text-muted-foreground">Preview Logo:</div>
-              <img
+              <Image
                 src={preview}
                 alt="preview"
                 className="w-40 h-40 object-contain border rounded-lg mx-auto"

@@ -52,6 +52,7 @@ const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
           id: toastId, // ✅ replace toast loading dengan success
         });
         router.push('/village');
+        // eslint-disable-next-line
       } catch (err: any) {
         toast.error(err.message || 'Gagal memperbarui data desa', {
           id: toastId, // ✅ replace toast loading dengan error

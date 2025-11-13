@@ -27,6 +27,7 @@ export async function middleware(req: NextRequest) {
     '/dashboard': ['ADMIN', 'OPERATOR', 'EDITOR'],
     '/users': ['ADMIN', 'OPERATOR'],
     '/settings': ['ADMIN'],
+    '/village': ['ADMIN', 'OPERATOR'],
   };
 
   // 2️⃣ Halaman auth yang tidak boleh diakses kalau sudah login
@@ -68,6 +69,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
+    '/village/:path*',
     '/users/:path*',
     '/settings/:path*',
     '/auth/:path*',

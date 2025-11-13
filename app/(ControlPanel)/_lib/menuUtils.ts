@@ -5,6 +5,7 @@ import {
   Newspaper,
   ClipboardPenLine,
   UsersRound,
+  FileUser,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -16,6 +17,7 @@ export interface MenuItem {
   url: string;
   icon: LucideIcon;
   roles?: string[]; // jika tidak ada, berarti menu publik
+  sub?: { title: string; url: string; icon: LucideIcon }[];
 }
 
 /**
@@ -35,8 +37,20 @@ const allMenuList: MenuItem[] = [
   },
   {
     title: 'Penduduk',
-    url: '/residents',
+    url: '/#',
     icon: UsersRound,
+    sub: [
+      {
+        title: 'Data Keluarga',
+        url: '/family',
+        icon: FileUser,
+      },
+      {
+        title: 'Penduduk',
+        url: '/residents',
+        icon: UsersRound,
+      },
+    ],
   },
   {
     title: 'Article',

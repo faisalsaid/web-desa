@@ -1,5 +1,19 @@
+import ContentCard from '../../_component/ContentCard';
+import NewResidentForm from '../_components/NewResidentForm';
+
 const AddNewResidentPage = () => {
-  return <div>AddNewResidentPage</div>;
+  return (
+    <div className="space-y-4">
+      <ContentCard className=" ">
+        <div className="flex gap-4 items-center justify-between">
+          <h2 className="text-xl font-semibold">Formulir Penduduk</h2>
+        </div>
+      </ContentCard>
+      <ContentCard>
+        <NewResidentForm />
+      </ContentCard>
+    </div>
+  );
 };
 
 export default AddNewResidentPage;

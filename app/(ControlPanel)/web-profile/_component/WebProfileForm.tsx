@@ -105,7 +105,7 @@ const WebProfileForm = ({ data }: { data: VillageProfileType }) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <TabsContent value="general">
-            <div className="space-y-4">
+            <div className="space-y-4 ">
               <FormField
                 control={form.control}
                 name="name"

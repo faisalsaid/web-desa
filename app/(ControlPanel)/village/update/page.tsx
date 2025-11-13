@@ -5,6 +5,9 @@ import { VillageConfigType } from '../_lib/villageConfig.type';
 
 const VillageUpdatePage = async () => {
   const villageConfig: VillageConfigType | null = await getVillageConfig();
+
+  console.log(typeof villageConfig?.latitude);
+
   if (!villageConfig) {
     return <div>Info Desa Belum tersedia</div>;
   }
@@ -14,7 +17,7 @@ const VillageUpdatePage = async () => {
         <h1 className="text-xl">Update Profil Desa</h1>
       </ContentCard>
       <ContentCard>
-        <VillageConfigForm />
+        <VillageConfigForm data={villageConfig} />
       </ContentCard>
     </div>
   );

@@ -4,6 +4,7 @@ import {
   Users,
   Newspaper,
   ClipboardPenLine,
+  UsersRound,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -31,6 +32,11 @@ const allMenuList: MenuItem[] = [
     title: 'Profile Desa',
     url: '/village',
     icon: ClipboardPenLine,
+  },
+  {
+    title: 'Penduduk',
+    url: '/residents',
+    icon: UsersRound,
   },
   {
     title: 'Article',

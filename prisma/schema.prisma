@@ -97,47 +97,6 @@ model PasswordResetToken {
   @@index([userId])
 }
 
-model VillageProfile {
-  id            String    @id @default(cuid())
-  name          String                     // Nama desa
-  tagline       String?                    // Nama desa
-  logo          String?                     // Nama desa
-  description   String?   @db.Text         // Deskripsi umum desa
-
-  // Informasi lokasi dasar
-  country       String?
-  province      String?
-  regency       String?                   // Kabupaten
-  district      String?                   // Kecamatan
-  village       String?                   // Desa / Kelurahan
-
-  // Geografi penting
-  latitude      Float?                    // Garis lintang
-  longitude     Float?                    // Garis bujur
-  areaKm2       Float?                    // Luas wilayah dalam km²
-  elevation     Int?                      // Ketinggian dari permukaan laut (opsional)
-  population    Int?                      // Jumlah penduduk
-
-  // Visi & misi
-  vision        String?   @db.Text
-  mission       String?   @db.Text
-
-  // Batas wilayah
-  northBorder   String?   @db.Text
-  eastBorder    String?   @db.Text
-  southBorder   String?   @db.Text
-  westBorder    String?   @db.Text
-
-  // Media
-  mapUrl        String?                   // URL embed Google Maps
-
-  // Metadata
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-}
-
-
-
 model VillageConfig {
   id               Int       @id @default(autoincrement())
   villageCode      String    @unique @db.VarChar(10)
@@ -183,6 +142,173 @@ model VillageConfig {
   isActive         Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+}
+
+
+model Family {
+  id                Int        @id @default(autoincrement())
+  familyCardNumber  String     @unique @db.VarChar(20)
+  address           String?
+  dusun             String?    @db.VarChar(100)
+  rw                String?    @db.VarChar(10)
+  rt                String?    @db.VarChar(10)
+
+  // Kepala keluarga (satu keluarga hanya punya satu kepala)
+  headOfFamilyId    Int?       @unique
+  headOfFamily      Resident?  @relation("HeadOfFamily", fields: [headOfFamilyId], references: [id])
+
+  members           Resident[]
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Resident {
+  id                Int                @id @default(autoincrement())
+  nik               String             @unique @db.VarChar(16)
+  fullName          String             @db.VarChar(100)
+  gender            Gender
+  birthPlace        String?
+  birthDate         DateTime?
+  religion          Religion?
+  education         Education?
+  occupation        Occupation?
+  maritalStatus     MaritalStatus?
+  bloodType         BloodType?         @default(UNKNOWN)
+  disabilityType    DisabilityType?    @default(NONE)
+  citizenship       Citizenship?       @default(WNI) 
+  passportNumber    String?            @db.VarChar(50)
+  ethnicity         String?            @db.VarChar(100)
+  nationality       String?            @db.VarChar(100)           // country name for WNA
+  address           String?            @db.Text
+  dusun             String?
+  rw                String?
+  rt                String?
+  phone             String?
+  email             String?
+  populationStatus  PopulationStatus   @default(PERMANENT)
+  familyId          Int?
+  family            Family?            @relation(fields: [familyId], references: [id])
+
+  // Relasi balik untuk kepala keluarga
+  headOfFamilyFor   Family?            @relation("HeadOfFamily")
+
+  // Relasi visitor (pendatang)
+  visitor           Visitor?
+
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+
+model Visitor {
+  id              Int       @id @default(autoincrement())
+  residentId      Int       @unique
+  resident        Resident  @relation(fields: [residentId], references: [id])
+
+  originAddress   String?   // alamat asal
+  originVillage   String?   // desa asal
+  originDistrict  String?
+  originRegency   String?
+  originProvince  String?
+  arrivalDate     DateTime? // tanggal datang
+  purpose         String?   // tujuan datang (kerja, sekolah, dll)
+  stayType        String?   // kontrak, kos, keluarga, dll
+  isStillStaying  Boolean   @default(true)
+  departureDate   DateTime? // tanggal keluar
+  notes           String?   // keterangan tambahan
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Religion {
+  ISLAM
+  CHRISTIAN
+  CATHOLIC
+  HINDU
+  BUDDHIST
+  CONFUCIAN
+  OTHER
+}
+
+enum Education {
+  NONE
+  ELEMENTARY
+  JUNIOR_HIGH
+  SENIOR_HIGH
+  VOCATIONAL_HIGH   // SMK
+  DIPLOMA_1
+  DIPLOMA_2
+  DIPLOMA_3
+  BACHELOR
+  MASTER
+  DOCTORATE
+  OTHER
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum Occupation {
+  FARMER
+  FISHERMAN
+  TRADER
+  CIVIL_SERVANT
+  MILITARY
+  POLICE
+  PRIVATE_EMPLOYEE
+  TEACHER
+  STUDENT
+  UNIVERSITY_STUDENT
+  LABORER
+  HOUSEWIFE
+  UNEMPLOYED
+  OTHER
+}
+
+enum BloodType {
+  A
+  B
+  AB
+  O
+  UNKNOWN
+}
+
+enum PopulationStatus {
+  PERMANENT    // Warga tetap
+  TEMPORARY    // Pendatang sementara
+  MOVED_OUT    // Sudah pindah
+  DECEASED     // Meninggal dunia
+}
+
+enum DisabilityType {
+  NONE                // Tidak ada disabilitas
+  PHYSICAL            // Disabilitas fisik (cacat tubuh, anggota badan)
+  VISUAL              // Tunanetra
+  HEARING             // Tunarungu / tunawicara
+  MENTAL              // Gangguan mental atau disabilitas psikososial
+  INTELLECTUAL        // Tunagrahita / disabilitas intelektual
+  MULTIPLE            // Disabilitas ganda
+  OTHER               // Lainnya
+}
+
+
+enum Citizenship {
+  WNI
+  WNA
 }
 
 

@@ -4,6 +4,7 @@ import ContentCard from '../../_component/ContentCard';
 import ResidentDetails from '../_components/ResidentDetails';
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 
 interface Params {
   residentid: string;
@@ -29,9 +30,11 @@ const ResidentDetailPage = async ({ params }: ResidentDetails) => {
         <div className="font-semibold text-2xl">Profil Warga</div>
 
         <div className="flex items-center gap-4">
-          <Button size={'icon'} className="rounded-full">
-            <SquarePen />
-          </Button>
+          <Link href={`/residents/${residentDetails.urlId}/update`}>
+            <Button size={'icon'} className="rounded-full">
+              <SquarePen />
+            </Button>
+          </Link>
           <Button size={'icon'} className="rounded-full">
             <Trash2 />
           </Button>

@@ -65,10 +65,17 @@ export async function getResidentDetails(
   }
 }
 
+// -- HANDLE UPDATE RESIDENT -- //
 export async function updateResident(
   id: number,
   formData: ResidentUpdateInput,
 ) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
   try {
     // 1. Validasi Zod (AMAN, pakai schema .partial())
     const parsed = ResidentUpdateSchema.safeParse(formData);
@@ -101,5 +108,26 @@ export async function updateResident(
       success: false,
       message: 'Terjadi kesalahan saat memperbarui data penduduk',
     };
+  }
+}
+
+// -- HANDLE SOFT DELETE RESIDENT -- //
+export async function deleteResident(id: number) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  try {
+    await prisma.resident.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Delete resident failed:', error);
+    return { success: false, message: 'Gagal menghapus penduduk' };
   }
 }

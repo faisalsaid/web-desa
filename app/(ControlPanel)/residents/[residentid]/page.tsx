@@ -5,6 +5,7 @@ import ResidentDetails from '../_components/ResidentDetails';
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import DeleteResidentButton from '../_components/DeleteResidentButton';
 
 interface Params {
   residentid: string;
@@ -35,9 +36,10 @@ const ResidentDetailPage = async ({ params }: ResidentDetails) => {
               <SquarePen />
             </Button>
           </Link>
-          <Button size={'icon'} className="rounded-full">
+          <DeleteResidentButton id={residentDetails.id} />
+          {/* <Button size={'icon'} className="rounded-full">
             <Trash2 />
-          </Button>
+          </Button> */}
         </div>
       </ContentCard>
       <ResidentDetails resident={residentDetails} />

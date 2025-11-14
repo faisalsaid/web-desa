@@ -20,6 +20,7 @@ import {
   maritalStatusLabels,
   occupationLabels,
   populationStatusLabels,
+  religionLabels,
 } from '@/lib/enum';
 
 type ResidentDetailType = ResidentType;
@@ -72,7 +73,7 @@ const ResidentDetails = ({ resident }: ResidentDetailsProps) => {
           )}
 
           {/* GENDER + ACTIVE STATUS */}
-          <div className="flex gap-4 items-center justify-center">
+          <div className="flex gap-1 items-center justify-center">
             {resident.gender === 'MALE' ? (
               <Mars className="size-5 text-sky-500" />
             ) : (
@@ -106,12 +107,16 @@ const ResidentDetails = ({ resident }: ResidentDetailsProps) => {
         <DetailRow label="KK" value={resident.familyId} />
         <DetailRow label="NIK" value={resident.nik} />
         <DetailRow
+          label="Agama"
+          value={resident.religion && religionLabels[resident.religion]}
+        />
+        <DetailRow
           label="Kewarganegaraan"
           value={
             resident.citizenship && citizenshipLabels[resident.citizenship]
           }
         />
-        <DetailRow label="Passport" value={resident.passportNumber} />
+        <DetailRow label="Paspor" value={resident.passportNumber} />
         <DetailRow label="Suku / Etnis" value={resident.ethnicity} />
         <DetailRow label="Kebangsaan" value={resident.nationality} />
       </DetailSection>
@@ -160,6 +165,12 @@ const ResidentDetails = ({ resident }: ResidentDetailsProps) => {
           value={resident.occupation && occupationLabels[resident.occupation]}
         />
       </DetailSection>
+
+      <ContentCard>
+        <p className="text-sm text-muted-foreground">
+          Pembaruan terakhir : {resident.updatedAt.toLocaleDateString('id-ID')}
+        </p>
+      </ContentCard>
     </div>
   );
 };

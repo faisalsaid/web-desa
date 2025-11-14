@@ -77,18 +77,30 @@ export const Citizenship = z.enum(['WNI', 'WNA']);
 // Zod Schema untuk Resident
 export const ResidentSchema = z.object({
   id: z.number().int().optional(),
-  nik: z.string().max(16),
-  fullName: z.string().max(100),
+  nik: z.string().max(16).min(1, 'Tidak Boleh Kosong'),
+  fullName: z.string().max(100).min(3, 'Minimal 3 carakter'),
   gender: Gender,
-  birthPlace: z.string().nullable().optional(),
-  birthDate: z.coerce.date().nullable().optional(),
+  //   birthPlace: z.string().nullable().optional(),
+  birthPlace: z
+    .union([z.string(), z.null(), z.undefined()])
+    .transform((val) => {
+      if (val == null) return null; // null atau undefined → null
+
+      const trimmed = val.trim();
+      if (trimmed === '') return null; // string kosong → null
+
+      return trimmed; // string valid → disimpan apa adanya
+    })
+    .nullable()
+    .optional(),
+  birthDate: z.date().nullable().optional(),
   religion: Religion.nullable().optional(),
   education: Education.nullable().optional(),
   occupation: Occupation.nullable().optional(),
   maritalStatus: MaritalStatus.nullable().optional(),
-  bloodType: BloodType.default('UNKNOWN'),
-  disabilityType: DisabilityType.default('NONE'),
-  citizenship: Citizenship.default('WNI'),
+  bloodType: BloodType.default('UNKNOWN').optional(),
+  disabilityType: DisabilityType.default('NONE').optional(),
+  citizenship: Citizenship.default('WNI').optional(),
   passportNumber: z.string().max(50).nullable().optional(),
   ethnicity: z.string().max(100).nullable().optional(),
   nationality: z.string().max(100).nullable().optional(),
@@ -97,10 +109,10 @@ export const ResidentSchema = z.object({
   rw: z.string().nullable().optional(),
   rt: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
-  email: z.email().nullable().optional(),
-  populationStatus: PopulationStatus.default('PERMANENT'),
+  email: z.email('Email tidak valid').optional().or(z.literal('')),
+  populationStatus: PopulationStatus.default('PERMANENT').optional(),
   familyId: z.number().int().nullable().optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean().default(true).optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 });

@@ -27,7 +27,7 @@ const ResidentsPage = async ({
     <div className="space-y-4">
       <ContentCard className=" ">
         <div className="flex gap-4 items-center justify-between">
-          <h2 className="text-xl font-semibold">Data Penduduk</h2>
+          <h1 className="text-xl font-semibold">Data Penduduk</h1>
           <div>
             <Link href={'/residents/add'}>
               <Button>

@@ -44,7 +44,7 @@ const allMenuList: MenuItem[] = [
     sub: [
       {
         title: 'Data Keluarga',
-        url: '/family',
+        url: '/families',
         icon: FileUser,
       },
       {

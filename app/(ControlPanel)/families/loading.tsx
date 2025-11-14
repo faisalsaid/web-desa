@@ -2,7 +2,7 @@
 
 import { Spinner } from '@/components/ui/spinner';
 
-const FamilyLoading = () => {
+const FamiliesLoading = () => {
   return (
     <div className="flex items-center justify-center">
       <Spinner />
@@ -10,4 +10,4 @@ const FamilyLoading = () => {
   );
 };
 
-export default FamilyLoading;
+export default FamiliesLoading;

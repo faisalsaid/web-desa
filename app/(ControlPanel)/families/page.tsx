@@ -1,6 +1,6 @@
 import ContentCard from '../_component/ContentCard';
 
-const FamilyPage = () => {
+const FamiliesPage = () => {
   return (
     <div className="space-y-4">
       <ContentCard className=" ">
@@ -12,4 +12,4 @@ const FamilyPage = () => {
   );
 };
 
-export default FamilyPage;
+export default FamiliesPage;

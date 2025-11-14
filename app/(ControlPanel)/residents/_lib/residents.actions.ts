@@ -39,7 +39,7 @@ export async function createResident(data: ResidentCreateInput) {
 // -- HANDEL GET RESIDENT DETAIL BY ID --//
 
 export async function getResidentDetails(
-  id: number,
+  urlId: string,
 ): Promise<ResidentType | null> {
   const user = await getCurrentUser();
 
@@ -49,7 +49,7 @@ export async function getResidentDetails(
 
   try {
     const resident = await prisma.resident.findUnique({
-      where: { id },
+      where: { urlId },
       ...getResidentDetailQuery, // memastikan type-safe
     });
 

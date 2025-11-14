@@ -34,11 +34,13 @@ const allMenuList: MenuItem[] = [
     title: 'Profile Desa',
     url: '/village',
     icon: ClipboardPenLine,
+    roles: ['ADMIN', 'OPERATOR'],
   },
   {
     title: 'Penduduk',
     url: '/#',
     icon: UsersRound,
+    roles: ['ADMIN', 'OPERATOR'],
     sub: [
       {
         title: 'Data Keluarga',

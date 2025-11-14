@@ -144,9 +144,10 @@ model VillageConfig {
   updatedAt        DateTime  @updatedAt
 }
 
-
+// RESIDENTS SCEMA
 model Family {
-  id                Int        @id @default(autoincrement())
+  id                Int        @id @default(autoincrement())       // ID internal
+  urlId             String     @unique @default(cuid())             // ID untuk URL
   familyCardNumber  String     @unique @db.VarChar(20)
   address           String?
   dusun             String?    @db.VarChar(100)
@@ -157,14 +158,18 @@ model Family {
   headOfFamilyId    Int?       @unique
   headOfFamily      Resident?  @relation("HeadOfFamily", fields: [headOfFamilyId], references: [id])
 
+  // Anggota keluarga
   members           Resident[]
 
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
+
+  @@index([dusun, rw, rt])
 }
 
 model Resident {
-  id                Int                @id @default(autoincrement())
+  id                Int                @id @default(autoincrement()) // ID internal
+  urlId             String           @unique @default(cuid())       // ID untuk URL
   nik               String             @unique @db.VarChar(16)
   fullName          String             @db.VarChar(100)
   gender            Gender
@@ -187,9 +192,11 @@ model Resident {
   phone             String?
   email             String?
   populationStatus  PopulationStatus   @default(PERMANENT)
+  
+  // Relasi keluarga
   familyId          Int?
   family            Family?            @relation(fields: [familyId], references: [id])
-
+  
   // Relasi balik untuk kepala keluarga
   headOfFamilyFor   Family?            @relation("HeadOfFamily")
 
@@ -199,11 +206,16 @@ model Resident {
   isActive          Boolean            @default(true)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+
+  @@index([familyId])
+  @@index([dusun, rw, rt])
+  @@index([populationStatus])
+  @@index([isActive])
 }
 
-
 model Visitor {
-  id              Int       @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())  // ID internal
+  urlId           String    @unique @default(cuid())       // ID untuk URL
   residentId      Int       @unique
   resident        Resident  @relation(fields: [residentId], references: [id])
 
@@ -221,6 +233,9 @@ model Visitor {
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([arrivalDate])
+  @@index([departureDate])
 }
 
 

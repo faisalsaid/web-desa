@@ -130,7 +130,7 @@ const populationStatusLabels: Record<string, string> = {
 
 import { useRouter } from 'next/navigation';
 
-const NewResidentForm = () => {
+const ResidentForm = () => {
   const router = useRouter();
 
   const form = useForm<ResidentCreateInput>({
@@ -805,4 +805,4 @@ const NewResidentForm = () => {
   );
 };
 
-export default NewResidentForm;
+export default ResidentForm;

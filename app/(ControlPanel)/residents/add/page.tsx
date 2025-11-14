@@ -1,5 +1,5 @@
 import ContentCard from '../../_component/ContentCard';
-import NewResidentForm from '../_components/NewResidentForm';
+import ResidentForm from '../_components/ResidentForm';
 
 const AddNewResidentPage = () => {
   return (
@@ -10,7 +10,7 @@ const AddNewResidentPage = () => {
         </div>
       </ContentCard>
       <ContentCard>
-        <NewResidentForm />
+        <ResidentForm />
       </ContentCard>
     </div>
   );

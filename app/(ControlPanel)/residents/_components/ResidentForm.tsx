@@ -13,6 +13,8 @@ import {
   DisabilityType,
   Citizenship,
   PopulationStatus,
+  ResidentUpdateInput,
+  ResidentUpdateSchema,
 } from '../_lib/residents.zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -44,7 +46,7 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { createResident } from '../_lib/residents.actions';
+import { createResident, updateResident } from '../_lib/residents.actions';
 import { toast } from 'sonner';
 
 // Mapping enum ke label bahasa Indonesia
@@ -129,58 +131,98 @@ const populationStatusLabels: Record<string, string> = {
 };
 
 import { useRouter } from 'next/navigation';
+import { ResidentType } from '../_lib/residents.type';
 
-const ResidentForm = () => {
+type ResidentDetailType = ResidentType;
+
+interface ResidentDetailsProps {
+  resident?: ResidentDetailType;
+}
+
+const ResidentForm = ({ resident }: ResidentDetailsProps) => {
   const router = useRouter();
+
+  const isEdit = !!resident;
 
   const form = useForm<ResidentCreateInput>({
     resolver: zodResolver(ResidentCreateSchema),
-    defaultValues: {
-      nik: '',
-      fullName: '',
-      gender: 'MALE', // enum Gender
-      birthPlace: '',
-      birthDate: null, // nullable Date
-      religion: 'ISLAM', // enum Religion
-      education: 'NONE', // enum Education
-      occupation: 'OTHER', // enum Occupation
-      maritalStatus: 'SINGLE', // enum MaritalStatus
-      bloodType: 'UNKNOWN', // enum BloodType
-      disabilityType: 'NONE', // enum DisabilityType
-      citizenship: 'WNI', // enum Citizenship
-      passportNumber: null,
-      ethnicity: null,
-      nationality: null,
-      address: null,
-      dusun: null,
-      rw: null,
-      rt: null,
-      phone: null,
-      email: '',
-      populationStatus: 'PERMANENT', // enum PopulationStatus
-      familyId: undefined, // relasi opsional
-      isActive: true, // boolean default true
-    },
+    defaultValues: isEdit
+      ? {
+          ...resident,
+          birthDate: resident.birthDate ? new Date(resident.birthDate) : null,
+          email: resident.email ?? '',
+        }
+      : {
+          nik: '',
+          fullName: '',
+          gender: 'MALE',
+          birthPlace: '',
+          birthDate: null,
+          religion: 'ISLAM',
+          education: 'NONE',
+          occupation: 'OTHER',
+          maritalStatus: 'SINGLE',
+          bloodType: 'UNKNOWN',
+          disabilityType: 'NONE',
+          citizenship: 'WNI',
+          passportNumber: null,
+          ethnicity: null,
+          nationality: null,
+          address: null,
+          dusun: null,
+          rw: null,
+          rt: null,
+          phone: null,
+          email: '',
+          populationStatus: 'PERMANENT',
+          familyId: undefined,
+          isActive: true,
+        },
   });
-
-  const onSubmit = async (data: ResidentCreateInput) => {
-    // console.log('PAYLOAD ON SUMBIT => ', data);
-
-    // 1️⃣ Tampilkan toast loading dengan ID unik
-    const toastId = toast.loading('Menyimpan data penduduk...');
+  const onSubmit = async (formData: ResidentUpdateInput) => {
+    const toastId = toast.loading(
+      isEdit ? 'Menyimpan perubahan...' : 'Menyimpan data penduduk...',
+    );
 
     try {
-      const result = await createResident(data);
+      let result;
+
+      if (isEdit) {
+        // 🔄 VALIDASI UPDATE
+        const parsed = ResidentUpdateSchema.safeParse(formData);
+
+        if (!parsed.success) {
+          toast.error('Validasi gagal', { id: toastId });
+          console.error(parsed.error.flatten());
+          return;
+        }
+
+        result = await updateResident(resident!.id, parsed.data);
+      } else {
+        // 🆕 VALIDASI CREATE (INILAH FIX UTAMANYA)
+        const parsed = ResidentCreateSchema.safeParse(formData);
+
+        if (!parsed.success) {
+          toast.error('Validasi gagal', { id: toastId });
+          console.error(parsed.error.flatten());
+          return;
+        }
+
+        result = await createResident(parsed.data);
+      }
 
       if (result.success) {
-        // 2️⃣ Update toast menjadi sukses
-        toast.success('Penduduk berhasil dibuat!', { id: toastId });
-        form.reset(); // reset form
-        router.push('/residents'); // redirect
+        toast.success(
+          isEdit
+            ? 'Data penduduk berhasil diperbarui!'
+            : 'Penduduk berhasil dibuat!',
+          { id: toastId },
+        );
+
+        form.reset();
+        router.push('/residents');
       } else {
-        toast.error(result.message ?? 'Gagal membuat penduduk', {
-          id: toastId,
-        });
+        toast.error(result.message ?? 'Gagal menyimpan data', { id: toastId });
         console.error(result.errors);
       }
     } catch (error) {
@@ -796,7 +838,11 @@ const ResidentForm = () => {
               disabled={!isValid || isSubmitting}
             >
               <Upload />
-              {form.formState.isSubmitting ? 'Memproses...' : 'Tambah Warga'}
+              {form.formState.isSubmitting
+                ? 'Memproses...'
+                : resident
+                ? 'Ubah Data Warga'
+                : 'Tambah Data Warga'}
             </Button>
           </div>
         </fieldset>

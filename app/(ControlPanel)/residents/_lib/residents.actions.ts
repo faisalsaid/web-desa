@@ -1,7 +1,12 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { ResidentCreateInput, ResidentCreateSchema } from './residents.zod';
+import {
+  ResidentCreateInput,
+  ResidentCreateSchema,
+  ResidentUpdateInput,
+  ResidentUpdateSchema,
+} from './residents.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
 import { getResidentDetailQuery, ResidentType } from './residents.type';
 
@@ -57,5 +62,44 @@ export async function getResidentDetails(
   } catch (error) {
     console.error('Gagal mengambil detail resident:', error);
     return null;
+  }
+}
+
+export async function updateResident(
+  id: number,
+  formData: ResidentUpdateInput,
+) {
+  try {
+    // 1. Validasi Zod (AMAN, pakai schema .partial())
+    const parsed = ResidentUpdateSchema.safeParse(formData);
+
+    if (!parsed.success) {
+      return {
+        success: false,
+        message: 'Validasi gagal',
+        errors: parsed.error.flatten().fieldErrors,
+      };
+    }
+
+    const data = parsed.data;
+
+    // 2. Update ke Prisma
+    const updatedResident = await prisma.resident.update({
+      where: { id },
+      data,
+    });
+
+    return {
+      success: true,
+      message: 'Data penduduk berhasil diperbarui',
+      data: updatedResident,
+    };
+  } catch (error) {
+    console.error('Error update resident:', error);
+
+    return {
+      success: false,
+      message: 'Terjadi kesalahan saat memperbarui data penduduk',
+    };
   }
 }

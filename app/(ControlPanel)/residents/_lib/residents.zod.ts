@@ -74,45 +74,54 @@ export const DisabilityType = z.enum([
 
 export const Citizenship = z.enum(['WNI', 'WNA']);
 
+// Helper untuk string optional yang jika kosong menjadi null
+const emptyToNull = z
+  .union([z.string(), z.null(), z.undefined()])
+  .transform((val) => {
+    if (val == null) return null;
+    const trimmed = val.trim();
+    return trimmed === '' ? null : trimmed;
+  })
+  .nullable()
+  .optional();
+
 // Zod Schema untuk Resident
 export const ResidentSchema = z.object({
   id: z.number().int().optional(),
-  nik: z.string().max(16).min(1, 'Tidak Boleh Kosong'),
-  fullName: z.string().max(100).min(3, 'Minimal 3 carakter'),
+
+  nik: z.string().min(1, 'Tidak Boleh Kosong').max(16),
+  fullName: z.string().min(3, 'Minimal 3 karakter').max(100),
   gender: Gender,
-  //   birthPlace: z.string().nullable().optional(),
-  birthPlace: z
-    .union([z.string(), z.null(), z.undefined()])
-    .transform((val) => {
-      if (val == null) return null; // null atau undefined → null
 
-      const trimmed = val.trim();
-      if (trimmed === '') return null; // string kosong → null
-
-      return trimmed; // string valid → disimpan apa adanya
-    })
-    .nullable()
-    .optional(),
+  birthPlace: emptyToNull,
   birthDate: z.date().nullable().optional(),
+
   religion: Religion.nullable().optional(),
   education: Education.nullable().optional(),
   occupation: Occupation.nullable().optional(),
   maritalStatus: MaritalStatus.nullable().optional(),
-  bloodType: BloodType.default('UNKNOWN').optional(),
-  disabilityType: DisabilityType.default('NONE').optional(),
-  citizenship: Citizenship.default('WNI').optional(),
-  passportNumber: z.string().max(50).nullable().optional(),
-  ethnicity: z.string().max(100).nullable().optional(),
-  nationality: z.string().max(100).nullable().optional(),
-  address: z.string().nullable().optional(),
-  dusun: z.string().nullable().optional(),
-  rw: z.string().nullable().optional(),
-  rt: z.string().nullable().optional(),
-  phone: z.string().nullable().optional(),
-  email: z.email('Email tidak valid').optional().or(z.literal('')),
+
+  bloodType: BloodType.nullable().default('UNKNOWN').optional(),
+  disabilityType: DisabilityType.nullable().default('NONE').optional(),
+  citizenship: Citizenship.nullable().default('WNI').optional(),
+
+  passportNumber: emptyToNull,
+  ethnicity: emptyToNull,
+  nationality: emptyToNull,
+
+  address: emptyToNull,
+  dusun: emptyToNull,
+  rw: emptyToNull,
+  rt: emptyToNull,
+  phone: emptyToNull,
+
+  // Email boleh kosong, null, atau string valid
+  email: emptyToNull.or(z.literal('')),
+
   populationStatus: PopulationStatus.default('PERMANENT').optional(),
   familyId: z.number().int().nullable().optional(),
   isActive: z.boolean().default(true).optional(),
+
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 });

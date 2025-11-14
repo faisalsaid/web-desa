@@ -1,5 +1,6 @@
 import ContentCard from '../../_component/ContentCard';
 import ResidentForm from '../_components/ResidentForm';
+import { ResidentType } from '../_lib/residents.type';
 
 const AddNewResidentPage = () => {
   return (

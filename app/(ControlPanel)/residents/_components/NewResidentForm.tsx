@@ -44,6 +44,8 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { createResident } from '../_lib/residents.actions';
+import { toast } from 'sonner';
 
 // Mapping enum ke label bahasa Indonesia
 const religionLabels: Record<string, string> = {
@@ -126,7 +128,11 @@ const populationStatusLabels: Record<string, string> = {
   DECEASED: 'Meninggal Dunia',
 };
 
+import { useRouter } from 'next/navigation';
+
 const NewResidentForm = () => {
+  const router = useRouter();
+
   const form = useForm<ResidentCreateInput>({
     resolver: zodResolver(ResidentCreateSchema),
     defaultValues: {
@@ -142,14 +148,14 @@ const NewResidentForm = () => {
       bloodType: 'UNKNOWN', // enum BloodType
       disabilityType: 'NONE', // enum DisabilityType
       citizenship: 'WNI', // enum Citizenship
-      passportNumber: '',
-      ethnicity: '',
-      nationality: '',
-      address: '',
-      dusun: '',
-      rw: '',
-      rt: '',
-      phone: '',
+      passportNumber: null,
+      ethnicity: null,
+      nationality: null,
+      address: null,
+      dusun: null,
+      rw: null,
+      rt: null,
+      phone: null,
       email: '',
       populationStatus: 'PERMANENT', // enum PopulationStatus
       familyId: undefined, // relasi opsional
@@ -157,8 +163,30 @@ const NewResidentForm = () => {
     },
   });
 
-  const onSubmit = async (payload: ResidentCreateInput) => {
-    console.log(payload);
+  const onSubmit = async (data: ResidentCreateInput) => {
+    // console.log('PAYLOAD ON SUMBIT => ', data);
+
+    // 1️⃣ Tampilkan toast loading dengan ID unik
+    const toastId = toast.loading('Menyimpan data penduduk...');
+
+    try {
+      const result = await createResident(data);
+
+      if (result.success) {
+        // 2️⃣ Update toast menjadi sukses
+        toast.success('Penduduk berhasil dibuat!', { id: toastId });
+        form.reset(); // reset form
+        router.push('/residents'); // redirect
+      } else {
+        toast.error(result.message ?? 'Gagal membuat penduduk', {
+          id: toastId,
+        });
+        console.error(result.errors);
+      }
+    } catch (error) {
+      toast.error('Terjadi kesalahan server', { id: toastId });
+      console.error(error);
+    }
   };
 
   const isValid = form.formState.isValid;

@@ -3,7 +3,9 @@
 import prisma from '@/lib/prisma';
 import { ResidentCreateInput, ResidentCreateSchema } from './residents.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
+import { getResidentDetailQuery, ResidentType } from './residents.type';
 
+// -- HANDLE CREATE RESIDENT -- //
 export async function createResident(data: ResidentCreateInput) {
   const user = await getCurrentUser();
 
@@ -31,5 +33,29 @@ export async function createResident(data: ResidentCreateInput) {
     }
 
     return { success: false, message: 'Terjadi kesalahan server' };
+  }
+}
+
+// -- HANDEL GET RESIDENT DETAIL BY ID --//
+
+export async function getResidentDetails(
+  id: number,
+): Promise<ResidentType | null> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  try {
+    const resident = await prisma.resident.findUnique({
+      where: { id },
+      ...getResidentDetailQuery, // memastikan type-safe
+    });
+
+    return resident;
+  } catch (error) {
+    console.error('Gagal mengambil detail resident:', error);
+    return null;
   }
 }

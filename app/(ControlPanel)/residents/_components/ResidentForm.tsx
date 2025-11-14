@@ -220,7 +220,9 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
         );
 
         form.reset();
-        router.push('/residents');
+        isEdit
+          ? router.push(`/residents/${resident.urlId}`)
+          : router.push('/residents');
       } else {
         toast.error(result.message ?? 'Gagal menyimpan data', { id: toastId });
         console.error(result.errors);

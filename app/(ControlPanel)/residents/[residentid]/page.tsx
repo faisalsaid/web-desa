@@ -3,7 +3,7 @@ import { getResidentDetails } from '../_lib/residents.actions';
 import ContentCard from '../../_component/ContentCard';
 import ResidentDetails from '../_components/ResidentDetails';
 import { Button } from '@/components/ui/button';
-import { SquarePen, Trash2 } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import DeleteResidentButton from '../_components/DeleteResidentButton';
 

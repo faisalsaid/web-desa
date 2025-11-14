@@ -29,13 +29,28 @@ interface ResidentDetailsProps {
   resident: ResidentDetailType;
 }
 
-type RowProps = { label: string; value?: any };
-const DetailRow = ({ label, value }: RowProps) => (
-  <div className="flex items-center justify-between">
-    <p>{label}</p>
-    <p>{value ?? '-'}</p>
-  </div>
-);
+type DetailRowProps = {
+  label: string;
+  value?: string | number | boolean | Date | null;
+};
+
+const DetailRow = ({ label, value }: DetailRowProps) => {
+  const displayValue =
+    value instanceof Date
+      ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(value)
+      : value === true
+      ? 'Ya'
+      : value === false
+      ? 'Tidak'
+      : value ?? '-';
+
+  return (
+    <div className="flex items-center justify-between">
+      <p className="font-medium">{label}</p>
+      <p>{displayValue}</p>
+    </div>
+  );
+};
 
 const DetailSection = ({
   title,

@@ -43,7 +43,6 @@ import {
 } from '@/components/ui/popover';
 
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { createResident, updateResident } from '../_lib/residents.actions';
@@ -149,9 +148,11 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
         );
 
         form.reset();
-        isEdit
-          ? router.push(`/residents/${resident.urlId}`)
-          : router.push('/residents');
+        if (isEdit) {
+          router.push(`/residents/${resident.urlId}`);
+        } else {
+          router.push('/residents');
+        }
       } else {
         toast.error(result.message ?? 'Gagal menyimpan data', { id: toastId });
         console.error(result.errors);

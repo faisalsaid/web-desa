@@ -9,6 +9,8 @@ import {
 } from './residents.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
 import { getResidentDetailQuery, ResidentType } from './residents.type';
+import { Prisma } from '@prisma/client';
+import { ZodError } from 'zod';
 
 // -- HANDLE CREATE RESIDENT -- //
 export async function createResident(data: ResidentCreateInput) {
@@ -30,11 +32,10 @@ export async function createResident(data: ResidentCreateInput) {
     });
 
     return { success: true, resident: newResident };
-  } catch (error: any) {
-    console.error(error);
-
-    if (error.name === 'ZodError') {
-      return { success: false, errors: error.errors };
+    //eslint-
+  } catch (error: unknown) {
+    if (error instanceof ZodError) {
+      return { success: false, errors: error.issues };
     }
 
     return { success: false, message: 'Terjadi kesalahan server' };
@@ -130,4 +131,53 @@ export async function deleteResident(id: number) {
     console.error('Delete resident failed:', error);
     return { success: false, message: 'Gagal menghapus penduduk' };
   }
+}
+
+// --- HANDLE GET ALL RESIDENT -- //
+
+export async function getResidents({
+  page = 1,
+  limit = 10,
+  search = '',
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}) {
+  const where: Prisma.ResidentWhereInput = search
+    ? {
+        OR: [
+          {
+            fullName: {
+              contains: search,
+              mode: 'insensitive', // harus literal
+            },
+          },
+          {
+            nik: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      }
+    : {};
+
+  const [items, total] = await Promise.all([
+    prisma.resident.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.resident.count({ where }),
+  ]);
+
+  return {
+    items,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
 }

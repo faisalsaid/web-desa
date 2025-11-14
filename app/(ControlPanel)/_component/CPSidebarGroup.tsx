@@ -1,20 +1,20 @@
 import {
-  Sidebar,
+  // Sidebar,
+  // SidebarFooter,
+  // SidebarGroupAction,
+  // SidebarGroupContent,
+  // SidebarHeader,
+  // SidebarMenuBadge,
+  // SidebarSeparator,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
-  SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -28,7 +28,7 @@ type Menu = {
   title: string;
   url: string;
   icon: LucideIcon;
-  sub: { title: string; url: string; icon: LucideIcon }[];
+  sub?: { title: string; url: string; icon: LucideIcon }[];
 };
 
 interface Props {

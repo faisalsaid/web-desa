@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { createFamily } from './actions';
 // import { FamilyCreateInput, FamilyCreateSchema } from './schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,6 +29,25 @@ import {
 import { DUSUN_LIST, RT_LIST, RW_LIST } from '@/lib/staticData';
 import { Textarea } from '@/components/ui/textarea';
 import { Upload } from 'lucide-react';
+import { searchResidentsHeadFamilyNull } from '../_lib/families.actions';
+
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from '@/components/ui/command';
+
+type Resident = {
+  id: number;
+  nik: string;
+  fullName: string;
+};
 
 export function CreateFamilyForm() {
   //   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,24 +65,28 @@ export function CreateFamilyForm() {
     mode: 'onChange',
   });
 
+  const [query, setQuery] = useState<string>('');
+  const [suggestResidents, setSuggestResidents] = useState<Resident[]>([]);
+  const [commandInput, setCommandInput] = useState<string>('');
+  const [showSugest, setShowSugest] = useState<boolean>(false);
+
+  console.log('LIST =>', suggestResidents);
+  console.log('QUERY =>', query);
+
+  useEffect(() => {
+    const getResident = async () => {
+      const result: Resident[] = await searchResidentsHeadFamilyNull(query);
+      if (result) {
+        setSuggestResidents(result) ?? [];
+      }
+      console.log(result);
+    };
+
+    getResident();
+  }, [query]);
+
   async function onSubmit(values: FamilyCreateInput) {
     console.log(values);
-
-    // setIsSubmitting(true);
-    // try {
-    //   const result = await createFamil(values);
-    //   if (result.success) {
-    //     toast.success('Family berhasil dibuat!');
-    //     form.reset();
-    //   } else {
-    //     toast.error(result.error || 'Gagal membuat family.');
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   toast.error('Terjadi kesalahan saat submit.');
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
   }
 
   const disabled = form.formState.isSubmitted && !form.formState.isValid;
@@ -200,14 +223,49 @@ export function CreateFamilyForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>ID Kepala Keluarga (Opsional)</FormLabel>
+
               <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Masukkan ID resident"
-                  type="number"
-                  value={field.value ?? ''}
-                />
+                <Command>
+                  <CommandInput
+                    placeholder="Cari nama atau NIK..."
+                    value={commandInput}
+                    onValueChange={(inputQuery) => {
+                      console.log('inputQuery', inputQuery);
+
+                      setQuery(inputQuery);
+                      console.log('FIELD VALUE', field.value);
+                      setCommandInput(inputQuery);
+
+                      inputQuery === ''
+                        ? setShowSugest(false)
+                        : setShowSugest(true);
+                    }}
+                  />
+
+                  {showSugest ? (
+                    <CommandList>
+                      <CommandEmpty>No results found.</CommandEmpty>
+
+                      <CommandGroup heading="Suggestions">
+                        {suggestResidents.map((resident) => (
+                          <CommandItem
+                            key={resident.id}
+                            value={resident.fullName}
+                            onSelect={() => {
+                              field.onChange(resident.id);
+                              setCommandInput(resident.fullName);
+                              setShowSugest(false);
+                            }}
+                          >
+                            {resident.fullName} - {resident.nik}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  ) : null}
+                </Command>
               </FormControl>
+
               <FormMessage />
             </FormItem>
           )}

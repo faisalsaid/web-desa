@@ -1,3 +1,7 @@
+import { FamilyRelationshipEnum } from '@/app/(ControlPanel)/families/_lib/families.zod';
+
+type FamilyRelationship = keyof typeof FamilyRelationshipEnum.enum;
+
 // Mapping enum ke label bahasa Indonesia
 export const religionLabels: Record<string, string> = {
   ISLAM: 'Islam',
@@ -77,4 +81,12 @@ export const populationStatusLabels: Record<string, string> = {
   TEMPORARY: 'Pendatang Sementara',
   MOVED_OUT: 'Sudah Pindah',
   DECEASED: 'Meninggal Dunia',
+};
+
+export const familyRelationshipLabels: Record<FamilyRelationship, string> = {
+  HEAD: 'Kepala Keluarga',
+  SPOUSE: 'Istri / Suami',
+  CHILD: 'Anak',
+  PARENT: 'Orang Tua',
+  OTHER: 'Lainnya',
 };

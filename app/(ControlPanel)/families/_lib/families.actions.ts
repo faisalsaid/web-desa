@@ -25,11 +25,10 @@ export async function searchResidentsHeadFamilyNull(query: string) {
 }
 
 // HANDLE CREATE FAMILY
-
 export async function createFamily(data: FamilyCreateInput) {
   try {
-    // 1. Validasi data dengan Zod
     const parsed = FamilyCreateSchema.safeParse(data);
+
     if (!parsed.success) {
       return {
         success: false,
@@ -40,7 +39,7 @@ export async function createFamily(data: FamilyCreateInput) {
     const { familyCardNumber, address, dusun, rw, rt, headOfFamilyId } =
       parsed.data;
 
-    // 2. Cek apakah Nomor KK sudah ada
+    // Cek duplikasi Kartu Keluarga
     const existFamily = await prisma.family.findUnique({
       where: { familyCardNumber },
       select: { id: true },
@@ -53,7 +52,7 @@ export async function createFamily(data: FamilyCreateInput) {
       };
     }
 
-    // 3. Validasi headOfFamilyId jika diisi
+    // Validasi kepala keluarga
     let validatedHeadId: number | null = null;
 
     if (headOfFamilyId) {
@@ -62,6 +61,7 @@ export async function createFamily(data: FamilyCreateInput) {
         select: {
           id: true,
           isActive: true,
+          familyId: true,
           headOfFamilyFor: true,
         },
       });
@@ -83,15 +83,24 @@ export async function createFamily(data: FamilyCreateInput) {
       if (resident.headOfFamilyFor) {
         return {
           success: false,
-          error: 'Resident ini sudah menjadi kepala keluarga lain',
+          error: 'Resident ini sudah menjadi kepala keluarga di keluarga lain',
+        };
+      }
+
+      if (resident.familyId) {
+        return {
+          success: false,
+          error: 'Resident ini sudah menjadi anggota keluarga lain',
         };
       }
 
       validatedHeadId = resident.id;
     }
 
-    // 4. Buat family baru
-    const created = await prisma.family.create({
+    // ================================
+    // 1️⃣ Buat keluarga baru
+    // ================================
+    const createdFamily = await prisma.family.create({
       data: {
         familyCardNumber,
         address,
@@ -102,14 +111,26 @@ export async function createFamily(data: FamilyCreateInput) {
       },
     });
 
-    // Revalidate halaman list family
+    // ================================
+    // 2️⃣ Kepala keluarga otomatis jadi anggota
+    // ================================
+    if (validatedHeadId) {
+      await prisma.resident.update({
+        where: { id: validatedHeadId },
+        data: {
+          familyId: createdFamily.id, // kepala keluarga menjadi member
+        },
+      });
+    }
+
+    // Refresh list families
     revalidatePath('/families');
 
     return {
       success: true,
-      data: created,
+      data: createdFamily,
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Create Family Error:', error);
 
     return {

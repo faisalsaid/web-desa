@@ -192,6 +192,8 @@ model Resident {
   phone             String?
   email             String?
   populationStatus  PopulationStatus   @default(PERMANENT)
+
+  familyRelationship FamilyRelationship?  // <--- TAMBAHKAN INI
   
   // Relasi keluarga
   familyId          Int?
@@ -327,6 +329,13 @@ enum Citizenship {
   WNA
 }
 
+enum FamilyRelationship {
+  HEAD        // kepala keluarga
+  SPOUSE      // istri/suami
+  CHILD       // anak
+  PARENT      // orang tua
+  OTHER       // lainnya
+}
 
 
 enum UserRole {

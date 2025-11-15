@@ -76,14 +76,15 @@ export function CreateFamilyForm() {
   console.log('QUERY =>', query);
 
   useEffect(() => {
-    if (query.length < 3) {
-      setSuggestResidents([]); // kosongkan ketika kurang dari 3 karakter
+    if (query.trim().length < 3) {
+      setSuggestResidents([]);
       return;
     }
+
     const delay = setTimeout(async () => {
-      const result = await searchResidentsHeadFamilyNull(query);
+      const result = await searchResidentsHeadFamilyNull(query.trim());
       setSuggestResidents(result || []);
-    }, 300);
+    }, 250);
 
     return () => clearTimeout(delay);
   }, [query]);
@@ -246,48 +247,44 @@ export function CreateFamilyForm() {
           name="headOfFamilyId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>ID Kepala Keluarga (Opsional)</FormLabel>
+              <FormLabel>
+                Kepala Keluarga <span className="text-red-500">*</span>
+              </FormLabel>
 
               <FormControl>
-                <Command>
+                <Command shouldFilter={false}>
                   <CommandInput
                     onBlur={() => setTimeout(() => setShowSugest(false), 150)}
                     placeholder="Cari nama atau NIK..."
                     value={commandInput}
-                    onValueChange={(inputQuery) => {
-                      console.log('inputQuery', inputQuery);
+                    onValueChange={(text) => {
+                      setCommandInput(text);
+                      setQuery(text);
 
-                      setQuery(inputQuery);
-                      console.log('FIELD VALUE', field.value);
-                      setCommandInput(inputQuery);
-
-                      inputQuery === ''
-                        ? setShowSugest(false)
-                        : setShowSugest(true);
+                      if (text.length >= 3) setShowSugest(true);
+                      else setShowSugest(false);
                     }}
                   />
 
-                  {showSugest ? (
+                  {showSugest && (
                     <CommandList>
-                      <CommandEmpty>No results found.</CommandEmpty>
-
-                      <CommandGroup heading="Suggestions">
+                      <CommandEmpty>Tidak ada hasil</CommandEmpty>
+                      <CommandGroup heading="Hasil Pencarian">
                         {suggestResidents.map((resident) => (
                           <CommandItem
                             key={resident.id}
-                            value={resident.fullName}
                             onSelect={() => {
                               field.onChange(resident.id);
                               setCommandInput(resident.fullName);
                               setShowSugest(false);
                             }}
                           >
-                            {resident.fullName} - {resident.nik}
+                            {resident.fullName} — {resident.nik}
                           </CommandItem>
                         ))}
                       </CommandGroup>
                     </CommandList>
-                  ) : null}
+                  )}
                 </Command>
               </FormControl>
 

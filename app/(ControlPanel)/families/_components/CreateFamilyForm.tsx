@@ -29,19 +29,21 @@ import {
 import { DUSUN_LIST, RT_LIST, RW_LIST } from '@/lib/staticData';
 import { Textarea } from '@/components/ui/textarea';
 import { Upload } from 'lucide-react';
-import { searchResidentsHeadFamilyNull } from '../_lib/families.actions';
+import {
+  createFamily,
+  searchResidentsHeadFamilyNull,
+} from '../_lib/families.actions';
 
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from '@/components/ui/command';
+
+import { useRouter } from 'next/navigation';
 
 type Resident = {
   id: number;
@@ -50,7 +52,7 @@ type Resident = {
 };
 
 export function CreateFamilyForm() {
-  //   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const form = useForm<FamilyCreateInput>({
     resolver: zodResolver(FamilyCreateSchema),
@@ -87,7 +89,28 @@ export function CreateFamilyForm() {
   }, [query]);
 
   async function onSubmit(values: FamilyCreateInput) {
-    console.log(values);
+    // Buat toast loading yang bisa di-update
+    const toastId = toast.loading('Menyimpan data keluarga...');
+
+    try {
+      const res = await createFamily(values);
+
+      if (!res.success) {
+        toast.error(res.error || 'Gagal membuat keluarga', { id: toastId });
+        return;
+      }
+
+      toast.success('Keluarga berhasil dibuat', { id: toastId });
+
+      const urlId = res?.data?.urlId;
+      router.push(`/families/${urlId}`);
+
+      // opsional: reset form jika perlu
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      toast.error('Terjadi kesalahan server', { id: toastId });
+    }
   }
 
   const disabled = form.formState.isSubmitted && !form.formState.isValid;

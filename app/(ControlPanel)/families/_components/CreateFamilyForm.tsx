@@ -1,13 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-// import { createFamily } from './actions';
-// import { FamilyCreateInput, FamilyCreateSchema } from './schemas';
+import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner'; // opsional, untuk feedback
-
-// Shadcn UI Components
+import { useFieldArray, useForm, Controller } from 'react-hook-form';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import {
   Form,
   FormField,
@@ -26,30 +23,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { DUSUN_LIST, RT_LIST, RW_LIST } from '@/lib/staticData';
+import { DUSUN_LIST, RW_LIST, RT_LIST } from '@/lib/staticData';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload } from 'lucide-react';
+import { Trash2, Upload } from 'lucide-react';
+import { Autocomplete } from '@/components/autocomplete';
+import { Separator } from '@/components/ui/separator';
 import {
   createFamily,
   searchResidentsHeadFamilyNull,
+  searchResidentsForMember,
 } from '../_lib/families.actions';
-
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-
-import { useRouter } from 'next/navigation';
 
 type Resident = {
   id: number;
   nik: string;
   fullName: string;
 };
+
+type Cache = Record<string, Resident[]>;
 
 export function CreateFamilyForm() {
   const router = useRouter();
@@ -63,75 +54,89 @@ export function CreateFamilyForm() {
       rw: '',
       rt: '',
       headOfFamilyId: undefined,
+      members: [{ residentId: undefined, relationship: 'OTHER' }],
     },
     mode: 'onChange',
   });
 
-  const [query, setQuery] = useState<string>('');
-  const [suggestResidents, setSuggestResidents] = useState<Resident[]>([]);
-  const [commandInput, setCommandInput] = useState<string>('');
-  const [showSugest, setShowSugest] = useState<boolean>(false);
+  const { control, handleSubmit, watch, formState } = form;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'members',
+  });
 
-  console.log('LIST =>', suggestResidents);
-  console.log('QUERY =>', query);
+  const headOfFamilyId = watch('headOfFamilyId');
+  const memberIds =
+    watch('members')
+      ?.map((m) => m.residentId)
+      .filter(Boolean) ?? [];
+  const excludeIds = headOfFamilyId
+    ? [headOfFamilyId, ...memberIds]
+    : memberIds;
 
-  useEffect(() => {
-    if (query.trim().length < 3) {
-      setSuggestResidents([]);
-      return;
-    }
+  // --------------------------
+  // Caching for Autocomplete
+  // --------------------------
+  const headCache = useRef<Cache>({});
+  const memberCache = useRef<Cache>({});
 
-    const delay = setTimeout(async () => {
-      const result = await searchResidentsHeadFamilyNull(query.trim());
-      setSuggestResidents(result || []);
-    }, 250);
+  const fetchHead = async (query: string) => {
+    if (headCache.current[query]) return headCache.current[query];
+    const result = await searchResidentsHeadFamilyNull(query);
+    headCache.current[query] = result || [];
+    return result;
+  };
 
-    return () => clearTimeout(delay);
-  }, [query]);
+  const fetchMember = async (query: string) => {
+    if (memberCache.current[query]) return memberCache.current[query];
+    const result = await searchResidentsForMember(query, excludeIds);
+    memberCache.current[query] = result || [];
+    return result;
+  };
 
-  async function onSubmit(values: FamilyCreateInput) {
-    // Buat toast loading yang bisa di-update
+  // --------------------------
+  // Submit handler
+  // --------------------------
+  const onSubmit = async (values: FamilyCreateInput) => {
     const toastId = toast.loading('Menyimpan data keluarga...');
-
     try {
       const res = await createFamily(values);
-
       if (!res.success) {
         toast.error(res.error || 'Gagal membuat keluarga', { id: toastId });
         return;
       }
 
       toast.success('Keluarga berhasil dibuat', { id: toastId });
-
-      const urlId = res?.data?.urlId;
-      router.push(`/families/${urlId}`);
-
-      // opsional: reset form jika perlu
       form.reset();
+
+      const urlId = res.data.urlId;
+      router.push(`/families/${urlId}`);
     } catch (err) {
       console.error(err);
       toast.error('Terjadi kesalahan server', { id: toastId });
     }
-  }
+  };
 
-  const disabled = form.formState.isSubmitted && !form.formState.isValid;
-  const isSubmitting = form.formState.isSubmitting;
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Nomor KK */}
         <FormField
-          control={form.control}
+          control={control}
           name="familyCardNumber"
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Nomor KK : <span className="text-red-500">*</span>
+                Nomor KK <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   placeholder="e.g : 3171011503950001"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="\d*"
+                  onWheel={(e) => (e.currentTarget as HTMLElement).blur()}
                 />
               </FormControl>
               <FormMessage />
@@ -139,19 +144,20 @@ export function CreateFamilyForm() {
           )}
         />
 
+        {/* Address */}
         <FormField
-          control={form.control}
+          control={control}
           name="address"
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Alamat : <span className="text-red-500">*</span>
+                Alamat <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
-                  placeholder="e.g : Jl. Panglima Sudirman No. 1"
-                  className="resize-none h-32" // mencegah resize
+                  placeholder="Jl. Panglima Sudirman No. 1"
+                  className="resize-none h-32"
                 />
               </FormControl>
               <FormMessage />
@@ -159,148 +165,186 @@ export function CreateFamilyForm() {
           )}
         />
 
+        {/* Dusun / RW / RT */}
         <div className="grid gap-4 sm:grid-cols-3">
-          <FormField
-            control={form.control}
-            name="dusun"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Dusun : <span className="text-red-500">*</span>
-                </FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl className="w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih dusun" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {DUSUN_LIST.map((dusun) => (
-                      <SelectItem key={dusun.key} value={dusun.key}>
-                        {dusun.value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* // RW */}
-          <FormField
-            control={form.control}
-            name="rw"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>
-                  RW : <span className="text-red-500">*</span>
-                </FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl className="w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih RW" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {RW_LIST.map((rw) => (
-                      <SelectItem key={rw.key} value={rw.key}>
-                        {rw.value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* // RT */}
-          <FormField
-            control={form.control}
-            name="rt"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>
-                  RT : <span className="text-red-500">*</span>
-                </FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl className="w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih RT" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {RT_LIST.map((rt) => (
-                      <SelectItem key={rt.key} value={rt.key}>
-                        {rt.value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {['dusun', 'rw', 'rt'].map((fieldName) => {
+            const list =
+              fieldName === 'dusun'
+                ? DUSUN_LIST
+                : fieldName === 'rw'
+                ? RW_LIST
+                : RT_LIST;
+            return (
+              <FormField
+                key={fieldName}
+                control={control}
+                name={fieldName as any}
+                render={() => (
+                  <FormItem>
+                    <FormLabel>
+                      {fieldName.toUpperCase()}{' '}
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Controller
+                      name={fieldName as any}
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl className="w-full">
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder={`Pilih ${fieldName.toUpperCase()}`}
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {list.map((opt) => (
+                              <SelectItem key={opt.key} value={opt.key}>
+                                {opt.value}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            );
+          })}
         </div>
 
+        {/* Kepala Keluarga */}
         <FormField
-          control={form.control}
+          control={control}
           name="headOfFamilyId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>
                 Kepala Keluarga <span className="text-red-500">*</span>
               </FormLabel>
-
               <FormControl>
-                <Command shouldFilter={false}>
-                  <CommandInput
-                    onBlur={() => setTimeout(() => setShowSugest(false), 150)}
-                    placeholder="Cari nama atau NIK..."
-                    value={commandInput}
-                    onValueChange={(text) => {
-                      setCommandInput(text);
-                      setQuery(text);
-
-                      if (text.length >= 3) setShowSugest(true);
-                      else setShowSugest(false);
-                    }}
-                  />
-
-                  {showSugest && (
-                    <CommandList>
-                      <CommandEmpty>Tidak ada hasil</CommandEmpty>
-                      <CommandGroup heading="Hasil Pencarian">
-                        {suggestResidents.map((resident) => (
-                          <CommandItem
-                            key={resident.id}
-                            onSelect={() => {
-                              field.onChange(resident.id);
-                              setCommandInput(resident.fullName);
-                              setShowSugest(false);
-                            }}
-                          >
-                            {resident.fullName} — {resident.nik}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
+                <Controller
+                  name="headOfFamilyId"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      placeholder="Cari nama atau NIK..."
+                      value={field.value}
+                      onChange={field.onChange}
+                      search={fetchHead}
+                      getKey={(item) => item.id}
+                      displayValue={(item) => item?.fullName ?? ''}
+                      renderItem={(item) => (
+                        <div>
+                          {item.fullName} — {item.nik}
+                        </div>
+                      )}
+                    />
                   )}
-                </Command>
+                />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
+        <Separator />
 
+        {/* Family Members */}
+        <FormLabel className="font-semibold text-lg">Family Members</FormLabel>
+        {fields.map((f, index) => (
+          <div key={f.id} className="space-y-3 border p-4 rounded-xl">
+            <Controller
+              control={control}
+              name={`members.${index}.residentId`}
+              render={({ field }) => (
+                <Autocomplete
+                  placeholder="Cari nama atau NIK..."
+                  value={field.value}
+                  onChange={field.onChange}
+                  search={fetchMember}
+                  getKey={(item) => item.id}
+                  displayValue={(item) => item?.fullName ?? ''}
+                  renderItem={(item) => (
+                    <div>
+                      {item.fullName} — {item.nik}
+                    </div>
+                  )}
+                />
+              )}
+            />
+
+            <div className="flex items-baseline-last justify-between gap-4">
+              <FormField
+                control={control}
+                name={`members.${index}.relationship`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Relationship</FormLabel>
+                    <FormControl>
+                      <Controller
+                        control={control}
+                        name={`members.${index}.relationship` as any}
+                        render={({ field: ctl }) => (
+                          <Select
+                            value={ctl.value}
+                            onValueChange={ctl.onChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select relationship" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="SPOUSE">Spouse</SelectItem>
+                              <SelectItem value="CHILD">Child</SelectItem>
+                              <SelectItem value="PARENT">Parent</SelectItem>
+                              <SelectItem value="OTHER">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {fields.length > 1 && (
+                <Button
+                  variant="destructive"
+                  type="button"
+                  onClick={() => remove(index)}
+                  size="icon"
+                >
+                  <Trash2 />
+                </Button>
+              )}
+            </div>
+          </div>
+        ))}
+
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => append({ residentId: 0, relationship: 'OTHER' })}
+        >
+          + Tambah Member
+        </Button>
+
+        <Separator />
         <div className="flex gap-4 items-center justify-end">
           <Button
             type="submit"
             className="w-fit"
-            disabled={disabled || isSubmitting}
+            disabled={
+              formState.isSubmitting ||
+              (formState.isSubmitted && !formState.isValid)
+            }
           >
             <Upload />
-            {form.formState.isSubmitting ? 'Menyimpan...' : 'Buat Family'}
+            {formState.isSubmitting ? 'Menyimpan...' : 'Buat Family'}
           </Button>
         </div>
       </form>

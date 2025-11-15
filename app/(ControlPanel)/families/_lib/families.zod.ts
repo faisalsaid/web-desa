@@ -47,7 +47,7 @@ export const FamilySchema = z.object({
    MEMBERS INPUT (opsional)
 ----------------------------------------- */
 export const FamilyMemberInputSchema = z.object({
-  residentId: z.number().int(),
+  residentId: z.number().int().min(1),
   relationship: FamilyRelationshipEnum,
 });
 export type FamilyMemberInput = z.infer<typeof FamilyMemberInputSchema>;

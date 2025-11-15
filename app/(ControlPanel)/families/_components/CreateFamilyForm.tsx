@@ -74,15 +74,16 @@ export function CreateFamilyForm() {
   console.log('QUERY =>', query);
 
   useEffect(() => {
-    const getResident = async () => {
-      const result: Resident[] = await searchResidentsHeadFamilyNull(query);
-      if (result) {
-        setSuggestResidents(result) ?? [];
-      }
-      console.log(result);
-    };
+    if (query.length < 3) {
+      setSuggestResidents([]); // kosongkan ketika kurang dari 3 karakter
+      return;
+    }
+    const delay = setTimeout(async () => {
+      const result = await searchResidentsHeadFamilyNull(query);
+      setSuggestResidents(result || []);
+    }, 300);
 
-    getResident();
+    return () => clearTimeout(delay);
   }, [query]);
 
   async function onSubmit(values: FamilyCreateInput) {
@@ -227,6 +228,7 @@ export function CreateFamilyForm() {
               <FormControl>
                 <Command>
                   <CommandInput
+                    onBlur={() => setTimeout(() => setShowSugest(false), 150)}
                     placeholder="Cari nama atau NIK..."
                     value={commandInput}
                     onValueChange={(inputQuery) => {

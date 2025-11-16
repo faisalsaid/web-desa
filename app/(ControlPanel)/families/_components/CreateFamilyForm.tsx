@@ -54,7 +54,7 @@ export function CreateFamilyForm() {
       rw: '',
       rt: '',
       headOfFamilyId: undefined,
-      members: [{ residentId: undefined, relationship: 'OTHER' }],
+      members: [],
     },
     mode: 'onChange',
   });
@@ -98,6 +98,8 @@ export function CreateFamilyForm() {
   // Submit handler
   // --------------------------
   const onSubmit = async (values: FamilyCreateInput) => {
+    console.log(values);
+
     const toastId = toast.loading('Menyimpan data keluarga...');
     try {
       const res = await createFamily(values);
@@ -116,6 +118,8 @@ export function CreateFamilyForm() {
       toast.error('Terjadi kesalahan server', { id: toastId });
     }
   };
+
+  console.log(fields);
 
   return (
     <Form {...form}>

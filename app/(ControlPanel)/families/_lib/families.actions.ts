@@ -142,6 +142,7 @@ export async function createFamily(
         where: { id: validatedHeadId },
         data: {
           familyId: createdFamily.id,
+          familyRelationship: 'HEAD', // ← Tambahkan ini
           headOfFamilyFor: { connect: { id: createdFamily.id } },
         },
       });
@@ -172,7 +173,10 @@ export async function createFamily(
 
         await prisma.resident.update({
           where: { id: resident.id },
-          data: { familyId: createdFamily.id },
+          data: {
+            familyId: createdFamily.id,
+            familyRelationship: m.relationship ?? 'MEMBER', // ← Tambah ini
+          },
         });
       }
     }

@@ -8,6 +8,7 @@ import {
   Image as ImageAsIcon,
   MapPinHouse,
   Mars,
+  SquareUserRound,
   Users,
   UserStar,
   Venus,
@@ -66,7 +67,7 @@ const FamilyDetailsComp = ({ family }: FamilyDetailsProps) => {
       <ContentCard>
         <p className="text-xl">Anggota Keluarga : </p>
       </ContentCard>
-      <div className="space-y-3 sm:grid sm:grid-cols-3 gap-4">
+      <div className="space-y-3 sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {family.members.map((member) => (
           <MemberCard key={member.id} resident={member} />
         ))}
@@ -99,7 +100,7 @@ const MemberCard = ({ resident }: MemberCardProps) => {
 
       <div className=" grid grid-cols-3 gap-4">
         <div className="flex content-center">
-          <ImageAsIcon className="w-32 h-32 text-muted-foreground" />
+          <SquareUserRound className="w-32 h-32 text-muted-foreground" />
         </div>
         <div className="col-span-2 space-y-1">
           <p className="text-xl">{resident.fullName}</p>

@@ -38,7 +38,6 @@ const FamilyDetailsComp = ({ family }: FamilyDetailsProps) => {
     <div className="space-y-4">
       <ContentCard>
         <div>
-          <p>Detail Keluarga :</p>
           <h1 className="text-2xl">NIK : {family.familyCardNumber}</h1>
         </div>
       </ContentCard>

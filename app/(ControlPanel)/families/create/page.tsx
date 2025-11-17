@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 import ContentCard from '../../_component/ContentCard';
-import { CreateFamilyForm } from '../_components/CreateFamilyForm';
+import FamilyForm from '../_components/FamilyForm';
 
 const CreateFamilyPage = async () => {
   return (
@@ -11,7 +11,7 @@ const CreateFamilyPage = async () => {
         </div>
       </ContentCard>
       <ContentCard>
-        <CreateFamilyForm />
+        <FamilyForm />
       </ContentCard>
     </div>
   );

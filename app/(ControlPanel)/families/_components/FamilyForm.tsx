@@ -42,7 +42,7 @@ type Resident = {
 
 type Cache = Record<string, Resident[]>;
 
-export function CreateFamilyForm() {
+export default function FamilyForm() {
   const router = useRouter();
 
   const form = useForm<FamilyCreateInput>({

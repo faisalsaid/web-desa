@@ -30,7 +30,7 @@ const FamilyDetailsPage = async ({ params }: FamilyDetailProps) => {
         <div className="font-semibold text-2xl">Detail Keluarga</div>
 
         <div className="flex items-center gap-4">
-          <Link href={`/residents/${familyDetails.urlId}/update`}>
+          <Link href={`/families/${familyDetails.urlId}/update`}>
             <Button size={'icon'} className="rounded-full">
               <SquarePen />
             </Button>

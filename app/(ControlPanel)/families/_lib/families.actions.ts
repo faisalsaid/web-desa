@@ -3,7 +3,7 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { FamilyCreateInput, FamilyCreateSchema } from './families.zod';
-import { FamilyType } from './families.type';
+import { FamilyType, getFamilyDetailsQuery } from './families.type';
 
 // export async function searchResidentsHeadFamilyNull(query: string) {
 //   if (!query || query.trim().length === 0) return [];
@@ -156,10 +156,7 @@ export async function getFamilyDetails(
   try {
     const family = await prisma.family.findUnique({
       where: { urlId },
-      include: {
-        headOfFamily: true,
-        members: true,
-      },
+      ...getFamilyDetailsQuery,
     });
 
     return family;

@@ -47,7 +47,7 @@ export default async function FamilyUpdatePage({ params }: FamilyUpdateProps) {
   return (
     <div className="space-y-4">
       <ContentCard>
-        <h1 className="text-xl font-semibold">Update Page</h1>
+        <h1 className="text-xl font-semibold">Ubah Data Keluarga</h1>
       </ContentCard>
 
       <ContentCard>

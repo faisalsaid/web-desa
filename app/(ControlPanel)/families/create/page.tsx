@@ -7,7 +7,7 @@ const CreateFamilyPage = async () => {
     <div className="space-y-4">
       <ContentCard className=" ">
         <div className="flex gap-4 items-center justify-between">
-          <h1 className="text-xl font-semibold">Form Keluarga</h1>
+          <h1 className="text-xl font-semibold">Buat Data Keluarga Baru</h1>
         </div>
       </ContentCard>
       <ContentCard>

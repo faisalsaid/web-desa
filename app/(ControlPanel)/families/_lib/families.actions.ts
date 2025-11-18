@@ -10,6 +10,8 @@ import {
   getFamilyToUpdateQuery,
 } from './families.type';
 
+import type { FamilyUpdateInput, MemberInput } from './families.zod';
+
 // export async function searchResidentsHeadFamilyNull(query: string) {
 //   if (!query || query.trim().length === 0) return [];
 
@@ -197,5 +199,67 @@ export async function getFamilyToUpdate(
   } catch (error) {
     console.error('Error fetching family details:', error);
     return null;
+  }
+}
+
+export async function updateFamilyWithMembers(
+  payload: FamilyUpdateInput,
+): Promise<{ success: boolean; data?: typeof payload; error?: string }> {
+  const { id, members, ...familyData } = payload;
+
+  if (!id) {
+    return { success: false, error: 'Family ID wajib untuk update.' };
+  }
+
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      // 1️⃣ Update data utama family
+      const updatedFamily = await tx.family.update({
+        where: { id },
+        data: familyData,
+      });
+
+      // 2️⃣ Reset semua resident yang terkait family ini
+      await tx.resident.updateMany({
+        where: { familyId: id },
+        data: { familyId: null, familyRelationship: null },
+      });
+
+      // 3️⃣ Update member baru
+      const memberUpdates = members?.map((member: MemberInput) =>
+        tx.resident.update({
+          where: { id: member.residentId },
+          data: {
+            familyId: id,
+            familyRelationship: member.familyRelationship,
+          },
+        }),
+      );
+
+      if (memberUpdates) {
+        await Promise.all(memberUpdates);
+      }
+
+      // 4️⃣ Update kepala keluarga
+      const head = members?.find((m) => m.familyRelationship === 'HEAD');
+      if (head) {
+        await tx.family.update({
+          where: { id },
+          data: { headOfFamilyId: head.residentId },
+        });
+      } else {
+        await tx.family.update({
+          where: { id },
+          data: { headOfFamilyId: null },
+        });
+      }
+
+      return updatedFamily;
+    });
+
+    return { success: true, data: result };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: 'Gagal memperbarui keluarga.' };
   }
 }

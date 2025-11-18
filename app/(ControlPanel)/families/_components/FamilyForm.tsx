@@ -29,6 +29,8 @@ import {
   FamilyCreateSchema,
   FamilyRelationship,
   FamilyRelationshipEnum,
+  FamilyUpdateInput,
+  FamilyUpdateSchema,
 } from '../_lib/families.zod';
 import { DUSUN_LIST, RT_LIST, RW_LIST } from '@/lib/staticData';
 import { Textarea } from '@/components/ui/textarea';
@@ -37,6 +39,7 @@ import {
   checkFamilyCardNumberExists,
   createFamilyWithMembers,
   searchResidentsForMember,
+  updateFamilyWithMembers,
 } from '../_lib/families.actions';
 import { Separator } from '@/components/ui/separator';
 import { familyRelationshipLabels } from '@/lib/enum';
@@ -75,8 +78,10 @@ export default function FamilyForm({
 }: FamilyFormProps) {
   const router = useRouter();
 
-  const form = useForm<FamilyCreateInput>({
-    resolver: zodResolver(FamilyCreateSchema),
+  const form = useForm<FamilyCreateInput | FamilyUpdateInput>({
+    resolver: zodResolver(
+      mode === 'edit' ? FamilyUpdateSchema : FamilyCreateSchema,
+    ),
     defaultValues: defaultValues || {
       familyCardNumber: '',
       address: '',
@@ -161,25 +166,51 @@ export default function FamilyForm({
     }
   }, [watch('members')]);
 
-  const onSubmit = async (payload: FamilyCreateInput) => {
+  const onSubmit = async (payload: FamilyCreateInput | FamilyUpdateInput) => {
     console.log('FINAL PAYLOAD:', payload);
 
     const toastId = toast.loading('Menyimpan keluarga...');
 
-    try {
-      const result = await createFamilyWithMembers(payload);
+    if (mode === 'edit') {
+      try {
+        const result = await updateFamilyWithMembers(
+          payload as FamilyUpdateInput,
+        );
 
-      if (!result.success) {
-        toast.error(result.error ?? 'Gagal membuat keluarga.', { id: toastId });
-        return;
+        if (!result.success) {
+          toast.error(result.error ?? 'Gagal mengubah keluarga.', {
+            id: toastId,
+          });
+          return;
+        }
+
+        // result.data —— berisi family hasil create
+        toast.success('Keluarga berhasil diubah!', { id: toastId });
+
+        router.push(`/families/${result?.data?.urlId}`);
+      } catch (error) {
+        toast.error('Terjadi kesalahan server.', { id: toastId });
       }
+    } else {
+      try {
+        const result = await createFamilyWithMembers(
+          payload as FamilyCreateInput,
+        );
 
-      // result.data —— berisi family hasil create
-      toast.success('Keluarga berhasil dibuat!', { id: toastId });
+        if (!result.success) {
+          toast.error(result.error ?? 'Gagal membuat keluarga.', {
+            id: toastId,
+          });
+          return;
+        }
 
-      router.push(`/families/${result?.data?.urlId}`);
-    } catch (error) {
-      toast.error('Terjadi kesalahan server.', { id: toastId });
+        // result.data —— berisi family hasil create
+        toast.success('Keluarga berhasil dibuat!', { id: toastId });
+
+        router.push(`/families/${result?.data?.urlId}`);
+      } catch (error) {
+        toast.error('Terjadi kesalahan server.', { id: toastId });
+      }
     }
   };
 
@@ -331,7 +362,7 @@ export default function FamilyForm({
           <FormLabel className="text-md">
             Anggota Keluarga <span className="text-red-500">*</span>
           </FormLabel>
-          <div className="sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          <div className="sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-2 space-y-2">
             {fields.map((fieldItem, index) => (
               <div
                 key={fieldItem.id}

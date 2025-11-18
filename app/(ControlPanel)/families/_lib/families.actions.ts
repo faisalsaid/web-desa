@@ -3,7 +3,12 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { FamilyCreateInput, FamilyCreateSchema } from './families.zod';
-import { FamilyType, getFamilyDetailsQuery } from './families.type';
+import {
+  FamilyToUpdateType,
+  FamilyType,
+  getFamilyDetailsQuery,
+  getFamilyToUpdateQuery,
+} from './families.type';
 
 // export async function searchResidentsHeadFamilyNull(query: string) {
 //   if (!query || query.trim().length === 0) return [];
@@ -177,4 +182,20 @@ export async function checkFamilyCardNumberExists(
   });
 
   return !!exists;
+}
+
+export async function getFamilyToUpdate(
+  urlId: string,
+): Promise<FamilyToUpdateType | null> {
+  try {
+    const family = await prisma.family.findUnique({
+      where: { urlId },
+      ...getFamilyToUpdateQuery,
+    });
+
+    return family;
+  } catch (error) {
+    console.error('Error fetching family details:', error);
+    return null;
+  }
 }

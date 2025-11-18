@@ -329,6 +329,7 @@ enum FamilyRelationship {
   SPOUSE // istri/suami
   CHILD // anak
   PARENT // orang tua
+  SIBLING // saudara
   OTHER // lainnya
 }
 

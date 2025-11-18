@@ -1,3 +1,6 @@
+// ===========================
+// Autocomplete.tsx (Final)
+// ===========================
 'use client';
 
 import {
@@ -16,25 +19,27 @@ import {
 } from '@/components/ui/form';
 import { useEffect, useRef, useState } from 'react';
 
-type AutocompleteProps<T> = {
+// Autocomplete generik final
+export type AutocompleteProps<T> = {
   label?: string;
   placeholder?: string;
-  value: any;
-  onChange: (value: any) => void;
 
-  // async fetcher
+  /** item terpilih */
+  value: T | null;
+  onChange: (value: T | null) => void;
+
+  /** fungsi pencarian */
   search: (query: string) => Promise<T[]>;
 
-  // display text in input
+  /** cara menampilkan text */
   displayValue: (item: T | null) => string;
 
-  // identity key
+  /** key unik */
   getKey: (item: T) => string | number;
 
-  // how each item is rendered
+  /** custom render */
   renderItem?: (item: T) => React.ReactNode;
 
-  // minimum characters before triggering search
   minLength?: number;
 };
 
@@ -45,23 +50,21 @@ export function Autocomplete<T>({
   onChange,
   search,
   displayValue,
-  renderItem,
   getKey,
-  minLength = 3,
+  renderItem,
+  minLength = 2,
 }: AutocompleteProps<T>) {
   const [input, setInput] = useState('');
   const [results, setResults] = useState<T[]>([]);
   const [open, setOpen] = useState(false);
 
-  const searchTimeout = useRef<any>(null);
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Update input when external value changes (e.g. form reset)
+  // Prefill jika value berubah
   useEffect(() => {
-    if (!value) {
-      setInput('');
-      return;
-    }
+    if (value) setInput(displayValue(value));
+    else setInput('');
   }, [value]);
 
   async function runSearch(q: string) {
@@ -71,7 +74,6 @@ export function Autocomplete<T>({
       return;
     }
 
-    // cancel previous request
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -87,14 +89,11 @@ export function Autocomplete<T>({
     setInput(q);
 
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
-
-    searchTimeout.current = setTimeout(() => {
-      runSearch(q);
-    }, 250);
+    searchTimeout.current = setTimeout(() => runSearch(q), 200);
   }
 
   function selectItem(item: T) {
-    onChange(getKey(item)); // return actual key / id
+    onChange(item);
     setInput(displayValue(item));
     setOpen(false);
   }
@@ -109,12 +108,14 @@ export function Autocomplete<T>({
             placeholder={placeholder}
             value={input}
             onValueChange={(q) => handleInputChange(q)}
-            onFocus={() => results.length && setOpen(true)}
+            onFocus={() => results.length > 0 && setOpen(true)}
           />
 
           {open && (
-            <CommandList className="absolute left-0 w-full top-12 z-50 bg-white shadow-lg rounded-md border">
-              <CommandEmpty>Tidak ada hasil</CommandEmpty>
+            <CommandList className="absolute left-0 top-12 w-full bg-white shadow-md rounded-md border z-50">
+              <CommandEmpty>
+                <span className="text-red-500">Ups! Tidak ada hasil</span>
+              </CommandEmpty>
               <CommandGroup>
                 {results.map((item) => (
                   <CommandItem

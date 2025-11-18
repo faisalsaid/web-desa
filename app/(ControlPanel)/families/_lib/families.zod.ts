@@ -1,86 +1,58 @@
 import { z } from 'zod';
 
-/* --------------------------------------
-   ENUM: FamilyRelationship
------------------------------------------ */
+// Enum FamilyRelationship sesuai schema Prisma
 export const FamilyRelationshipEnum = z.enum([
   'HEAD',
   'SPOUSE',
   'CHILD',
   'PARENT',
+  'SIBLING',
   'OTHER',
 ]);
-export type FamilyRelationship = z.infer<typeof FamilyRelationshipEnum>;
 
-/* --------------------------------------
-   SCHEMA UTAMA (representasi database)
------------------------------------------ */
+// Schema untuk anggota Family (Resident existing)
+export const MemberSchema = z.object({
+  residentId: z.number(), // ID resident di database
+  fullName: z.string().min(1), // untuk UI/UX
+  nik: z.string().length(16), // untuk UI/UX
+  familyRelationship: FamilyRelationshipEnum,
+});
+
+// Schema utama Family
 export const FamilySchema = z.object({
-  id: z.number().int().optional(),
+  id: z.number(), // untuk database, optional di create
   urlId: z.string().optional(),
-
   familyCardNumber: z
     .string()
     .min(16, 'Nomor KK minimal 16 digit')
     .max(20, 'Nomor KK maksimal 20 digit')
     .regex(/^\d+$/, 'Nomor KK hanya boleh angka'),
-
-  address: z.string().min(3, 'Alamat tidak boleh kosong'),
-  dusun: z.string().trim().min(1, 'Dusun wajib dipilih'),
-  rw: z
-    .string()
-    .trim()
-    .regex(/^\d{1,2}$/, 'Format RW tidak valid'),
-  rt: z
-    .string()
-    .trim()
-    .regex(/^\d{1,2}$/, 'Format RT tidak valid'),
-
-  /* nullable di DB, tapi wajib di Create */
-  headOfFamilyId: z.number().int().nullable(),
-
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
+  address: z.string().trim().min(1, 'Alamat wajib diisi'),
+  dusun: z.string().trim().min(1, 'Wajib'),
+  rw: z.string().regex(/^\d{1,2}$/, 'Wajib'),
+  rt: z.string().regex(/^\d{1,2}$/, 'Wajib'),
+  members: z
+    .array(MemberSchema)
+    .min(1, 'Harus ada minimal satu anggota keluarga')
+    .refine(
+      (members) =>
+        members.filter((m) => m.familyRelationship === 'HEAD').length === 1,
+      'Hanya boleh ada satu anggota dengan familyRelationship HEAD',
+    ),
 });
 
-/* --------------------------------------
-   MEMBERS INPUT (opsional)
------------------------------------------ */
-export const FamilyMemberInputSchema = z.object({
-  residentId: z.number().int().min(1),
-  relationship: FamilyRelationshipEnum,
-});
-export type FamilyMemberInput = z.infer<typeof FamilyMemberInputSchema>;
-
-/* --------------------------------------
-   SCHEMA UNTUK CREATE
-   headOfFamilyId WAJIB
------------------------------------------ */
-export const FamilyCreateSchema = FamilySchema.extend({
-  headOfFamilyId: z.number().int(), // WAJIB
-  members: z.array(FamilyMemberInputSchema).optional(),
-}).omit({
+// Versi untuk create → id & urlId tidak dikirim
+export const FamilyCreateSchema = FamilySchema.omit({
   id: true,
   urlId: true,
-  createdAt: true,
-  updatedAt: true,
 });
 
+// Versi untuk update → semua field optional
+export const FamilyUpdateSchema = FamilySchema.partial();
+
+// TypeScript types
+export type FamilyInput = z.infer<typeof FamilySchema>;
 export type FamilyCreateInput = z.infer<typeof FamilyCreateSchema>;
-
-/* --------------------------------------
-   SCHEMA UNTUK UPDATE
-   Semua optional
------------------------------------------ */
-export const FamilyUpdateSchema = z.object({
-  familyCardNumber: FamilySchema.shape.familyCardNumber.optional(),
-  address: FamilySchema.shape.address.optional(),
-  dusun: FamilySchema.shape.dusun.optional(),
-  rw: FamilySchema.shape.rw.optional(),
-  rt: FamilySchema.shape.rt.optional(),
-  headOfFamilyId: z.number().int().nullable().optional(),
-
-  members: z.array(FamilyMemberInputSchema).optional(),
-});
-
 export type FamilyUpdateInput = z.infer<typeof FamilyUpdateSchema>;
+export type MemberInput = z.infer<typeof MemberSchema>;
+export type FamilyRelationship = z.infer<typeof FamilyRelationshipEnum>;

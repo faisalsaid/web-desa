@@ -88,5 +88,6 @@ export const familyRelationshipLabels: Record<FamilyRelationship, string> = {
   SPOUSE: 'Istri / Suami',
   CHILD: 'Anak',
   PARENT: 'Orang Tua',
+  SIBLING: 'Saudara',
   OTHER: 'Lainnya',
 };

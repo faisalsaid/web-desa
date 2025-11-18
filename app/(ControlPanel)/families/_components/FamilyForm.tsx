@@ -376,18 +376,18 @@ export default function FamilyForm({
                 />
 
                 {/* Relationship */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                   <Select
                     value={fieldItem.familyRelationship}
                     onValueChange={(val: FamilyRelationship) => {
                       update(index, { ...fieldItem, familyRelationship: val });
                     }}
                   >
-                    <SelectTrigger className="w-44">
+                    <SelectTrigger className="bg-background w-full">
                       <SelectValue placeholder="Pilih hubungan" />
                     </SelectTrigger>
 
-                    <SelectContent>
+                    <SelectContent className="bg-background">
                       {FamilyRelationshipEnum.options
                         .filter((rel) => {
                           if (rel === 'HEAD') {

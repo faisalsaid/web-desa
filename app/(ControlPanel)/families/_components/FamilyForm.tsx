@@ -224,7 +224,7 @@ export default function FamilyForm({
                 Nomor KK <span className="text-red-500">*</span>
               </FormLabel>
 
-              <FormControl>
+              <FormControl className="bg-background">
                 <Input
                   {...field}
                   placeholder="e.g : 1234567890123456"
@@ -259,7 +259,7 @@ export default function FamilyForm({
               <FormLabel>
                 Alamat <span className="text-red-500">*</span>
               </FormLabel>
-              <FormControl>
+              <FormControl className="bg-background">
                 <Textarea
                   {...field}
                   className="h-24 resize-none"
@@ -299,7 +299,7 @@ export default function FamilyForm({
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          <FormControl className="w-full">
+                          <FormControl className="w-full bg-background">
                             <SelectTrigger>
                               <SelectValue
                                 placeholder={`Pilih ${fieldName.toUpperCase()}`}
@@ -331,88 +331,94 @@ export default function FamilyForm({
           <FormLabel className="text-md">
             Anggota Keluarga <span className="text-red-500">*</span>
           </FormLabel>
+          <div className="sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {fields.map((fieldItem, index) => (
+              <div
+                key={fieldItem.id}
+                className="space-y-2 p-3 border rounded-md"
+              >
+                {/* Autocomplete */}
 
-          {fields.map((fieldItem, index) => (
-            <div key={fieldItem.id} className="space-y-2 p-3 border rounded-md">
-              {/* Autocomplete */}
-              <Autocomplete<ResidentOption>
-                placeholder="Cari warga..."
-                value={
-                  fieldItem.fullName
-                    ? {
-                        id: fieldItem.residentId,
-                        fullName: fieldItem.fullName,
-                        nik: fieldItem.nik,
-                      }
-                    : null
-                }
-                onChange={(item) => {
-                  if (!item) return;
-                  update(index, {
-                    residentId: item.id,
-                    fullName: item.fullName,
-                    nik: item.nik,
-                    familyRelationship: fieldItem.familyRelationship || 'CHILD',
-                  });
-                }}
-                search={async (q) => {
-                  const exclude = fields
-                    .filter((_, i) => i !== index)
-                    .map((m) => m.residentId)
-                    .filter(Boolean);
-                  const res = await searchResidentsForMember(q, exclude);
-                  // setLastResults(res);
-                  return res;
-                }}
-                displayValue={(item) =>
-                  item ? `${item.fullName} – ${item.nik}` : ''
-                }
-                getKey={(item) => item.id}
-              />
-
-              {/* Relationship */}
-              <div className="flex items-center justify-between">
-                <Select
-                  value={fieldItem.familyRelationship}
-                  onValueChange={(val: FamilyRelationship) => {
-                    update(index, { ...fieldItem, familyRelationship: val });
-                  }}
-                >
-                  <SelectTrigger className="w-44">
-                    <SelectValue placeholder="Pilih hubungan" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {FamilyRelationshipEnum.options
-                      .filter((rel) => {
-                        if (rel === 'HEAD') {
-                          return (
-                            !headExists ||
-                            fieldItem.familyRelationship === 'HEAD'
-                          );
+                <Autocomplete<ResidentOption>
+                  placeholder="Cari warga..."
+                  value={
+                    fieldItem.fullName
+                      ? {
+                          id: fieldItem.residentId,
+                          fullName: fieldItem.fullName,
+                          nik: fieldItem.nik,
                         }
-                        return true;
-                      })
-                      .map((rel) => (
-                        <SelectItem key={rel} value={rel}>
-                          {familyRelationshipLabels[rel]}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
+                      : null
+                  }
+                  onChange={(item) => {
+                    if (!item) return;
+                    update(index, {
+                      residentId: item.id,
+                      fullName: item.fullName,
+                      nik: item.nik,
+                      familyRelationship:
+                        fieldItem.familyRelationship || 'CHILD',
+                    });
+                  }}
+                  search={async (q) => {
+                    const exclude = fields
+                      .filter((_, i) => i !== index)
+                      .map((m) => m.residentId)
+                      .filter(Boolean);
+                    const res = await searchResidentsForMember(q, exclude);
+                    // setLastResults(res);
+                    return res;
+                  }}
+                  displayValue={(item) =>
+                    item ? `${item.fullName} – ${item.nik}` : ''
+                  }
+                  getKey={(item) => item.id}
+                />
 
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => remove(index)}
-                  className="rounded-full"
-                >
-                  <Trash2 />
-                </Button>
+                {/* Relationship */}
+                <div className="flex items-center justify-between">
+                  <Select
+                    value={fieldItem.familyRelationship}
+                    onValueChange={(val: FamilyRelationship) => {
+                      update(index, { ...fieldItem, familyRelationship: val });
+                    }}
+                  >
+                    <SelectTrigger className="w-44">
+                      <SelectValue placeholder="Pilih hubungan" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {FamilyRelationshipEnum.options
+                        .filter((rel) => {
+                          if (rel === 'HEAD') {
+                            return (
+                              !headExists ||
+                              fieldItem.familyRelationship === 'HEAD'
+                            );
+                          }
+                          return true;
+                        })
+                        .map((rel) => (
+                          <SelectItem key={rel} value={rel}>
+                            {familyRelationshipLabels[rel]}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => remove(index)}
+                    className="rounded-full"
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           {/* {headError && (
             <Alert variant="destructive">

@@ -36,8 +36,12 @@ import { Autocomplete } from '@/components/autocomplete';
 import { searchResidentsForMember } from '../_lib/families.actions';
 import { Separator } from '@/components/ui/separator';
 import { familyRelationshipLabels } from '@/lib/enum';
-import { RefreshCcw, Trash2, Upload } from 'lucide-react';
+import { Plus, RefreshCcw, Trash2, Upload } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
+const hasHead = (members: FamilyCreateInput['members']) =>
+  members.some((m) => m.familyRelationship === 'HEAD');
 
 type LocationField = 'dusun' | 'rw' | 'rt';
 
@@ -72,11 +76,15 @@ export default function FamilyForm({
     },
   });
 
+  const [headError, setHeadError] = React.useState<string | null>(null);
+
   const { control, handleSubmit } = form;
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     name: 'members',
   });
+
+  const headExists = fields.some((m) => m.familyRelationship === 'HEAD');
 
   // const [lastResults, setLastResults] = useState<ResidentOption[]>([]);
 
@@ -228,20 +236,25 @@ export default function FamilyForm({
               <div className="flex items-center justify-between">
                 <Select
                   value={fieldItem.familyRelationship}
-                  onValueChange={(val) =>
-                    update(index, {
-                      ...fieldItem,
-                      familyRelationship: val as FamilyRelationship,
-                    })
-                  }
+                  onValueChange={(val: FamilyRelationship) => {
+                    update(index, { ...fieldItem, familyRelationship: val });
+                  }}
                 >
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-44">
                     <SelectValue placeholder="Pilih hubungan" />
                   </SelectTrigger>
 
                   <SelectContent>
                     {FamilyRelationshipEnum.options
-                      // .filter((rel) => rel !== 'HEAD') // HEAD tidak boleh muncul di member
+                      .filter((rel) => {
+                        if (rel === 'HEAD') {
+                          return (
+                            !headExists ||
+                            fieldItem.familyRelationship === 'HEAD'
+                          );
+                        }
+                        return true;
+                      })
                       .map((rel) => (
                         <SelectItem key={rel} value={rel}>
                           {familyRelationshipLabels[rel]}
@@ -263,8 +276,17 @@ export default function FamilyForm({
             </div>
           ))}
 
+          {headError && (
+            <Alert variant="destructive">
+              <AlertTitle>Validasi</AlertTitle>
+              <AlertDescription>{headError}</AlertDescription>
+            </Alert>
+          )}
+
           <Button
             type="button"
+            className="rounded-full"
+            size={'icon'}
             onClick={() =>
               append({
                 residentId: 0,
@@ -274,7 +296,7 @@ export default function FamilyForm({
               })
             }
           >
-            Tambah Anggota
+            <Plus />
           </Button>
         </div>
         <Separator />

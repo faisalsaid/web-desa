@@ -89,7 +89,7 @@ const emptyToNull = z
 export const ResidentSchema = z.object({
   id: z.number().int().optional(),
 
-  nik: z.string().min(1, 'Tidak Boleh Kosong').max(16),
+  nik: z.string().min(1, 'Tidak Boleh Kosong').max(16, 'Maksimal 16 Karakter'),
   fullName: z.string().min(3, 'Minimal 3 karakter').max(100),
   gender: Gender,
 

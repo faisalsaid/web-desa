@@ -2,31 +2,30 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
- 
+
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
+  id             String          @id @default(cuid())
+  name           String?
+  email          String          @unique
+  emailVerified  DateTime?
+  image          String?
   hashedPassword String?
-  role          UserRole @default(USER)
-  accounts      Account[]
-  sessions      Session[]
+  role           UserRole        @default(USER)
+  accounts       Account[]
+  sessions       Session[]
   // Optional for WebAuthn support
-  Authenticator Authenticator[]
+  Authenticator  Authenticator[]
 
-  passwordResetTokens PasswordResetToken[]   // reset passw relation
+  passwordResetTokens PasswordResetToken[] // reset passw relation
 
- 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model Account {
   userId            String
   type              String
@@ -39,33 +38,33 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
- 
+
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
@@ -76,17 +75,16 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
 }
 
-
 model PasswordResetToken {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  tokenHash String   // simpan hash dari raw token
+  tokenHash String // simpan hash dari raw token
   expiresAt DateTime
   usedAt    DateTime?
 
@@ -98,117 +96,117 @@ model PasswordResetToken {
 }
 
 model VillageConfig {
-  id               Int       @id @default(autoincrement())
-  villageCode      String    @unique @db.VarChar(10)
-  villageName      String
-  districtCode     String?   @db.VarChar(6)
-  districtName     String?
-  regencyCode      String?   @db.VarChar(4)
-  regencyName      String?
-  provinceCode     String?   @db.VarChar(2)
-  provinceName     String?
-  officeAddress    String?
-  postalCode       String?   @db.VarChar(10)
-  phone            String?
-  email            String?
-  website          String?
-  establishedYear  Int?
+  id              Int     @id @default(autoincrement())
+  villageCode     String  @unique @db.VarChar(10)
+  villageName     String
+  districtCode    String? @db.VarChar(6)
+  districtName    String?
+  regencyCode     String? @db.VarChar(4)
+  regencyName     String?
+  provinceCode    String? @db.VarChar(2)
+  provinceName    String?
+  officeAddress   String?
+  postalCode      String? @db.VarChar(10)
+  phone           String?
+  email           String?
+  website         String?
+  establishedYear Int?
 
   // 📝 General description
-  description      String?   @db.Text
+  description String? @db.Text
 
   // 🌍 Geographic info
-  areaSize         Float?
-  areaUnit         String?   @default("km²")
-  populationTotal  Int?      @default(0)
-  hamletCount      Int?      @default(0)
-  rwCount          Int?      @default(0)
-  rtCount          Int?      @default(0)
-  borderNorth      String?
-  borderEast       String?
-  borderSouth      String?
-  borderWest       String?
-  elevation        Int?
-  latitude         Decimal?  @db.Decimal(10,8)
-  longitude        Decimal?  @db.Decimal(11,8)
+  areaSize        Float?
+  areaUnit        String?  @default("km²")
+  populationTotal Int?     @default(0)
+  hamletCount     Int?     @default(0)
+  rwCount         Int?     @default(0)
+  rtCount         Int?     @default(0)
+  borderNorth     String?
+  borderEast      String?
+  borderSouth     String?
+  borderWest      String?
+  elevation       Int?
+  latitude        Decimal? @db.Decimal(10, 8)
+  longitude       Decimal? @db.Decimal(11, 8)
 
   // 🖼️ Visual identity
-  logoUrl          String?
-  officePhotoUrl   String?
-  vision           String?
-  mission          String?
-  slogan           String?
+  logoUrl        String?
+  officePhotoUrl String?
+  vision         String?
+  mission        String?
+  slogan         String?
 
-  isActive         Boolean   @default(true)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // RESIDENTS SCEMA
 model Family {
-  id                Int        @id @default(autoincrement())       // ID internal
-  urlId             String     @unique @default(cuid())             // ID untuk URL
-  familyCardNumber  String     @unique @db.VarChar(20)
-  address           String
-  dusun             String    @db.VarChar(100)
-  rw                String    @db.VarChar(10)
-  rt                String    @db.VarChar(10)
+  id               Int    @id @default(autoincrement()) // ID internal
+  urlId            String @unique @default(cuid()) // ID untuk URL
+  familyCardNumber String @unique @db.VarChar(20)
+  address          String
+  dusun            String @db.VarChar(100)
+  rw               String @db.VarChar(10)
+  rt               String @db.VarChar(10)
 
   // Kepala keluarga (satu keluarga hanya punya satu kepala)
-  headOfFamilyId    Int?       @unique
-  headOfFamily      Resident?  @relation("HeadOfFamily", fields: [headOfFamilyId], references: [id])
+  headOfFamilyId Int?      @unique
+  headOfFamily   Resident? @relation("HeadOfFamily", fields: [headOfFamilyId], references: [id])
 
   // Anggota keluarga
-  members           Resident[]
+  members Resident[]
 
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([dusun, rw, rt])
 }
 
 model Resident {
-  id                Int                @id @default(autoincrement()) // ID internal
-  urlId             String           @unique @default(cuid())       // ID untuk URL
-  nik               String             @unique @db.VarChar(16)
-  fullName          String             @db.VarChar(100)
-  gender            Gender
-  birthPlace        String?
-  birthDate         DateTime?
-  religion          Religion?
-  education         Education?
-  occupation        Occupation?
-  maritalStatus     MaritalStatus?
-  bloodType         BloodType?         @default(UNKNOWN)
-  disabilityType    DisabilityType?    @default(NONE)
-  citizenship       Citizenship?       @default(WNI) 
-  passportNumber    String?            @db.VarChar(50)
-  ethnicity         String?            @db.VarChar(100)
-  nationality       String?            @db.VarChar(100)           // country name for WNA
-  address           String?            @db.Text
-  dusun             String?
-  rw                String?
-  rt                String?
-  phone             String?
-  email             String?
-  populationStatus  PopulationStatus   @default(PERMANENT)
+  id               Int              @id @default(autoincrement()) // ID internal
+  urlId            String           @unique @default(cuid()) // ID untuk URL
+  nik              String           @unique @db.VarChar(16)
+  fullName         String           @db.VarChar(100)
+  gender           Gender
+  birthPlace       String?
+  birthDate        DateTime?
+  religion         Religion?
+  education        Education?
+  occupation       Occupation?
+  maritalStatus    MaritalStatus?
+  bloodType        BloodType?       @default(UNKNOWN)
+  disabilityType   DisabilityType?  @default(NONE)
+  citizenship      Citizenship?     @default(WNI)
+  passportNumber   String?          @db.VarChar(50)
+  ethnicity        String?          @db.VarChar(100)
+  nationality      String?          @db.VarChar(100) // country name for WNA
+  address          String?          @db.Text
+  dusun            String?
+  rw               String?
+  rt               String?
+  phone            String?
+  email            String?
+  populationStatus PopulationStatus @default(PERMANENT)
 
-  familyRelationship FamilyRelationship?  // <--- TAMBAHKAN INI
-  
+  familyRelationship FamilyRelationship? // <--- TAMBAHKAN INI
+
   // Relasi keluarga
-  familyId          Int?
-  family            Family?            @relation(fields: [familyId], references: [id])
-  
+  familyId Int?
+  family   Family? @relation(fields: [familyId], references: [id])
+
   // Relasi balik untuk kepala keluarga
-  headOfFamilyFor   Family?            @relation("HeadOfFamily")
+  headOfFamilyFor Family? @relation("HeadOfFamily")
 
   // Relasi visitor (pendatang)
-  visitor           Visitor?
+  visitor Visitor?
 
-  isActive          Boolean            @default(true)
-  deletedAt         DateTime? 
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([familyId])
   @@index([dusun, rw, rt])
@@ -217,31 +215,29 @@ model Resident {
 }
 
 model Visitor {
-  id              Int       @id @default(autoincrement())  // ID internal
-  urlId           String    @unique @default(cuid())       // ID untuk URL
-  residentId      Int       @unique
-  resident        Resident  @relation(fields: [residentId], references: [id])
+  id         Int      @id @default(autoincrement()) // ID internal
+  urlId      String   @unique @default(cuid()) // ID untuk URL
+  residentId Int      @unique
+  resident   Resident @relation(fields: [residentId], references: [id])
 
-  originAddress   String?   // alamat asal
-  originVillage   String?   // desa asal
-  originDistrict  String?
-  originRegency   String?
-  originProvince  String?
-  arrivalDate     DateTime? // tanggal datang
-  purpose         String?   // tujuan datang (kerja, sekolah, dll)
-  stayType        String?   // kontrak, kos, keluarga, dll
-  isStillStaying  Boolean   @default(true)
-  departureDate   DateTime? // tanggal keluar
-  notes           String?   // keterangan tambahan
+  originAddress  String? // alamat asal
+  originVillage  String? // desa asal
+  originDistrict String?
+  originRegency  String?
+  originProvince String?
+  arrivalDate    DateTime? // tanggal datang
+  purpose        String? // tujuan datang (kerja, sekolah, dll)
+  stayType       String? // kontrak, kos, keluarga, dll
+  isStillStaying Boolean   @default(true)
+  departureDate  DateTime? // tanggal keluar
+  notes          String? // keterangan tambahan
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([arrivalDate])
   @@index([departureDate])
 }
-
-
 
 enum Gender {
   MALE
@@ -263,7 +259,7 @@ enum Education {
   ELEMENTARY
   JUNIOR_HIGH
   SENIOR_HIGH
-  VOCATIONAL_HIGH   // SMK
+  VOCATIONAL_HIGH // SMK
   DIPLOMA_1
   DIPLOMA_2
   DIPLOMA_3
@@ -306,23 +302,22 @@ enum BloodType {
 }
 
 enum PopulationStatus {
-  PERMANENT    // Warga tetap
-  TEMPORARY    // Pendatang sementara
-  MOVED_OUT    // Sudah pindah
-  DECEASED     // Meninggal dunia
+  PERMANENT // Warga tetap
+  TEMPORARY // Pendatang sementara
+  MOVED_OUT // Sudah pindah
+  DECEASED // Meninggal dunia
 }
 
 enum DisabilityType {
-  NONE                // Tidak ada disabilitas
-  PHYSICAL            // Disabilitas fisik (cacat tubuh, anggota badan)
-  VISUAL              // Tunanetra
-  HEARING             // Tunarungu / tunawicara
-  MENTAL              // Gangguan mental atau disabilitas psikososial
-  INTELLECTUAL        // Tunagrahita / disabilitas intelektual
-  MULTIPLE            // Disabilitas ganda
-  OTHER               // Lainnya
+  NONE // Tidak ada disabilitas
+  PHYSICAL // Disabilitas fisik (cacat tubuh, anggota badan)
+  VISUAL // Tunanetra
+  HEARING // Tunarungu / tunawicara
+  MENTAL // Gangguan mental atau disabilitas psikososial
+  INTELLECTUAL // Tunagrahita / disabilitas intelektual
+  MULTIPLE // Disabilitas ganda
+  OTHER // Lainnya
 }
-
 
 enum Citizenship {
   WNI
@@ -330,17 +325,16 @@ enum Citizenship {
 }
 
 enum FamilyRelationship {
-  HEAD        // kepala keluarga
-  SPOUSE      // istri/suami
-  CHILD       // anak
-  PARENT      // orang tua
-  OTHER       // lainnya
+  HEAD // kepala keluarga
+  SPOUSE // istri/suami
+  CHILD // anak
+  PARENT // orang tua
+  OTHER // lainnya
 }
 
-
 enum UserRole {
-    ADMIN
-    OPERATOR
-    EDITOR
-    USER
+  ADMIN
+  OPERATOR
+  EDITOR
+  USER
 }

@@ -767,7 +767,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
             <Button
               type="submit"
               className="w-fit"
-              disabled={!isValid || isSubmitting}
+              disabled={isSubmitting || !isValid || isSubmitting}
             >
               <Upload />
               {form.formState.isSubmitting

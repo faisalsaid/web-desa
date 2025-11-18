@@ -3,7 +3,7 @@
 // ===========================
 'use client';
 
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -33,13 +33,21 @@ import {
 import { DUSUN_LIST, RT_LIST, RW_LIST } from '@/lib/staticData';
 import { Textarea } from '@/components/ui/textarea';
 import { Autocomplete } from '@/components/autocomplete';
-import { searchResidentsForMember } from '../_lib/families.actions';
+import {
+  createFamilyWithMembers,
+  searchResidentsForMember,
+} from '../_lib/families.actions';
 import { Separator } from '@/components/ui/separator';
 import { familyRelationshipLabels } from '@/lib/enum';
 import { Plus, RefreshCcw, Trash2, Upload } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+// helper mengecek member sudah punya HEAD lalu berikan warning
 const hasHead = (members: FamilyCreateInput['members']) =>
   members.some((m) => m.familyRelationship === 'HEAD');
 
@@ -64,6 +72,8 @@ export default function FamilyForm({
   mode = 'create',
   defaultValues,
 }: FamilyFormProps) {
+  const router = useRouter();
+
   const form = useForm<FamilyCreateInput>({
     resolver: zodResolver(FamilyCreateSchema),
     defaultValues: defaultValues || {
@@ -76,9 +86,12 @@ export default function FamilyForm({
     },
   });
 
-  const [headError, setHeadError] = React.useState<string | null>(null);
+  // const [headError, setHeadError] = useState<string | null>(null);
+  const [missingHeadWarning, setMissingHeadWarning] = useState<string | null>(
+    null,
+  );
 
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, watch } = form;
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     name: 'members',
@@ -86,10 +99,96 @@ export default function FamilyForm({
 
   const headExists = fields.some((m) => m.familyRelationship === 'HEAD');
 
+  const [showAddMemberButton, setShowAddMemberButton] = useState(false);
+
+  const requiredValues = watch([
+    'familyCardNumber',
+    'address',
+    'dusun',
+    'rw',
+    'rt',
+  ]);
+
+  useEffect(() => {
+    const [familyCardNumber, address, dusun, rw, rt] = requiredValues;
+
+    const filled =
+      familyCardNumber?.trim() && address?.trim() && dusun && rw && rt;
+
+    const hasErrors =
+      !!form.formState.errors.familyCardNumber ||
+      !!form.formState.errors.address ||
+      !!form.formState.errors.dusun ||
+      !!form.formState.errors.rw ||
+      !!form.formState.errors.rt;
+
+    setShowAddMemberButton(Boolean(filled && !hasErrors));
+  }, [requiredValues, form.formState.errors]);
+
   // const [lastResults, setLastResults] = useState<ResidentOption[]>([]);
 
-  const onSubmit = (data: FamilyCreateInput) => {
-    console.log('FINAL PAYLOAD:', data);
+  useEffect(() => {
+    const members = watch('members');
+
+    if (!members || members.length === 0) {
+      setMissingHeadWarning('Tambahkan minimal satu anggota keluarga.');
+      return;
+    }
+
+    if (!hasHead(members)) {
+      setMissingHeadWarning(
+        'Harus ada satu anggota dengan status Kepala Keluarga.',
+      );
+    } else {
+      setMissingHeadWarning(null);
+    }
+  }, [watch('members')]);
+
+  const onSubmit = async (payload: FamilyCreateInput) => {
+    console.log('FINAL PAYLOAD:', payload);
+
+    // const toastId = toast.loading('Menyimpan keluarga...');
+
+    // try {
+    //   const result = await createFamilyWithMembers(payload);
+
+    //   if (!result.success) {
+    //     toast.error(result.error ?? 'Gagal membuat keluarga.', { id: toastId });
+    //     return;
+    //   }
+
+    //   // result.data —— berisi family hasil create
+    //   toast.success('Keluarga berhasil dibuat!', { id: toastId });
+
+    //   router.push(`/families/${result?.data?.urlId}`);
+    // } catch (error) {
+    //   toast.error('Terjadi kesalahan server.', { id: toastId });
+    // }
+  };
+
+  const canAddMember = (): boolean => {
+    const members = form.getValues('members');
+
+    if (!members || members.length === 0) return true;
+
+    // 1. Tidak boleh ada member tanpa resident
+    const hasEmptyResident = members.some(
+      (m) => !m.residentId || m.residentId === 0,
+    );
+    if (hasEmptyResident) return false;
+
+    // 2. Tidak boleh ada fullName kosong (autocomplete belum fix)
+    const hasInvalidName = members.some(
+      (m) => !m.fullName || m.fullName.trim() === '',
+    );
+    if (hasInvalidName) return false;
+
+    // 3. Duplicate resident
+    const ids = members.map((m) => m.residentId);
+    const hasDuplicate = new Set(ids).size !== ids.length;
+    if (hasDuplicate) return false;
+
+    return true;
   };
 
   const isValid = form.formState.isValid;
@@ -192,7 +291,9 @@ export default function FamilyForm({
 
         {/* Members */}
         <div className="space-y-3">
-          <FormLabel className="text-md">Anggota Keluarga</FormLabel>
+          <FormLabel className="text-md">
+            Anggota Keluarga <span className="text-red-500">*</span>
+          </FormLabel>
 
           {fields.map((fieldItem, index) => (
             <div key={fieldItem.id} className="space-y-2 p-3 border rounded-md">
@@ -276,29 +377,39 @@ export default function FamilyForm({
             </div>
           ))}
 
-          {headError && (
+          {/* {headError && (
             <Alert variant="destructive">
               <AlertTitle>Validasi</AlertTitle>
               <AlertDescription>{headError}</AlertDescription>
             </Alert>
-          )}
-
-          <Button
-            type="button"
-            className="rounded-full"
-            size={'icon'}
-            onClick={() =>
-              append({
-                residentId: 0,
-                fullName: '',
-                nik: '',
-                familyRelationship: 'CHILD',
-              })
-            }
-          >
-            <Plus />
-          </Button>
+          )} */}
         </div>
+        {isSubmitted && missingHeadWarning && (
+          <div className="mt-2 p-2 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded text-sm">
+            {missingHeadWarning}
+          </div>
+        )}
+        {showAddMemberButton && (
+          <div className="flex items-center justify-center">
+            <Button
+              type="button"
+              className="rounded-full"
+              size={'icon'}
+              disabled={!canAddMember()}
+              onClick={() =>
+                append({
+                  residentId: 0,
+                  fullName: '',
+                  nik: '',
+                  familyRelationship: 'CHILD',
+                })
+              }
+            >
+              <Plus />
+            </Button>
+          </div>
+        )}
+
         <Separator />
         <div className="flex items-center justify-end gap-4 w-full mt-5">
           {isSubmitting ? null : (

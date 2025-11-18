@@ -5,25 +5,25 @@ import { revalidatePath } from 'next/cache';
 import { FamilyCreateInput, FamilyCreateSchema } from './families.zod';
 import { FamilyType } from './families.type';
 
-export async function searchResidentsHeadFamilyNull(query: string) {
-  if (!query || query.trim().length === 0) return [];
+// export async function searchResidentsHeadFamilyNull(query: string) {
+//   if (!query || query.trim().length === 0) return [];
 
-  const residents = await prisma.resident.findMany({
-    where: {
-      isActive: true,
-      headOfFamilyFor: null,
-      fullName: { contains: query, mode: 'insensitive' },
-    },
-    take: 20, // batasi hasil
-    select: {
-      id: true,
-      fullName: true,
-      nik: true,
-    },
-  });
+//   const residents = await prisma.resident.findMany({
+//     where: {
+//       isActive: true,
+//       headOfFamilyFor: null,
+//       fullName: { contains: query, mode: 'insensitive' },
+//     },
+//     take: 20, // batasi hasil
+//     select: {
+//       id: true,
+//       fullName: true,
+//       nik: true,
+//     },
+//   });
 
-  return residents;
-}
+//   return residents;
+// }
 
 export async function searchResidentsForMember(
   query: string,
@@ -36,6 +36,7 @@ export async function searchResidentsForMember(
       isActive: true,
       id: { notIn: excludeIds },
       headOfFamilyFor: null,
+      familyId: null,
 
       OR: [
         { fullName: { contains: query, mode: 'insensitive' } },
@@ -53,145 +54,101 @@ export async function searchResidentsForMember(
   return residents;
 }
 
-// HANDLE CREATE FAMILY
+export async function createFamilyWithMembers(data: FamilyCreateInput) {
+  // ---- 1. Temukan HEAD dalam payload ----
+  const head = data.members.find((m) => m.familyRelationship === 'HEAD');
 
-type CreateFamilyResponse =
-  | { success: true; data: { id: number; urlId: string } }
-  | { success: false; error: string };
+  if (!head) {
+    return { success: false, error: 'Kepala keluarga wajib dipilih.' };
+  }
 
-export async function createFamily(
-  data: FamilyCreateInput,
-): Promise<CreateFamilyResponse> {
-  try {
-    // 1️⃣ Validasi schema
-    const parsed = FamilyCreateSchema.safeParse(data);
-    if (!parsed.success) {
+  // ---- 2. Kumpulkan semua residentId ----
+  const memberIds = data.members.map((m) => m.residentId);
+
+  // ---- 3. Validasi duplikasi payload ----
+  if (new Set(memberIds).size !== memberIds.length) {
+    return { success: false, error: 'Terdapat anggota duplikat.' };
+  }
+
+  // ---- 4. Ambil data resident dari DB untuk validasi ----
+  const residents = await prisma.resident.findMany({
+    where: { id: { in: memberIds } },
+    select: {
+      id: true,
+      isActive: true,
+      familyId: true,
+      headOfFamilyFor: true,
+    },
+  });
+
+  // ---- 5. Validasi semua resident valid ----
+  if (residents.length !== memberIds.length) {
+    return { success: false, error: 'Beberapa warga tidak ditemukan.' };
+  }
+
+  for (const r of residents) {
+    if (!r.isActive) {
       return {
         success: false,
-        error: parsed.error.issues[0]?.message || 'Data tidak valid',
+        error: `Warga dengan ID ${r.id} tidak aktif.`,
       };
     }
 
-    const {
-      familyCardNumber,
-      address,
-      dusun,
-      rw,
-      rt,
-      headOfFamilyId,
-      members,
-    } = parsed.data;
-
-    // 2️⃣ Cek duplikasi KK
-    const existFamily = await prisma.family.findUnique({
-      where: { familyCardNumber },
-      select: { id: true },
-    });
-    if (existFamily) {
-      return { success: false, error: 'Nomor KK sudah terdaftar' };
+    if (r.familyId !== null) {
+      return {
+        success: false,
+        error: `Warga dengan ID ${r.id} sudah masuk keluarga lain.`,
+      };
     }
+  }
 
-    // 3️⃣ Validasi kepala keluarga
-    let validatedHeadId: number | null = null;
-    if (headOfFamilyId) {
-      const resident = await prisma.resident.findUnique({
-        where: { id: headOfFamilyId },
-        select: {
-          id: true,
-          isActive: true,
-          familyId: true,
-          headOfFamilyFor: true,
-        },
-      });
+  // ---- 6. Validasi head belum kepala keluarga lain ----
+  const headDb = residents.find((x) => x.id === head.residentId);
+  if (headDb?.headOfFamilyFor !== null) {
+    return {
+      success: false,
+      error: 'Resident ini sudah menjadi kepala keluarga lain.',
+    };
+  }
 
-      if (!resident)
-        return { success: false, error: 'Kepala keluarga tidak ditemukan' };
-      if (!resident.isActive)
-        return { success: false, error: 'Resident ini tidak aktif' };
-      if (resident.headOfFamilyFor)
-        return {
-          success: false,
-          error: 'Resident ini sudah menjadi kepala keluarga di keluarga lain',
-        };
-      if (resident.familyId)
-        return {
-          success: false,
-          error: 'Resident ini sudah menjadi anggota keluarga lain',
-        };
+  // ---- 7. Buat keluarga + update semua member ATOMIC ----
 
-      validatedHeadId = resident.id;
-    }
-
-    // 4️⃣ Buat keluarga baru
-    const createdFamily = await prisma.family.create({
-      data: {
-        familyCardNumber,
-        address,
-        dusun,
-        rw,
-        rt,
-        headOfFamilyId: validatedHeadId,
-      },
-    });
-
-    // ===========================
-    // 5️⃣ Tambahkan kepala keluarga sebagai member (relationship = HEAD)
-    // ===========================
-    if (validatedHeadId) {
-      await prisma.resident.update({
-        where: { id: validatedHeadId },
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      // --- 7A. Buat family ---
+      const family = await tx.family.create({
         data: {
-          familyId: createdFamily.id,
-          familyRelationship: 'HEAD', // ← Tambahkan ini
-          headOfFamilyFor: { connect: { id: createdFamily.id } },
+          familyCardNumber: data.familyCardNumber,
+          address: data.address,
+          dusun: data.dusun,
+          rw: data.rw,
+          rt: data.rt,
+          headOfFamilyId: head.residentId,
         },
       });
-    }
 
-    // ===========================
-    // 6️⃣ Tambahkan anggota dari payload (members)
-    // ===========================
-    if (members?.length) {
-      for (const m of members) {
-        // jangan masukkan kepala keluarga lagi
-        if (m.residentId === validatedHeadId) continue;
+      // --- 7B. Update semua anggota ---
+      await Promise.all(
+        data.members.map((m) =>
+          tx.resident.update({
+            where: { id: m.residentId },
+            data: {
+              familyId: family.id,
+              familyRelationship: m.familyRelationship,
+            },
+          }),
+        ),
+      );
 
-        const resident = await prisma.resident.findUnique({
-          where: { id: m.residentId },
-          select: {
-            id: true,
-            isActive: true,
-            familyId: true,
-            headOfFamilyFor: true,
-          },
-        });
+      return family;
+    });
 
-        if (!resident) continue; // skip jika tidak ditemukan
-        if (!resident.isActive) continue; // skip jika tidak aktif
-        if (resident.headOfFamilyFor) continue; // skip jika sudah kepala keluarga
-        if (resident.familyId) continue; // skip jika sudah anggota keluarga lain
-
-        await prisma.resident.update({
-          where: { id: resident.id },
-          data: {
-            familyId: createdFamily.id,
-            familyRelationship: m.relationship ?? 'MEMBER', // ← Tambah ini
-          },
-        });
-      }
-    }
-
-    // 7️⃣ Refresh cache Next.js
-    revalidatePath('/families');
-
-    return { success: true, data: createdFamily };
+    return { success: true, data: result };
   } catch (error) {
-    console.error('Create Family Error:', error);
-    return { success: false, error: 'Terjadi kesalahan pada server' };
+    console.error(error);
+    return { success: false, error: 'Gagal membuat keluarga.' };
   }
 }
-
-// GET FAMILY DETAILS
 
 export async function getFamilyDetails(
   urlId: string,

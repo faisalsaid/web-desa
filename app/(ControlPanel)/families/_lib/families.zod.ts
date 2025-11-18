@@ -34,6 +34,10 @@ export const FamilySchema = z.object({
   members: z
     .array(MemberSchema)
     .min(1, 'Harus ada minimal satu anggota keluarga')
+    .refine((members) => members.some((m) => m.familyRelationship === 'HEAD'), {
+      message: 'Harus memilih satu Kepala Keluarga (HEAD)',
+      path: ['members'],
+    })
     .refine(
       (members) =>
         members.filter((m) => m.familyRelationship === 'HEAD').length === 1,

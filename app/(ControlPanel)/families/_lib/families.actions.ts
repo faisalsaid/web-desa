@@ -168,3 +168,16 @@ export async function getFamilyDetails(
     return null;
   }
 }
+
+export async function checkFamilyCardNumberExists(
+  kk: string,
+): Promise<boolean> {
+  if (!kk || kk.trim().length === 0) return false;
+
+  const exists = await prisma.family.findFirst({
+    where: { familyCardNumber: kk },
+    select: { id: true },
+  });
+
+  return !!exists;
+}

@@ -34,6 +34,7 @@ import { DUSUN_LIST, RT_LIST, RW_LIST } from '@/lib/staticData';
 import { Textarea } from '@/components/ui/textarea';
 import { Autocomplete } from '@/components/autocomplete';
 import {
+  checkFamilyCardNumberExists,
   createFamilyWithMembers,
   searchResidentsForMember,
 } from '../_lib/families.actions';
@@ -45,7 +46,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // helper mengecek member sudah punya HEAD lalu berikan warning
 const hasHead = (members: FamilyCreateInput['members']) =>
@@ -90,6 +91,7 @@ export default function FamilyForm({
   const [missingHeadWarning, setMissingHeadWarning] = useState<string | null>(
     null,
   );
+  const [showAddMemberButton, setShowAddMemberButton] = useState(false);
 
   const { control, handleSubmit, watch } = form;
   const { fields, append, remove, update } = useFieldArray({
@@ -97,9 +99,24 @@ export default function FamilyForm({
     name: 'members',
   });
 
-  const headExists = fields.some((m) => m.familyRelationship === 'HEAD');
+  const [kkExists, setKkExists] = useState(false);
+  const [checkingKK, setCheckingKK] = useState(false);
+  const kkTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const [showAddMemberButton, setShowAddMemberButton] = useState(false);
+  async function handleKkCheck(value: string, onChange: (v: string) => void) {
+    onChange(value);
+
+    if (kkTimeout.current) clearTimeout(kkTimeout.current);
+
+    kkTimeout.current = setTimeout(async () => {
+      setCheckingKK(true);
+      const exists = await checkFamilyCardNumberExists(value);
+      setKkExists(exists);
+      setCheckingKK(false);
+    }, 400);
+  }
+
+  const headExists = fields.some((m) => m.familyRelationship === 'HEAD');
 
   const requiredValues = watch([
     'familyCardNumber',
@@ -147,23 +164,23 @@ export default function FamilyForm({
   const onSubmit = async (payload: FamilyCreateInput) => {
     console.log('FINAL PAYLOAD:', payload);
 
-    // const toastId = toast.loading('Menyimpan keluarga...');
+    const toastId = toast.loading('Menyimpan keluarga...');
 
-    // try {
-    //   const result = await createFamilyWithMembers(payload);
+    try {
+      const result = await createFamilyWithMembers(payload);
 
-    //   if (!result.success) {
-    //     toast.error(result.error ?? 'Gagal membuat keluarga.', { id: toastId });
-    //     return;
-    //   }
+      if (!result.success) {
+        toast.error(result.error ?? 'Gagal membuat keluarga.', { id: toastId });
+        return;
+      }
 
-    //   // result.data —— berisi family hasil create
-    //   toast.success('Keluarga berhasil dibuat!', { id: toastId });
+      // result.data —— berisi family hasil create
+      toast.success('Keluarga berhasil dibuat!', { id: toastId });
 
-    //   router.push(`/families/${result?.data?.urlId}`);
-    // } catch (error) {
-    //   toast.error('Terjadi kesalahan server.', { id: toastId });
-    // }
+      router.push(`/families/${result?.data?.urlId}`);
+    } catch (error) {
+      toast.error('Terjadi kesalahan server.', { id: toastId });
+    }
   };
 
   const canAddMember = (): boolean => {
@@ -206,9 +223,29 @@ export default function FamilyForm({
               <FormLabel>
                 Nomor KK <span className="text-red-500">*</span>
               </FormLabel>
+
               <FormControl>
-                <Input {...field} placeholder="1234567890123456" />
+                <Input
+                  {...field}
+                  placeholder="e.g : 1234567890123456"
+                  onChange={(e) =>
+                    handleKkCheck(e.target.value, field.onChange)
+                  }
+                />
               </FormControl>
+
+              {checkingKK && (
+                <p className="text-sm text-muted-foreground">
+                  Memeriksa nomor KK...
+                </p>
+              )}
+
+              {kkExists && (
+                <p className="text-sm text-red-500 font-medium">
+                  Nomor KK sudah terpakai. Gunakan nomor lain.
+                </p>
+              )}
+
               <FormMessage />
             </FormItem>
           )}

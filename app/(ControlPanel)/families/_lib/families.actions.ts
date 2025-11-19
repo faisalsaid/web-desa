@@ -14,6 +14,7 @@ import {
 
 import type { FamilyUpdateInput, MemberInput } from './families.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
+import { Prisma } from '@prisma/client';
 
 // export async function searchResidentsHeadFamilyNull(query: string) {
 //   if (!query || query.trim().length === 0) return [];
@@ -269,10 +270,11 @@ export async function updateFamilyWithMembers(
 
 // app/_lib/families.actions.ts
 
-export interface FetchFamiliesParams {
+interface FetchFamiliesParams {
   page?: number;
-  pageSize?: number;
+  limit?: number;
   search?: string;
+  pageSize?: number;
 }
 
 export const fetchFamilies = async ({
@@ -283,42 +285,87 @@ export const fetchFamilies = async ({
   success: boolean;
   data?: FamiliesDataTableType[];
   total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
   error?: string;
 }> => {
   try {
     // Filter untuk search
-    const where = search
+    const where: Prisma.FamilyWhereInput = search
       ? {
           OR: [
-            { familyCardNumber: { contains: search } },
-            { address: { contains: search } },
-            { dusun: { contains: search } },
-            { rw: { contains: search } },
-            { rt: { contains: search } },
             {
-              members: {
-                some: {
-                  fullName: { contains: search },
+              familyCardNumber: {
+                contains: search,
+                mode: 'insensitive' as Prisma.QueryMode,
+              },
+            },
+            {
+              headOfFamily: {
+                fullName: {
+                  contains: search,
+                  mode: 'insensitive' as Prisma.QueryMode,
                 },
               },
             },
+            // {
+            //   address: {
+            //     contains: search,
+            //     mode: 'insensitive' as Prisma.QueryMode,
+            //   },
+            // },
+            // {
+            //   dusun: {
+            //     contains: search,
+            //     mode: 'insensitive' as Prisma.QueryMode,
+            //   },
+            // },
+            // {
+            //   rw: { contains: search, mode: 'insensitive' as Prisma.QueryMode },
+            // },
+            // {
+            //   rt: { contains: search, mode: 'insensitive' as Prisma.QueryMode },
+            // },
+            // {
+            //   members: {
+            //     some: {
+            //       fullName: {
+            //         contains: search,
+            //         mode: 'insensitive' as Prisma.QueryMode,
+            //       },
+            //     },
+            //   },
+            // },
           ],
         }
       : {};
 
+    // Total record matching filter
     const total = await prisma.family.count({ where });
 
+    // Ambil data dengan pagination
     const families = await prisma.family.findMany({
-      ...getFamiliesDataTableQuery,
+      ...getFamiliesDataTableQuery, // pastikan query ini sesuai kebutuhan
       where,
       skip: (page - 1) * pageSize,
       take: pageSize,
       orderBy: { id: 'desc' },
     });
 
-    return { success: true, data: families, total };
+    return {
+      success: true,
+      data: families,
+      total,
+      page,
+      limit: pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
   } catch (error) {
     console.error(error);
-    return { success: false, error: 'Gagal mengambil data table' };
+    return {
+      success: false,
+      error: 'Gagal mengambil data table',
+    };
   }
 };

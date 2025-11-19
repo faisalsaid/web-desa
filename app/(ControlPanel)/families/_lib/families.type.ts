@@ -1,4 +1,6 @@
 import { Prisma } from '@prisma/client';
+import { tree } from 'next/dist/build/templates/app-page';
+import { tr } from 'zod/v4/locales';
 
 export const getFamilyDetailsQuery =
   Prisma.validator<Prisma.FamilyFindFirstArgs>()({
@@ -51,6 +53,12 @@ export const getFamiliesDataTableQuery =
           nik: true,
           fullName: true,
           familyRelationship: true,
+        },
+      },
+      headOfFamily: {
+        select: {
+          id: true,
+          fullName: true,
         },
       },
     },

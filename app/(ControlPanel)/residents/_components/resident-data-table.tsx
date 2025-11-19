@@ -24,7 +24,7 @@ interface DataTableProps<TData, TValue> {
   page: number;
   totalPages: number;
 }
-export function DataTable<TData, TValue>({
+export function ResidentDataTable<TData, TValue>({
   columns,
   data,
   page,

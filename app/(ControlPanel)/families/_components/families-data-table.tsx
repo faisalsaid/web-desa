@@ -1,46 +1,35 @@
 'use client';
 
 import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
   ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
 
 import {
   Table,
   TableBody,
   TableCell,
-  TableHeader,
   TableHead,
+  TableHeader,
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useRouter } from 'next/navigation';
-import { FamiliesDataTableType } from '../_lib/families.type';
 
-interface FamilyDataTableProps {
-  columns: ColumnDef<FamiliesDataTableType, any>[];
-  data: FamiliesDataTableType[];
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
   page: number;
   totalPages: number;
-  pageSize: number;
 }
-
-export const FamilyDataTable = ({
+export default function FamilyDataTable<TData, TValue>({
   columns,
   data,
   page,
   totalPages,
-  pageSize,
-}: FamilyDataTableProps) => {
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -48,10 +37,6 @@ export const FamilyDataTable = ({
   });
 
   const router = useRouter();
-
-  const handleChangePageSize = (size: number) => {
-    router.push(`/families?page=1&pageSize=${size}`);
-  };
 
   return (
     <div className="space-y-4">
@@ -89,7 +74,7 @@ export const FamilyDataTable = ({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="text-center">
-                  Tidak ada data
+                  Tidak ada data.
                 </TableCell>
               </TableRow>
             )}
@@ -97,51 +82,26 @@ export const FamilyDataTable = ({
         </Table>
       </div>
 
-      {/* Pagination & PageSize */}
+      {/* PAGINATION */}
       <div className="flex items-center justify-between">
-        <div className="flex gap-2 items-center">
-          <span>Per halaman:</span>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={(val) => handleChangePageSize(Number(val))}
-          >
-            <SelectTrigger className="w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {[5, 10, 20].map((size) => (
-                <SelectItem key={size} value={size.toString()}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <Button
+          disabled={page <= 1}
+          onClick={() => router.push(`/families?page=${page - 1}`)}
+        >
+          Previous
+        </Button>
 
-        <div className="flex gap-2 items-center">
-          <Button
-            disabled={page <= 1}
-            onClick={() =>
-              router.push(`/families?page=${page - 1}&pageSize=${pageSize}`)
-            }
-          >
-            Previous
-          </Button>
+        <span className="text-sm">
+          Halaman {page} dari {totalPages}
+        </span>
 
-          <span>
-            Halaman {page} dari {totalPages}
-          </span>
-
-          <Button
-            disabled={page >= totalPages}
-            onClick={() =>
-              router.push(`/families?page=${page + 1}&pageSize=${pageSize}`)
-            }
-          >
-            Next
-          </Button>
-        </div>
+        <Button
+          disabled={page >= totalPages}
+          onClick={() => router.push(`/families?page=${page + 1}`)}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
-};
+}

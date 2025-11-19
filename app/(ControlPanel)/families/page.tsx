@@ -4,38 +4,26 @@ import { Button } from '@/components/ui/button';
 import { HousePlus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { fetchFamilies } from './_lib/families.actions';
-import { FamilyDataTable } from './_components/families-data-table';
+
+import FamilyDataTable from './_components/families-data-table';
 import { familyColumns } from './_components/families-columns';
-import { FamiliesSearch } from './_components/FamiliesSearch';
+import { Input } from '@/components/ui/input';
 
-interface Params {
-  page?: string;
-  pageSize?: string;
-  search?: string;
-}
+const FamiliesPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; search?: string }>;
+}) => {
+  const params = await searchParams;
+  const page = Number(params.page ?? 1);
+  const search = params.search ?? '';
+  const limit = 10;
 
-interface FamiliesPageProps {
-  params: Promise<Params>;
-}
-
-const FamiliesPage = async ({ params }: FamiliesPageProps) => {
-  const { page, pageSize, search } = await params;
-
-  const pageNumber = parseInt(page ?? '1', 10);
-  const size = parseInt(pageSize ?? '10', 10);
-  const searchQuery = search ?? '';
-
-  const res = await fetchFamilies({
-    page: pageNumber,
-    pageSize: size,
-    search: searchQuery,
+  const { data = [], totalPages } = await fetchFamilies({
+    page,
+    limit,
+    search,
   });
-
-  console.log('FAMILY DATA TABLE', res);
-
-  const data = res.success && res.data ? res.data : [];
-  const total = res.success && res.total ? res.total : 0;
-  const totalPages = total ? Math.ceil(total / size) : 1;
 
   return (
     <div className="space-y-4">
@@ -53,10 +41,26 @@ const FamiliesPage = async ({ params }: FamiliesPageProps) => {
       </ContentCard>
 
       <ContentCard>
-        <FamiliesSearch
-          initialData={data}
-          initialPage={pageNumber}
-          initialPageSize={size}
+        {/* SEARCH BAR */}
+        <form className="mb-4 ">
+          <div className="flex items-center gap-2 max-w-96">
+            <Input
+              type="text"
+              name="search"
+              defaultValue={search}
+              placeholder="Cari NIK, Nama Kepala Keluarga ..."
+              // className="border px-3 py-2 rounded w-64"
+            />
+            <Button>
+              <Search /> <span>Cari</span>
+            </Button>
+          </div>
+        </form>
+        <FamilyDataTable
+          columns={familyColumns}
+          data={data}
+          page={page}
+          totalPages={totalPages as number}
         />
       </ContentCard>
     </div>

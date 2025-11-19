@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import ContentCard from '../_component/ContentCard';
 import { Search, UserPlus } from 'lucide-react';
 import Link from 'next/link';
-import { DataTable } from './_components/resident-data-table';
+import { ResidentDataTable } from './_components/resident-data-table';
 import { getResidents } from './_lib/residents.actions';
 import { residentsColumns } from './_components/residents-columns';
 import { Input } from '@/components/ui/input';
@@ -56,7 +56,7 @@ const ResidentsPage = async ({
           </div>
         </form>
 
-        <DataTable
+        <ResidentDataTable
           columns={residentsColumns}
           data={items}
           page={page}

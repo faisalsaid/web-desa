@@ -89,7 +89,7 @@ const emptyToNull = z
 export const ResidentSchema = z.object({
   id: z.number().int().optional(),
 
-  nik: z.string().min(1, 'Tidak Boleh Kosong').max(16, 'Maksimal 16 Karakter'),
+  nik: z.string().length(16, 'Harus 16 digit'),
   fullName: z.string().min(3, 'Minimal 3 karakter').max(100),
   gender: Gender,
 
@@ -119,7 +119,7 @@ export const ResidentSchema = z.object({
   email: emptyToNull.or(z.literal('')),
 
   populationStatus: PopulationStatus.default('PERMANENT').optional(),
-  familyId: z.number().int().nullable().optional(),
+  // familyId: z.number().int().nullable().optional(),
   isActive: z.boolean().default(true).optional(),
 
   createdAt: z.coerce.date().optional(),

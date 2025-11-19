@@ -6,7 +6,7 @@ const AddNewResidentPage = () => {
     <div className="space-y-4">
       <ContentCard className=" ">
         <div className="flex gap-4 items-center justify-between">
-          <h2 className="text-xl font-semibold">Formulir Penduduk</h2>
+          <h2 className="text-xl font-semibold">Rekam Penduduk Baru</h2>
         </div>
       </ContentCard>
       <ContentCard>

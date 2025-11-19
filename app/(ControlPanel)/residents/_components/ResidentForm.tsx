@@ -103,7 +103,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
           phone: null,
           email: '',
           populationStatus: 'PERMANENT',
-          familyId: undefined,
+          // familyId: undefined,
           isActive: true,
         },
   });
@@ -165,6 +165,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
 
   const isValid = form.formState.isValid;
   const isSubmitting = form.formState.isSubmitting;
+  const isSubmitted = form.formState.isSubmitted;
 
   //   console.log(form);
 
@@ -173,7 +174,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <fieldset disabled={form.formState.isSubmitting} className="space-y-4">
           {/* ID Family (NO KK) Field */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="familyId"
             render={({ field }) => (
@@ -195,7 +196,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* NIK iD Field */}
           <FormField
@@ -214,6 +215,9 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
                     type="number"
                   />
                 </FormControl>
+                <FormDescription className="text-xs italic">
+                  Pastikan NIK terdiri dari 16 angka
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -767,7 +771,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
             <Button
               type="submit"
               className="w-fit"
-              disabled={isSubmitting || !isValid || isSubmitting}
+              disabled={isSubmitting || (isSubmitted && !isValid)}
             >
               <Upload />
               {form.formState.isSubmitting

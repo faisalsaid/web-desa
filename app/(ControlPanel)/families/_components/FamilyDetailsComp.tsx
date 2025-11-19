@@ -26,8 +26,7 @@ import {
 } from '@/components/ui/tooltip';
 import { DUSUN_LIST } from '@/lib/staticData';
 import ResidentDetails from '../../residents/_components/ResidentDetails';
-import { useEffect, useState } from 'react';
-import { getResidentDetails } from '../../residents/_lib/residents.actions';
+import { useState } from 'react';
 
 type FamilyDetailType = FamilyType;
 
@@ -42,25 +41,11 @@ const FamilyDetailsComp = ({ family }: FamilyDetailsProps) => {
   const headOfFamily = family.members.filter(
     (p) => p.familyRelationship === 'HEAD',
   );
-  // console.log(headOfFamily[0].urlId);
 
-  const [residentId, setResidentId] = useState<string>(headOfFamily[0].urlId);
+  const [singelResident, setSingelResident] = useState<ResidentType>(
+    headOfFamily[0],
+  );
 
-  const [singelResident, setSingelResident] = useState<ResidentType | null>();
-
-  useEffect(() => {
-    const fetchResidentDetails = async () => {
-      const result = await getResidentDetails(residentId);
-
-      console.log(result);
-
-      if (result) {
-        setSingelResident(result);
-      }
-    };
-
-    fetchResidentDetails();
-  }, [residentId]);
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       <div className="space-y-4">
@@ -100,7 +85,7 @@ const FamilyDetailsComp = ({ family }: FamilyDetailsProps) => {
             <MemberCard
               key={member.id}
               resident={member}
-              onSelect={setResidentId}
+              onSelect={setSingelResident}
             />
           ))}
         </div>
@@ -116,7 +101,7 @@ export default FamilyDetailsComp;
 
 interface MemberCardProps {
   resident: ResidentType;
-  onSelect: (id: string) => void; // tipe callback
+  onSelect: (id: ResidentType) => void; // tipe callback
 }
 
 const MemberCard = ({ resident, onSelect }: MemberCardProps) => {
@@ -169,7 +154,7 @@ const MemberCard = ({ resident, onSelect }: MemberCardProps) => {
             <Button
               className="rounded-full hidden sm:flex"
               size={'icon'}
-              onClick={() => onSelect(resident.urlId)}
+              onClick={() => onSelect(resident)}
             >
               <Eye />
             </Button>

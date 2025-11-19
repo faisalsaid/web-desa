@@ -45,7 +45,7 @@ import { Separator } from '@/components/ui/separator';
 import { familyRelationshipLabels } from '@/lib/enum';
 import { Plus, RefreshCcw, Trash2, Upload } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+// import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -189,6 +189,8 @@ export default function FamilyForm({
 
         router.push(`/families/${result?.data?.urlId}`);
       } catch (error) {
+        console.log(error);
+
         toast.error('Terjadi kesalahan server.', { id: toastId });
       }
     } else {
@@ -209,6 +211,7 @@ export default function FamilyForm({
 
         router.push(`/families/${result?.data?.urlId}`);
       } catch (error) {
+        console.log(error);
         toast.error('Terjadi kesalahan server.', { id: toastId });
       }
     }

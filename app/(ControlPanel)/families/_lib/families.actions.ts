@@ -1,8 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
-import { FamilyCreateInput, FamilyCreateSchema } from './families.zod';
+import { FamilyCreateInput } from './families.zod';
 import {
   FamiliesDataTableType,
   FamilyToUpdateType,
@@ -13,7 +12,6 @@ import {
 } from './families.type';
 
 import type { FamilyUpdateInput, MemberInput } from './families.zod';
-import { getCurrentUser } from '@/app/_lib/root.action';
 import { Prisma } from '@prisma/client';
 
 // export async function searchResidentsHeadFamilyNull(query: string) {

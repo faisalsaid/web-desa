@@ -1,4 +1,3 @@
-import prisma from '@/lib/prisma';
 import ContentCard from '../../_component/ContentCard';
 import FamilyForm from '../_components/FamilyForm';
 

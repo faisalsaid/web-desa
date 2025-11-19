@@ -65,7 +65,7 @@ export function Autocomplete<T>({
   useEffect(() => {
     if (value) setInput(displayValue(value));
     else setInput('');
-  }, [value]);
+  }, [value, displayValue]);
 
   async function runSearch(q: string) {
     if (q.trim().length < minLength) {

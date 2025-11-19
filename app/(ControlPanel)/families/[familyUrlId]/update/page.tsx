@@ -1,11 +1,8 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
 import FamilyForm from '../../_components/FamilyForm';
-import {
-  getFamilyDetails,
-  getFamilyToUpdate,
-} from '../../_lib/families.actions';
+import { getFamilyToUpdate } from '../../_lib/families.actions';
 import { redirect } from 'next/navigation';
-import { FamilyCreateInput, FamilyUpdateInput } from '../../_lib/families.zod';
+import { FamilyUpdateInput } from '../../_lib/families.zod';
 import { FamilyRelationship } from '@prisma/client';
 
 interface Params {

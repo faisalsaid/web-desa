@@ -4,8 +4,6 @@ import {
   CircleStar,
   Edit,
   Eye,
-  HomeIcon,
-  Image as ImageAsIcon,
   MapPinHouse,
   Mars,
   SquareUserRound,

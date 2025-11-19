@@ -4,13 +4,16 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { FamilyCreateInput, FamilyCreateSchema } from './families.zod';
 import {
+  FamiliesDataTableType,
   FamilyToUpdateType,
   FamilyType,
+  getFamiliesDataTableQuery,
   getFamilyDetailsQuery,
   getFamilyToUpdateQuery,
 } from './families.type';
 
 import type { FamilyUpdateInput, MemberInput } from './families.zod';
+import { getCurrentUser } from '@/app/_lib/root.action';
 
 // export async function searchResidentsHeadFamilyNull(query: string) {
 //   if (!query || query.trim().length === 0) return [];
@@ -263,3 +266,59 @@ export async function updateFamilyWithMembers(
     return { success: false, error: 'Gagal memperbarui keluarga.' };
   }
 }
+
+// app/_lib/families.actions.ts
+
+export interface FetchFamiliesParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+}
+
+export const fetchFamilies = async ({
+  page = 1,
+  pageSize = 10,
+  search = '',
+}: FetchFamiliesParams): Promise<{
+  success: boolean;
+  data?: FamiliesDataTableType[];
+  total?: number;
+  error?: string;
+}> => {
+  try {
+    // Filter untuk search
+    const where = search
+      ? {
+          OR: [
+            { familyCardNumber: { contains: search } },
+            { address: { contains: search } },
+            { dusun: { contains: search } },
+            { rw: { contains: search } },
+            { rt: { contains: search } },
+            {
+              members: {
+                some: {
+                  fullName: { contains: search },
+                },
+              },
+            },
+          ],
+        }
+      : {};
+
+    const total = await prisma.family.count({ where });
+
+    const families = await prisma.family.findMany({
+      ...getFamiliesDataTableQuery,
+      where,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      orderBy: { id: 'desc' },
+    });
+
+    return { success: true, data: families, total };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: 'Gagal mengambil data table' };
+  }
+};

@@ -30,6 +30,32 @@ export const getFamilyToUpdateQuery =
       },
     },
   });
+
 export type FamilyToUpdateType = Prisma.FamilyGetPayload<
   typeof getFamilyToUpdateQuery
+>;
+
+export const getFamiliesDataTableQuery =
+  Prisma.validator<Prisma.FamilyFindManyArgs>()({
+    select: {
+      id: true,
+      urlId: true,
+      familyCardNumber: true,
+      address: true,
+      dusun: true,
+      rw: true,
+      rt: true,
+      members: {
+        select: {
+          id: true,
+          nik: true,
+          fullName: true,
+          familyRelationship: true,
+        },
+      },
+    },
+  });
+
+export type FamiliesDataTableType = Prisma.FamilyGetPayload<
+  typeof getFamiliesDataTableQuery
 >;

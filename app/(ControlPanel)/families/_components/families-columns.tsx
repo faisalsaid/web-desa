@@ -34,6 +34,14 @@ export const familyColumns: ColumnDef<FamiliesDataTableType>[] = [
     },
   },
   {
+    accessorKey: 'members',
+    header: 'Keluarga',
+    cell: ({ row }) => {
+      const res = row.original.members.length;
+      return <div>{res} Orang</div>;
+    },
+  },
+  {
     id: 'actions',
     header: 'Aksi',
     cell: ({ row }) => {

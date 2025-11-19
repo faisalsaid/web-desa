@@ -24,6 +24,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { DUSUN_LIST } from '@/lib/staticData';
+import ResidentDetails from '../../residents/_components/ResidentDetails';
+import { useEffect, useState } from 'react';
+import { getResidentDetails } from '../../residents/_lib/residents.actions';
 
 type FamilyDetailType = FamilyType;
 
@@ -32,42 +36,77 @@ interface FamilyDetailsProps {
 }
 
 const FamilyDetailsComp = ({ family }: FamilyDetailsProps) => {
+  const labelDusun =
+    DUSUN_LIST.find((d) => d.key === family.dusun)?.value ?? family.dusun;
+
+  const headOfFamily = family.members.filter(
+    (p) => p.familyRelationship === 'HEAD',
+  );
+  // console.log(headOfFamily[0].urlId);
+
+  const [residentId, setResidentId] = useState<string>(headOfFamily[0].urlId);
+
+  const [singelResident, setSingelResident] = useState<ResidentType | null>();
+
+  useEffect(() => {
+    const fetchResidentDetails = async () => {
+      const result = await getResidentDetails(residentId);
+
+      console.log(result);
+
+      if (result) {
+        setSingelResident(result);
+      }
+    };
+
+    fetchResidentDetails();
+  }, [residentId]);
   return (
-    <div className="space-y-4">
-      <ContentCard>
-        <div>
-          <h1 className="text-2xl">NIK : {family.familyCardNumber}</h1>
+    <div className="grid sm:grid-cols-2 gap-4">
+      <div className="space-y-4">
+        <ContentCard>
+          <div>
+            <h1 className="text-xl">NIK : {family.familyCardNumber}</h1>
+          </div>
+        </ContentCard>
+        <ContentCard>
+          <div className="space-y-3">
+            <p>Info Umum :</p>
+            <div className="flex items-center gap-2">
+              <UserStar className="" />
+              <p className="font-semibold text-xl">
+                {family.headOfFamily?.fullName}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPinHouse />
+              <p className="">
+                {family.address}, RT : {family.rt} RW : {family.rw},{' '}
+                {labelDusun}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users />
+              <p className="">{family.members.length} orang</p>
+            </div>
+          </div>
+        </ContentCard>
+        <Separator />
+        <ContentCard>
+          <p className="text-xl">Anggota Keluarga : </p>
+        </ContentCard>
+        <div className="space-y-3 sm:grid gap-4">
+          {family.members.map((member) => (
+            <MemberCard
+              key={member.id}
+              resident={member}
+              onSelect={setResidentId}
+            />
+          ))}
         </div>
-      </ContentCard>
-      <ContentCard>
-        <div className="space-y-3">
-          <p>Info Umum :</p>
-          <div className="flex items-center gap-2">
-            <UserStar className="" />
-            <p className="font-semibold text-xl">
-              {family.headOfFamily?.fullName}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPinHouse />
-            <p className="text-lg">
-              {family.address}, RT : {family.rt} RW : {family.rw} {family.dusun}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Users />
-            <p className="text-lg">{family.members.length} orang</p>
-          </div>
-        </div>
-      </ContentCard>
-      <Separator />
-      <ContentCard>
-        <p className="text-xl">Anggota Keluarga : </p>
-      </ContentCard>
-      <div className="space-y-3 sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {family.members.map((member) => (
-          <MemberCard key={member.id} resident={member} />
-        ))}
+      </div>
+      <div className="hidden md:block">
+        {singelResident ? <ResidentDetails resident={singelResident} /> : null}
       </div>
     </div>
   );
@@ -77,9 +116,10 @@ export default FamilyDetailsComp;
 
 interface MemberCardProps {
   resident: ResidentType;
+  onSelect: (id: string) => void; // tipe callback
 }
 
-const MemberCard = ({ resident }: MemberCardProps) => {
+const MemberCard = ({ resident, onSelect }: MemberCardProps) => {
   return (
     <div className="p-4 bg-muted rounded-xl relative">
       {resident.familyRelationship === 'HEAD' ? (
@@ -126,16 +166,23 @@ const MemberCard = ({ resident }: MemberCardProps) => {
           </div>
           <Separator />
           <div className="flex items-center justify-end gap-2">
-            <Link href={`/residents/${resident.urlId}`}>
-              <Button className="rounded-full bg-sky-300" size={'icon'}>
+            <Button
+              className="rounded-full hidden sm:flex"
+              size={'icon'}
+              onClick={() => onSelect(resident.urlId)}
+            >
+              <Eye />
+            </Button>
+            <Button className="rounded-full bg-sky-300 md:hidden" size={'icon'}>
+              <Link href={`/residents/${resident.urlId}`}>
                 <Eye />
-              </Button>
-            </Link>
-            <Link href={`/residents/${resident.urlId}/update`}>
-              <Button className="rounded-full bg-green-400" size={'icon'}>
+              </Link>
+            </Button>
+            <Button className="rounded-full bg-green-400" size={'icon'}>
+              <Link href={`/residents/${resident.urlId}/update`}>
                 <Edit />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

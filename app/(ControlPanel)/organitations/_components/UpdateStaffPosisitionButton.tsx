@@ -28,12 +28,9 @@ const UpdateStaffPosisitionButton = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="icon"
-          className="rounded-full text-green-500"
-          variant={'secondary'}
-        >
-          <Edit />
+        <Button className="w-full mb-1" variant={'outline'}>
+          <Edit className="text-green-500" />
+          <span className="text-green-500"> Edit</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">

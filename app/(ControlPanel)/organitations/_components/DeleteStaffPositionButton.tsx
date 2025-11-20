@@ -44,8 +44,9 @@ export default function DeleteStaffPositionButton({ id }: { id: number }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="icon" variant="secondary" className="rounded-full">
+        <Button className="w-full " variant={'outline'}>
           <Trash2 className="text-red-500" />
+          <span className="text-red-500"> Hapus</span>
         </Button>
       </AlertDialogTrigger>
 

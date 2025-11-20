@@ -2,10 +2,17 @@
 
 import { StaffPositionType } from '../_lib/organitations.type';
 import AddStaffPositionButton from './AddStaffPositionButton';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, MoreHorizontalIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import DeleteStaffPositionButton from './DeleteStaffPositionButton';
 import UpdateStaffPosisitionButton from './UpdateStaffPosisitionButton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface StaffPositionsProps {
   staffPositions: StaffPositionType[];
@@ -39,10 +46,15 @@ export default StaffPositionsList;
 
 const ListCard = ({ position }: { position: StaffPositionType }) => {
   return (
-    <div className="flex items-center justify-between p-2 border  bg-background rounded-md">
-      <div className=" flex items-center gap-1">
+    <div className="flex items-center justify-between gap-2 p-2 border  bg-background rounded-md">
+      <div className=" flex items-center gap-1 flex-1">
         <GripVertical size={18} />
-        <p>{position.name}</p>
+        <div className="flex-1">
+          <p className="line-clamp-1">{position.name}</p>
+          <p className="text-xs text-muted-foreground line-clamp-1">
+            {position.description}
+          </p>
+        </div>
       </div>
       <div className="flex items-center gap-2">
         {position.staffAssignments.length === 0 ? (
@@ -55,8 +67,23 @@ const ListCard = ({ position }: { position: StaffPositionType }) => {
           </Badge>
         )}
 
-        <DeleteStaffPositionButton id={position.id} />
-        <UpdateStaffPosisitionButton staffPossition={position} />
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="More Options">
+                <MoreHorizontalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-24" align="center">
+              <DropdownMenuItem asChild>
+                <UpdateStaffPosisitionButton staffPossition={position} />
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <DeleteStaffPositionButton id={position.id} />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </div>
   );

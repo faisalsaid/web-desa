@@ -1,48 +1,53 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
   DialogDescription,
+  //   DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import StaffPositionTypeForm from './StaffPositionForm';
+import { StaffPositionTypeUpdateInput } from '../_lib/organitaions.zod';
 import { Separator } from '@/components/ui/separator';
 
-const AddStaffPositionButton = () => {
+interface UpdateStaffPosisitionButtonProps {
+  staffPossition: StaffPositionTypeUpdateInput;
+}
+
+const UpdateStaffPosisitionButton = ({
+  staffPossition,
+}: UpdateStaffPosisitionButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  //   const handleFormSubmit = async (data: any) => {
-  //     // Panggil server action createStaffPositionType
-  //     // Misal: await createStaffPositionType(data)
-  //     console.log("Submitted:", data);
-
-  //     // Tutup modal setelah submit
-  //     setIsOpen(false);
-  //   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size="icon" className="rounded-full bg-sky-500">
-          <Plus />
+        <Button
+          size="icon"
+          className="rounded-full text-green-500"
+          variant={'secondary'}
+        >
+          <Edit />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Tambah Jabatan Baru</DialogTitle>
+          <DialogTitle>Ubah Jabatan</DialogTitle>
           <DialogDescription>
             Form ini digunakan untuk mengubah jabatan staff.
           </DialogDescription>
         </DialogHeader>
         <Separator />
-        <StaffPositionTypeForm closeModal={() => setIsOpen(false)} />
+        <StaffPositionTypeForm
+          initialData={staffPossition}
+          closeModal={() => setIsOpen(false)}
+        />
 
         {/* <div className="mt-4 text-right">
           <DialogClose asChild>
@@ -56,4 +61,4 @@ const AddStaffPositionButton = () => {
   );
 };
 
-export default AddStaffPositionButton;
+export default UpdateStaffPosisitionButton;

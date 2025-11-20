@@ -21,7 +21,10 @@ import {
   StaffPositionTypeUpdateSchema,
 } from '../_lib/organitaions.zod';
 import { Upload } from 'lucide-react';
-import { createStaffPositionType } from '../_lib/organitatons.action';
+import {
+  createStaffPositionType,
+  updateStaffPosition,
+} from '../_lib/organitatons.action';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -55,23 +58,48 @@ StaffPositionTypeFormProps) {
   });
 
   const onSubmit = async (
-    data: StaffPositionTypeCreateInput | StaffPositionTypeUpdateInput,
+    payload: StaffPositionTypeCreateInput | StaffPositionTypeUpdateInput,
   ) => {
-    console.log(data);
+    console.log('StaffPositionTypeForm => ', payload);
 
     const toastId = toast.loading(
       isUpdate ? 'Mengubah jabatan...' : 'Membuat jabatan baru...',
     );
 
     if (isUpdate) {
+      const updatePayload = { ...payload, id: initialData.id };
+      console.log('StaffPositionTypeForm UPDATE=> ', updatePayload);
+
+      try {
+        const res = await updateStaffPosition(initialData.id as number, {
+          name: payload.name as string,
+          description: payload.description,
+        });
+
+        if (!res.success) {
+          toast.error(res.message ?? 'Gagal ubah jabatan.', {
+            id: toastId,
+          });
+          return;
+        }
+        form.reset();
+        closeModal();
+        toast.success(res.message, { id: toastId });
+      } catch (error) {
+        console.log(error);
+
+        toast.error('Terjadi kesalahan server.', { id: toastId });
+      } finally {
+        router.push('settings');
+      }
     } else {
       try {
         const res = await createStaffPositionType(
-          data as StaffPositionTypeCreateInput,
+          payload as StaffPositionTypeCreateInput,
         );
 
         if (!res.success) {
-          toast.error(res.message ?? 'Gagal mebuat jabatan baru.', {
+          toast.error(res.message ?? 'Gagal membuat jabatan baru.', {
             id: toastId,
           });
           return;
@@ -126,7 +154,12 @@ StaffPositionTypeFormProps) {
         />
 
         <div className="flex items-center justify-end gap-4">
-          <Button type="button" onClick={closeModal}>
+          <Button
+            type="button"
+            variant={'outline'}
+            onClick={closeModal}
+            className="text-red-500"
+          >
             Cancel
           </Button>
 

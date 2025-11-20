@@ -7,6 +7,8 @@ import { revalidatePath } from 'next/cache'; // opsional, untuk revalidate page
 import {
   StaffPositionTypeCreateInput,
   StaffPositionTypeCreateSchema,
+  StaffPositionTypeUpdateInput,
+  StaffPositionTypeUpdateSchema,
 } from './organitaions.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
 import slugify from 'slugify';
@@ -145,5 +147,34 @@ export async function deleteStaffPositionType(
       success: false,
       message: 'Ops! Gagal menghapus jabatan',
     };
+  }
+}
+
+export async function updateStaffPosition(
+  id: number,
+  data: StaffPositionTypeCreateInput,
+): Promise<CreateStaffPositionReturn> {
+  try {
+    const parsedData = StaffPositionTypeCreateSchema.parse(data);
+
+    const slug = slugify(parsedData.name, { lower: true, strict: true });
+
+    const updated = await prisma.staffPosition.update({
+      where: { id },
+      data: {
+        name: parsedData.name,
+        description: parsedData.description ?? null,
+        slug,
+      },
+    });
+
+    return {
+      success: true,
+      data: updated,
+      message: `Jabatan "${parsedData.name}" berhasil diperbarui`,
+    };
+  } catch (error) {
+    // Tangani duplicate slug dll
+    return { success: false, message: 'Ops! Gagal memperbarui jabatan' };
   }
 }

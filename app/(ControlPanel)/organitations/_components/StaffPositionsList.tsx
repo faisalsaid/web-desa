@@ -5,6 +5,7 @@ import AddStaffPositionButton from './AddStaffPositionButton';
 import { GripVertical } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import DeleteStaffPositionButton from './DeleteStaffPositionButton';
+import UpdateStaffPosisitionButton from './UpdateStaffPosisitionButton';
 
 interface StaffPositionsProps {
   staffPositions: StaffPositionType[];
@@ -47,9 +48,8 @@ const ListCard = ({ position }: { position: StaffPositionType }) => {
           </Badge>
         )}
 
-        <div>
-          <DeleteStaffPositionButton id={position.id} />
-        </div>
+        <DeleteStaffPositionButton id={position.id} />
+        <UpdateStaffPosisitionButton staffPossition={position} />
       </div>
     </div>
   );

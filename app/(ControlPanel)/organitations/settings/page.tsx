@@ -5,7 +5,7 @@ import StaffPositionsList from '../_components/StaffPositionsList';
 export default async function SettingsOrganitationsPage() {
   const staffPossitons = await getAllStaffPositionsTypes();
 
-  console.log(staffPossitons);
+  // console.log(staffPossitons);
 
   // console.log(staffPossitons);
 

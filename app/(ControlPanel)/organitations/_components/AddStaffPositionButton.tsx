@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,10 @@ const AddStaffPositionButton = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size="icon" className="rounded-full bg-sky-500">
+        <Button
+          size="icon"
+          className="rounded-full bg-sky-500 hover:bg-sky-600"
+        >
           <Plus />
         </Button>
       </DialogTrigger>
@@ -38,7 +40,9 @@ const AddStaffPositionButton = () => {
         <DialogHeader>
           <DialogTitle>Tambah Jabatan Baru</DialogTitle>
           <DialogDescription>
-            Form ini digunakan untuk mengubah jabatan staff.
+            <span className="text-xs">
+              Pastikan jabatan yang ingin dibuat belum tersedia
+            </span>
           </DialogDescription>
         </DialogHeader>
         <Separator />

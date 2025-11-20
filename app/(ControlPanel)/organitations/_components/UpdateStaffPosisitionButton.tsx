@@ -40,7 +40,9 @@ const UpdateStaffPosisitionButton = ({
         <DialogHeader>
           <DialogTitle>Ubah Jabatan</DialogTitle>
           <DialogDescription>
-            Form ini digunakan untuk mengubah jabatan staff.
+            <span className="text-xs">
+              Pastikan jabatan yang ingin diubah benar
+            </span>
           </DialogDescription>
         </DialogHeader>
         <Separator />

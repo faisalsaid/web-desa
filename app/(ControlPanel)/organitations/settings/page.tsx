@@ -1,13 +1,14 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
 import { getAllStaffPositionsTypes } from '../_lib/organitatons.action';
 import StaffPositionsList from '../_components/StaffPositionsList';
+import { getCurrentUser } from '@/app/_lib/root.action';
 
 export default async function SettingsOrganitationsPage() {
   const staffPossitons = await getAllStaffPositionsTypes();
 
-  // console.log(staffPossitons);
+  const curentUser = await getCurrentUser();
 
-  // console.log(staffPossitons);
+  console.log(curentUser);
 
   return (
     <div className="space-y-4">
@@ -19,13 +20,6 @@ export default async function SettingsOrganitationsPage() {
         <ContentCard>
           <StaffPositionsList staffPositions={staffPossitons} />
         </ContentCard>
-
-        {/* <div>
-            <
-          </div>
-          <div>
-            <StaffPositionTypeForm />
-          </div> */}
       </div>
     </div>
   );

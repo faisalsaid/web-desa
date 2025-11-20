@@ -19,11 +19,18 @@ const StaffPositionsList = ({ staffPositions }: StaffPositionsProps) => {
         <AddStaffPositionButton />
       </div>
       {/* <Separator /> */}
-      <div className="space-y-1">
-        {staffPositions.map((p) => (
-          <ListCard key={p.id} position={p} />
-        ))}
-      </div>
+
+      {staffPositions.length === 0 ? (
+        <div className="border  rounded-md h-28 bg-background flex items-center justify-center text-muted-foreground">
+          Belum ada jenis jabatan
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {staffPositions.map((p) => (
+            <ListCard key={p.id} position={p} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

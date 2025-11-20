@@ -11,6 +11,10 @@ import {
 import { getCurrentUser } from '@/app/_lib/root.action';
 import slugify from 'slugify';
 import { Prisma } from '@prisma/client';
+import {
+  getStaffPositionTypeDetailQuery,
+  StaffPositionType,
+} from './organitations.type';
 
 /**
  * Server Action: buat StaffPositionType baru
@@ -38,7 +42,7 @@ export async function createStaffPositionType(
   try {
     // Simpan ke database
     const slug = slugify(parsedData.name, { lower: true, strict: true });
-    const newPosition = await prisma.staffPositionType.create({
+    const newPosition = await prisma.staffPosition.create({
       data: {
         name: parsedData.name,
         slug,
@@ -78,4 +82,22 @@ export async function createStaffPositionType(
 
   // Opsional: revalidate path yang menampilkan daftar posisi
   //   revalidatePath('/organisasi/settings');
+}
+
+// HANDLE GET ALL STAFF POSSITION
+/**
+ * Server Action: ambil semua data StaffPositionType
+ */
+export async function getAllStaffPositionsTypes() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const staffPositions = await prisma.staffPosition.findMany({
+    ...getStaffPositionTypeDetailQuery,
+  });
+
+  return staffPositions;
 }

@@ -1,14 +1,7 @@
 'use client';
 
-import StaffPositionForm from './StaffPositionForm';
-
 const StaffPositionComp = () => {
-  return (
-    <div className="sm:grid sm:grid-cols-2">
-      <div>List Jabatan </div>
-      <StaffPositionForm />
-    </div>
-  );
+  return <div className=""></div>;
 };
 
 export default StaffPositionComp;

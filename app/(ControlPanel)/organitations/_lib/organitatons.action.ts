@@ -4,8 +4,12 @@
 import prisma from '@/lib/prisma';
 
 import {
+  CreateStaffInput,
+  createStaffSchema,
   StaffPositionTypeCreateInput,
   StaffPositionTypeCreateSchema,
+  UpdateStaffInput,
+  updateStaffSchema,
 } from './organitaions.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
 import slugify from 'slugify';
@@ -182,3 +186,87 @@ export async function updateStaffPosition(
     return { success: false, message: 'Ops! Gagal memperbarui jabatan' };
   }
 }
+
+// HANDLE CREATE STAFF =============================================================================
+
+export async function createStaffAction(input: CreateStaffInput) {
+  const data = createStaffSchema.parse(input);
+
+  return prisma.staff.create({
+    data: {
+      residentId: data.residentId,
+      positionTypeId: data.positionTypeId,
+      startDate: new Date(data.startDate),
+      endDate: data.endDate ? new Date(data.endDate) : null,
+      isActive: data.isActive ?? true,
+
+      // organizationUnit: data.organizationUnitId
+      //   ? { connect: { id: data.organizationUnitId } }
+      //   : undefined,
+    },
+  });
+}
+
+// for options resident
+export async function getResidentsToStaffFormOptions() {
+  return prisma.resident.findMany({
+    select: {
+      id: true,
+      fullName: true,
+    },
+    orderBy: {
+      fullName: 'asc',
+    },
+  });
+}
+
+// for options resident
+export async function getStaffPositionToStaffFormOptions() {
+  return prisma.staffPosition.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  });
+}
+
+// for options resident
+// export async function getOrganitationUnitToStaffFormOptions() {
+//   return prisma.organizationUnit.findMany({
+//     select: {
+//       id: true,
+//       name: true,
+//     },
+//     orderBy: {
+//       name: 'asc',
+//     },
+//   });
+// }
+
+// =================================================================================================
+
+// HANDLE UPDATE STAFF =============================================================================
+
+export async function updateStaffAction(input: UpdateStaffInput) {
+  const data = updateStaffSchema.parse(input);
+
+  return prisma.staff.update({
+    where: { id: data.id },
+    data: {
+      residentId: data.residentId,
+      positionTypeId: data.positionTypeId,
+      startDate: new Date(data.startDate),
+      endDate: data.endDate ? new Date(data.endDate) : null,
+      isActive: data.isActive ?? true,
+
+      // organizationUnit:
+      //   data.organizationUnitId === null
+      //     ? { disconnect: true }
+      //     : { connect: { id: data.organizationUnitId } },
+    },
+  });
+}
+// ==================================================================================================

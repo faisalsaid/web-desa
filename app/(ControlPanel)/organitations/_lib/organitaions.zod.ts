@@ -59,10 +59,15 @@ export type StaffPositionTypeUpdateInput = z.infer<
 export const baseStaffSchema = z.object({
   residentId: z.number().int().positive(),
   positionTypeId: z.number().int().positive(),
-  startDate: z.string().datetime({ offset: true }),
-  endDate: z.string().datetime({ offset: true }).nullable().optional(),
+
+  startDate: z.date(),
+  endDate: z.date().nullable().optional(),
+  // startDate: z.string().pipe(z.coerce.date()),
+  // endDate: z.string().pipe(z.coerce.date()).nullable().optional(),
+
   isActive: z.boolean().optional(),
-  organizationUnitId: z.number().int().positive().nullable().optional(),
+
+  // organizationUnitId: z.number().int().positive().nullable().optional(),
 });
 
 export const createStaffSchema = baseStaffSchema;

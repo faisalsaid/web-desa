@@ -1,22 +1,44 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
-import { getAllStaffPositionsTypes } from '../_lib/organitatons.action';
+import {
+  getAllStaffPositionsTypes,
+  getResidentsToStaffFormOptions,
+  getStaffPositionToStaffFormOptions,
+} from '../_lib/organitatons.action';
 import StaffPositionsList from '../_components/StaffPositionsList';
 import { getCurrentUser } from '@/app/_lib/root.action';
+import { StaffForm } from '../_components/StaffForm';
+import { Separator } from '@/components/ui/separator';
 
 export default async function SettingsOrganitationsPage() {
   const staffPossitons = await getAllStaffPositionsTypes();
 
-  const curentUser = await getCurrentUser();
+  // const curentUser = await getCurrentUser();
 
-  console.log(curentUser);
+  // console.log(curentUser);
+
+  const residnetList = await getResidentsToStaffFormOptions();
+  const stafPositionsList = await getStaffPositionToStaffFormOptions();
 
   return (
     <div className="space-y-4">
       <ContentCard>
-        <h1 className="text-xl font-semibold">Settings Page</h1>
+        <h1 className="text-xl font-semibold">Pengaturan Perangkat Desa</h1>
       </ContentCard>
 
-      <div className="sm:grid sm:grid-cols-2 gap-4 ">
+      <div className="grid sm:grid-cols-2 gap-4">
+        <ContentCard>
+          <div className="space-y-4">
+            <div>Atur Perkangkat Desa</div>
+            <Separator />
+            <StaffForm
+              mode="create"
+              residents={residnetList}
+              positions={stafPositionsList}
+              // units={units}
+            />
+          </div>
+        </ContentCard>
+
         <ContentCard>
           <StaffPositionsList staffPositions={staffPossitons} />
         </ContentCard>

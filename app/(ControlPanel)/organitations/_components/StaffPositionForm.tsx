@@ -23,6 +23,7 @@ import {
 import { Upload } from 'lucide-react';
 import { createStaffPositionType } from '../_lib/organitatons.action';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type StaffPositionTypeFormProps = {
   initialData?: Partial<{
@@ -40,6 +41,7 @@ export default function StaffPositionTypeForm({
   closeModal,
 }: //   onSubmit,
 StaffPositionTypeFormProps) {
+  const router = useRouter();
   const isUpdate = !!initialData;
 
   const form = useForm({
@@ -81,6 +83,8 @@ StaffPositionTypeFormProps) {
         console.log(error);
 
         toast.error('Terjadi kesalahan server.', { id: toastId });
+      } finally {
+        router.push('settings');
       }
     }
   };

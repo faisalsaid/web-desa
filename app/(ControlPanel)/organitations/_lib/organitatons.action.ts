@@ -101,3 +101,49 @@ export async function getAllStaffPositionsTypes() {
 
   return staffPositions;
 }
+
+/**
+ * Interface return untuk Server Action delete StaffPositionType
+ */
+export interface DeleteStaffPositionReturn {
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Server Action: hapus StaffPositionType berdasarkan id
+ */
+export async function deleteStaffPositionType(
+  id: number,
+): Promise<DeleteStaffPositionReturn> {
+  'use server';
+
+  try {
+    // Pastikan jabatan ada sebelum delete
+    const existing = await prisma.staffPosition.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return {
+        success: false,
+        message: 'Jabatan tidak ditemukan',
+      };
+    }
+
+    // Hapus jabatan
+    await prisma.staffPosition.delete({
+      where: { id },
+    });
+
+    return {
+      success: true,
+      message: `Jabatan "${existing.name}" berhasil dihapus`,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Ops! Gagal menghapus jabatan',
+    };
+  }
+}

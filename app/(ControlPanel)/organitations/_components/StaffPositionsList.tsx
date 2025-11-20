@@ -4,6 +4,7 @@ import { StaffPositionType } from '../_lib/organitations.type';
 import AddStaffPositionButton from './AddStaffPositionButton';
 import { GripVertical } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import DeleteStaffPositionButton from './DeleteStaffPositionButton';
 
 interface StaffPositionsProps {
   staffPositions: StaffPositionType[];
@@ -35,7 +36,7 @@ const ListCard = ({ position }: { position: StaffPositionType }) => {
         <GripVertical size={18} />
         <p>{position.name}</p>
       </div>
-      <div>
+      <div className="flex items-center gap-2">
         {position.staffAssignments.length === 0 ? (
           <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-slate-200 dark:bg-slate-700">
             0
@@ -45,6 +46,10 @@ const ListCard = ({ position }: { position: StaffPositionType }) => {
             {position.staffAssignments.length}
           </Badge>
         )}
+
+        <div>
+          <DeleteStaffPositionButton id={position.id} />
+        </div>
       </div>
     </div>
   );

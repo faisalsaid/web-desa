@@ -27,15 +27,20 @@ import {
   UpdateStaffInput,
   updateStaffSchema,
 } from '../_lib/organitaions.zod';
+import { Autocomplete } from '@/components/autocomplete';
+import { searchResidentToStaff } from '../_lib/organitatons.action';
+import { useEffect, useState } from 'react';
 
 type ResidentOption = { id: number; fullName: string };
 type PositionOption = { id: number; name: string };
 type UnitOption = { id: number; name: string };
 
+type ResidentItem = { id: number; fullName: string; nik: string };
+
 type StaffFormProps = {
   mode: 'create' | 'update';
   defaultValues?: Partial<UpdateStaffInput>;
-  residents: ResidentOption[];
+  // residents: ResidentOption[];
   positions: PositionOption[];
   //   units: UnitOption[];
 
@@ -45,7 +50,7 @@ type StaffFormProps = {
 export function StaffForm({
   mode,
   defaultValues,
-  residents,
+  // residents,
   positions,
 }: //   units,
 //   onSubmit,
@@ -69,35 +74,6 @@ StaffFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Resident */}
-        <FormField
-          control={form.control}
-          name="residentId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Resident</FormLabel>
-              <Select
-                onValueChange={(v) => field.onChange(Number(v))}
-                defaultValue={field.value?.toString()}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih Resident" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {residents.map((r) => (
-                    <SelectItem key={r.id} value={r.id.toString()}>
-                      {r.fullName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         {/* Position Type */}
         <FormField
           control={form.control}
@@ -109,7 +85,7 @@ StaffFormProps) {
                 onValueChange={(v) => field.onChange(Number(v))}
                 defaultValue={field.value?.toString()}
               >
-                <FormControl>
+                <FormControl className="bg-background w-full">
                   <SelectTrigger>
                     <SelectValue placeholder="Pilih Jabatan" />
                   </SelectTrigger>
@@ -124,6 +100,38 @@ StaffFormProps) {
               </Select>
               <FormMessage />
             </FormItem>
+          )}
+        />
+
+        {/* Resident */}
+        <FormField
+          control={form.control}
+          name="residentId"
+          render={({ field }) => (
+            <Autocomplete<ResidentItem>
+              label="Resident"
+              placeholder="Cari nama / NIK..."
+              // bentuk data di form = id number
+              value={null} // tidak dipakai karena kita simpan id
+              onChange={(resident) => {
+                field.onChange(resident?.id ?? null);
+              }}
+              search={async (q) => {
+                return await searchResidentToStaff(q);
+              }}
+              displayValue={(item) =>
+                item ? `${item.fullName} – ${item.nik}` : ''
+              }
+              getKey={(item) => item.id}
+              // renderItem={(item) => (
+              //   <div className="flex flex-col">
+              //     <span className="font-medium">{item.fullName}</span>
+              //     <span className="text-xs text-muted-foreground">
+              //       NIK: {item.nik}
+              //     </span>
+              //   </div>
+              // )}
+            />
           )}
         />
 

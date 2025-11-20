@@ -16,7 +16,7 @@ export default async function SettingsOrganitationsPage() {
 
   // console.log(curentUser);
 
-  const residnetList = await getResidentsToStaffFormOptions();
+  // const residnetList = await getResidentsToStaffFormOptions();
   const stafPositionsList = await getStaffPositionToStaffFormOptions();
 
   return (
@@ -25,21 +25,21 @@ export default async function SettingsOrganitationsPage() {
         <h1 className="text-xl font-semibold">Pengaturan Perangkat Desa</h1>
       </ContentCard>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <ContentCard>
-          <div className="space-y-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <ContentCard className="lg:col-span-3">
+          <div className="space-y-4 ">
             <div>Atur Perkangkat Desa</div>
             <Separator />
             <StaffForm
               mode="create"
-              residents={residnetList}
+              // residents={residnetList}
               positions={stafPositionsList}
               // units={units}
             />
           </div>
         </ContentCard>
 
-        <ContentCard>
+        <ContentCard className="lg:col-span-2">
           <StaffPositionsList staffPositions={staffPossitons} />
         </ContentCard>
       </div>

@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 type StaffPositionTypeFormProps = {
   initialData?: Partial<{
     id: number;
+    slug: string;
     name: string;
     description: string | null;
   }>;

@@ -9,6 +9,8 @@ import {
   StaffPositionTypeCreateSchema,
 } from './organitaions.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
+import slugify from 'slugify';
+import { Prisma } from '@prisma/client';
 
 /**
  * Server Action: buat StaffPositionType baru
@@ -35,9 +37,11 @@ export async function createStaffPositionType(
   const parsedData = StaffPositionTypeCreateSchema.parse(data);
   try {
     // Simpan ke database
+    const slug = slugify(parsedData.name, { lower: true, strict: true });
     const newPosition = await prisma.staffPositionType.create({
       data: {
         name: parsedData.name,
+        slug,
         description: parsedData.description ?? null,
       },
     });
@@ -48,6 +52,24 @@ export async function createStaffPositionType(
       message: `Selamat! Jabatan ${parsedData.name} berhasil ditambahkan`,
     };
   } catch (error) {
+    // console.log(error);
+
+    // Tangani duplicate slug / constraint violation
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // Pastikan error.meta ada dan bertipe object dengan property target
+      if (
+        error.code === 'P2002' &&
+        typeof error.meta === 'object' &&
+        error.meta !== null &&
+        'target' in error.meta &&
+        Array.isArray((error.meta as { target: string[] }).target)
+      ) {
+        return {
+          success: false,
+          message: `Ops! Jabatan ${parsedData.name} sudah ada! `,
+        };
+      }
+    }
     return {
       success: false,
       message: `Ops! Gagal menambah jabatan ${parsedData.name}! `,

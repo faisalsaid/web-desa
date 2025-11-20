@@ -15,6 +15,7 @@ export const StaffPositionTypeSchema = z.object({
   id: z.number().int().optional(),
 
   name: z.string().min(2, 'Nama Jabatan tidak boleh kosong').max(100),
+  slug: z.string().min(1),
   description: emptyToNull,
 
   // Relasi, optional karena bisa kosong

@@ -20,6 +20,9 @@ import {
   StaffPositionTypeUpdateInput,
   StaffPositionTypeUpdateSchema,
 } from '../_lib/organitaions.zod';
+import { Upload } from 'lucide-react';
+import { createStaffPositionType } from '../_lib/organitatons.action';
+import { toast } from 'sonner';
 
 type StaffPositionTypeFormProps = {
   initialData?: Partial<{
@@ -45,13 +48,35 @@ StaffPositionTypeFormProps) {
     },
   });
 
-  const onSubmit = (
+  const onSubmit = async (
     data: StaffPositionTypeCreateInput | StaffPositionTypeUpdateInput,
   ) => {
     console.log(data);
 
+    const toastId = toast.loading(
+      isUpdate ? 'Mengubah jabatan...' : 'Membuat jabatan baru...',
+    );
+
     if (isUpdate) {
     } else {
+      try {
+        const res = await createStaffPositionType(
+          data as StaffPositionTypeCreateInput,
+        );
+
+        if (!res.success) {
+          toast.error(res.message ?? 'Gagal mebuat jabatan baru.', {
+            id: toastId,
+          });
+          return;
+        }
+        form.reset();
+        toast.success(res.message, { id: toastId });
+      } catch (error) {
+        console.log(error);
+
+        toast.error('Terjadi kesalahan server.', { id: toastId });
+      }
     }
   };
 
@@ -64,8 +89,8 @@ StaffPositionTypeFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Nama Posisi</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="Masukkan nama posisi" />
+              <FormControl className="bg-background">
+                <Input {...field} placeholder="e.g : Kepala Desa" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,11 +103,12 @@ StaffPositionTypeFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Deskripsi</FormLabel>
-              <FormControl>
+              <FormControl className="bg-background">
                 <Textarea
                   {...field}
                   value={field.value ?? ''}
-                  placeholder="Deskripsi posisi (opsional)"
+                  placeholder="e.g : Bertanggung jawab semua ursan terkait desa"
+                  className="h-28 resize-none"
                 />
               </FormControl>
               <FormMessage />
@@ -90,7 +116,10 @@ StaffPositionTypeFormProps) {
           )}
         />
 
-        <Button type="submit">{isUpdate ? 'Update' : 'Simpan'}</Button>
+        <Button type="submit">
+          <Upload />
+          {isUpdate ? 'Ubah' : 'Simpan'}
+        </Button>
       </form>
     </Form>
   );

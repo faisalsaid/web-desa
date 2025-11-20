@@ -7,6 +7,11 @@ export const getStaffPositionTypeDetailQuery =
       name: true,
       slug: true,
       description: true,
+      staffAssignments: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 

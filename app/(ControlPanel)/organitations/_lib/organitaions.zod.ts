@@ -14,7 +14,14 @@ const emptyToNull = z
 export const StaffPositionTypeSchema = z.object({
   id: z.number().int().optional(),
 
-  name: z.string().min(2, 'Nama Jabatan tidak boleh kosong').max(100),
+  name: z
+    .string()
+    .min(2, 'Nama Jabatan tidak boleh kosong')
+    .max(100)
+    .refine(
+      (val) => val.trim().length > 0,
+      'Nama jabatan tidak boleh hanya spasi',
+    ),
   description: emptyToNull,
 
   // Relasi, optional karena bisa kosong

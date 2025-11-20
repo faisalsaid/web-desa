@@ -31,10 +31,13 @@ type StaffPositionTypeFormProps = {
     name: string;
     description: string | null;
   }>;
+  // onClick : () => void;
+  closeModal: () => void;
 };
 
 export default function StaffPositionTypeForm({
   initialData,
+  closeModal,
 }: //   onSubmit,
 StaffPositionTypeFormProps) {
   const isUpdate = !!initialData;
@@ -72,6 +75,7 @@ StaffPositionTypeFormProps) {
           return;
         }
         form.reset();
+        closeModal();
         toast.success(res.message, { id: toastId });
       } catch (error) {
         console.log(error);
@@ -117,10 +121,16 @@ StaffPositionTypeFormProps) {
           )}
         />
 
-        <Button type="submit">
-          <Upload />
-          {isUpdate ? 'Ubah' : 'Simpan'}
-        </Button>
+        <div className="flex items-center justify-end gap-4">
+          <Button type="button" onClick={closeModal}>
+            Cancel
+          </Button>
+
+          <Button type="submit">
+            <Upload />
+            {isUpdate ? 'Ubah' : 'Simpan'}
+          </Button>
+        </div>
       </form>
     </Form>
   );

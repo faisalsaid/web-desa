@@ -37,15 +37,15 @@ const AddStaffPositionButton = () => {
           <DialogTitle>Tambah Jabatan Baru</DialogTitle>
         </DialogHeader>
 
-        <StaffPositionTypeForm />
+        <StaffPositionTypeForm closeModal={() => setIsOpen(false)} />
 
-        <div className="mt-4 text-right">
+        {/* <div className="mt-4 text-right">
           <DialogClose asChild>
             <Button variant="ghost" size="sm">
               Batal
             </Button>
           </DialogClose>
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   );

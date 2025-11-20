@@ -1,11 +1,11 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
-import StaffPositionTypeForm from '../_components/StaffPositionForm';
 import { getAllStaffPositionsTypes } from '../_lib/organitatons.action';
 import StaffPositionsList from '../_components/StaffPositionsList';
-import StaffPositionComp from '../_components/StaffPositionComp';
 
 export default async function SettingsOrganitationsPage() {
   const staffPossitons = await getAllStaffPositionsTypes();
+
+  console.log(staffPossitons);
 
   // console.log(staffPossitons);
 

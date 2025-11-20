@@ -6,6 +6,11 @@ import {
   ClipboardPenLine,
   UsersRound,
   FileUser,
+  Briefcase,
+  Award,
+  Trees,
+  GitFork,
+  Columns3Cog,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -51,6 +56,24 @@ const allMenuList: MenuItem[] = [
         title: 'Penduduk',
         url: '/residents',
         icon: UsersRound,
+      },
+    ],
+  },
+  {
+    title: 'Organisasi',
+    url: '/#',
+    icon: GitFork,
+    roles: ['ADMIN', 'OPERATOR'],
+    sub: [
+      {
+        title: 'Perangkat',
+        url: '/staff',
+        icon: Briefcase,
+      },
+      {
+        title: 'Jabatan',
+        url: '/staff/settings',
+        icon: Columns3Cog,
       },
     ],
   },

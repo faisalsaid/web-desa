@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
     '/village': ['ADMIN', 'OPERATOR'],
     '/residents': ['ADMIN', 'OPERATOR'],
     '/family': ['ADMIN', 'OPERATOR'],
-    '/organitations': ['ADMIN', 'OPERATOR'],
+    '/staff': ['ADMIN', 'OPERATOR'],
   };
 
   // 2️⃣ Halaman auth yang tidak boleh diakses kalau sudah login
@@ -78,7 +78,7 @@ export const config = {
     '/users/:path*',
     '/settings/:path*',
     '/auth/:path*',
-    '/organitations/:path*',
+    '/staff/:path*',
   ],
 };
 

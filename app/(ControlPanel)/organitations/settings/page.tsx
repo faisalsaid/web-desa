@@ -1,7 +1,6 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
 import {
   getAllStaffPositionsTypes,
-  getResidentsToStaffFormOptions,
   getStaffPositionToStaffFormOptions,
 } from '../_lib/organitatons.action';
 import StaffPositionsList from '../_components/StaffPositionsList';
@@ -22,13 +21,13 @@ export default async function SettingsOrganitationsPage() {
   return (
     <div className="space-y-4">
       <ContentCard>
-        <h1 className="text-xl font-semibold">Pengaturan Perangkat Desa</h1>
+        <h1 className="text-xl font-semibold">Penetapan Perangkat Desa</h1>
       </ContentCard>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <ContentCard className="lg:col-span-3">
           <div className="space-y-4 ">
-            <div>Atur Perkangkat Desa</div>
+            <div className="font-medium">Atur Perkangkat Desa</div>
             <Separator />
             <StaffForm
               mode="create"

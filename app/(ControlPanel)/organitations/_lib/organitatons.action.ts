@@ -189,7 +189,7 @@ export async function updateStaffPosition(
 
 // HANDLE CREATE STAFF =============================================================================
 
-export async function createStaffAction(input: CreateStaffInput) {
+export async function createStaff(input: CreateStaffInput) {
   const data = createStaffSchema.parse(input);
 
   return prisma.staff.create({

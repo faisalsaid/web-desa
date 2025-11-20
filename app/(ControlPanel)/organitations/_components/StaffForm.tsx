@@ -10,9 +10,9 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -29,22 +29,26 @@ import {
 } from '../_lib/organitaions.zod';
 import { Autocomplete } from '@/components/autocomplete';
 import { searchResidentToStaff } from '../_lib/organitatons.action';
-import { useEffect, useState } from 'react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from 'lucide-react';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Switch } from '@/components/ui/switch';
+import { useState } from 'react';
 
-type ResidentOption = { id: number; fullName: string };
 type PositionOption = { id: number; name: string };
-type UnitOption = { id: number; name: string };
+// type UnitOption = { id: number; name: string };
 
 type ResidentItem = { id: number; fullName: string; nik: string };
 
 type StaffFormProps = {
   mode: 'create' | 'update';
   defaultValues?: Partial<UpdateStaffInput>;
-  // residents: ResidentOption[];
   positions: PositionOption[];
   //   units: UnitOption[];
-
-  //   onSubmit: (values: CreateStaffInput | UpdateStaffInput) => Promise<void>;
 };
 
 export function StaffForm({
@@ -52,9 +56,7 @@ export function StaffForm({
   defaultValues,
   // residents,
   positions,
-}: //   units,
-//   onSubmit,
-StaffFormProps) {
+}: StaffFormProps) {
   const form = useForm<CreateStaffInput | UpdateStaffInput>({
     resolver: zodResolver(
       mode === 'create' ? createStaffSchema : updateStaffSchema,
@@ -67,6 +69,9 @@ StaffFormProps) {
     },
   });
 
+  const [selectedResident, setSelectedResident] = useState<ResidentItem | null>(
+    null,
+  );
   const onSubmit = (values: CreateStaffInput | UpdateStaffInput) => {
     console.log(values);
   };
@@ -102,7 +107,6 @@ StaffFormProps) {
             </FormItem>
           )}
         />
-
         {/* Resident */}
         <FormField
           control={form.control}
@@ -112,8 +116,9 @@ StaffFormProps) {
               label="Resident"
               placeholder="Cari nama / NIK..."
               // bentuk data di form = id number
-              value={null} // tidak dipakai karena kita simpan id
+              value={selectedResident} // tidak dipakai karena kita simpan id
               onChange={(resident) => {
+                setSelectedResident(resident || null);
                 field.onChange(resident?.id ?? null);
               }}
               search={async (q) => {
@@ -134,7 +139,6 @@ StaffFormProps) {
             />
           )}
         />
-
         {/* Organization Unit */}
         {/* <FormField
           control={form.control}
@@ -164,83 +168,123 @@ StaffFormProps) {
             </FormItem>
           )}
         /> */}
+        <div className="flex gap-2 items-center w-full">
+          {/* Start Date */}
+          <FormField
+            control={form.control}
+            name="startDate"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Tanggal Mulai</FormLabel>
+                <FormControl>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full  justify-start text-left"
+                      >
+                        {field.value
+                          ? field.value.toLocaleDateString()
+                          : 'Pilih tanggal'}
+                        <Calendar className="ml-auto h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <CalendarComponent
+                        mode="single"
+                        selected={field.value ?? undefined}
+                        onSelect={(date) => field.onChange(date)}
+                        disabled={(date) => date > new Date()} // contoh: tidak bisa pilih tanggal di masa depan
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* Start Date */}
-        <FormField
-          control={form.control}
-          name="startDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tanggal Mulai</FormLabel>
-              <FormControl>
-                <Input
-                  type="datetime-local"
-                  value={
-                    typeof field.value === 'string'
-                      ? field.value
-                      : new Date(field.value).toISOString().slice(0, 16)
-                  }
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* End Date */}
-        <FormField
-          control={form.control}
-          name="endDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tanggal Selesai (opsional)</FormLabel>
-              <FormControl>
-                <Input
-                  type="datetime-local"
-                  value={
-                    field.value
-                      ? new Date(field.value).toISOString().slice(0, 16)
-                      : ''
-                  }
-                  onChange={(e) => field.onChange(e.target.value || null)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+          <FormField
+            control={form.control}
+            name="endDate"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Tanggal Berakhir</FormLabel>
+                <FormControl>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left"
+                      >
+                        {field.value
+                          ? field.value.toLocaleDateString()
+                          : 'Pilih tanggal'}
+                        <Calendar className="ml-auto h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <CalendarComponent
+                        mode="single"
+                        selected={field.value ?? undefined}
+                        onSelect={(date) => field.onChange(date)}
+                        disabled={(date) => date > new Date()} // contoh: tidak bisa pilih tanggal di masa depan
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         {/* Active */}
         <FormField
           control={form.control}
           name="isActive"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select
-                onValueChange={(v) => field.onChange(v === 'true')}
-                defaultValue={field.value ? 'true' : 'false'}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="true">Aktif</SelectItem>
-                  <SelectItem value="false">Tidak Aktif</SelectItem>
-                </SelectContent>
-              </Select>
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Status Aktif</FormLabel>
+                <FormDescription>
+                  <span className="text-xs text-muted-foreground">
+                    Tentukan apakah staff ini sedang aktif atau tidak.
+                  </span>
+                </FormDescription>
+              </div>
+
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  className="data-[state=checked]:bg-green-500"
+                />
+              </FormControl>
+
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Submit */}
-        <Button type="submit" className="w-full">
-          {mode === 'create' ? 'Tambah Staff' : 'Simpan Perubahan'}
-        </Button>
+        <div className="flex justify-end gap-2 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              form.reset();
+              setSelectedResident(null); // ← Reset autocomplete kepada kosong
+            }}
+          >
+            Reset
+          </Button>
+
+          {/* Submit */}
+          <Button type="submit" className="">
+            {mode === 'create' ? 'Tambah Staff' : 'Simpan Perubahan'}
+          </Button>
+        </div>
       </form>
     </Form>
   );

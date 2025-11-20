@@ -7,10 +7,6 @@ import {
   UsersRound,
   FileUser,
   Briefcase,
-  Award,
-  Trees,
-  GitFork,
-  Columns3Cog,
   Settings2,
   Route,
 } from 'lucide-react';

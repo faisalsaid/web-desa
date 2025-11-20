@@ -3,20 +3,14 @@
 
 import prisma from '@/lib/prisma';
 
-import { revalidatePath } from 'next/cache'; // opsional, untuk revalidate page
 import {
   StaffPositionTypeCreateInput,
   StaffPositionTypeCreateSchema,
-  StaffPositionTypeUpdateInput,
-  StaffPositionTypeUpdateSchema,
 } from './organitaions.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
 import slugify from 'slugify';
 import { Prisma } from '@prisma/client';
-import {
-  getStaffPositionTypeDetailQuery,
-  StaffPositionType,
-} from './organitations.type';
+import { getStaffPositionTypeDetailQuery } from './organitations.type';
 
 /**
  * Server Action: buat StaffPositionType baru
@@ -26,7 +20,14 @@ import {
 
 interface CreateStaffPositionReturn {
   success: boolean;
-  data?: any;
+  data?: {
+    description: string | null;
+    id: number;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    slug: string;
+  };
   message: string;
 }
 
@@ -143,6 +144,8 @@ export async function deleteStaffPositionType(
       message: `Jabatan "${existing.name}" berhasil dihapus`,
     };
   } catch (error) {
+    console.log(error);
+
     return {
       success: false,
       message: 'Ops! Gagal menghapus jabatan',
@@ -174,6 +177,7 @@ export async function updateStaffPosition(
       message: `Jabatan "${parsedData.name}" berhasil diperbarui`,
     };
   } catch (error) {
+    console.log(error);
     // Tangani duplicate slug dll
     return { success: false, message: 'Ops! Gagal memperbarui jabatan' };
   }

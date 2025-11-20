@@ -51,3 +51,27 @@ export type StaffPositionTypeCreateInput = z.infer<
 export type StaffPositionTypeUpdateInput = z.infer<
   typeof StaffPositionTypeUpdateSchema
 >;
+
+// =======================================================================================================
+
+/// STAFF SCHEMA ==========================================================================================
+
+export const baseStaffSchema = z.object({
+  residentId: z.number().int().positive(),
+  positionTypeId: z.number().int().positive(),
+  startDate: z.string().datetime({ offset: true }),
+  endDate: z.string().datetime({ offset: true }).nullable().optional(),
+  isActive: z.boolean().optional(),
+  organizationUnitId: z.number().int().positive().nullable().optional(),
+});
+
+export const createStaffSchema = baseStaffSchema;
+
+export const updateStaffSchema = baseStaffSchema.extend({
+  id: z.number().int().positive(),
+});
+
+export type CreateStaffInput = z.infer<typeof createStaffSchema>;
+export type UpdateStaffInput = z.infer<typeof updateStaffSchema>;
+
+// =======================================================================================================

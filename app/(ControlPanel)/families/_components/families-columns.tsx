@@ -6,6 +6,7 @@ import { DUSUN_LIST } from '@/lib/staticData';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Edit, Eye } from 'lucide-react';
+import DeleteFamilyButton from './DeleteFamilyButton';
 
 export const familyColumns: ColumnDef<FamiliesDataTableType>[] = [
   {
@@ -59,14 +60,16 @@ export const familyColumns: ColumnDef<FamiliesDataTableType>[] = [
             </Button>
           </Link>
 
-          <Button
+          <DeleteFamilyButton id={family.id} />
+
+          {/* <Button
             className="rounded-full"
             size={'icon'}
             variant={'destructive'}
             onClick={() => console.log('Delete', family.id)}
           >
             <Edit />
-          </Button>
+          </Button> */}
         </div>
       );
     },

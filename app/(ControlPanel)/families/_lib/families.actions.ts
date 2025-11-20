@@ -367,3 +367,69 @@ export const fetchFamilies = async ({
     };
   }
 };
+
+// HANDLE DELETE FAMILY
+
+export async function deleteFamily(
+  familyId: number,
+): Promise<{ success: boolean; message: string }> {
+  if (!familyId || typeof familyId !== 'number') {
+    return {
+      success: false,
+      message: 'Invalid family ID.',
+    };
+  }
+
+  try {
+    // 1. Ambil data keluarga
+    const family = await prisma.family.findUnique({
+      where: { id: familyId },
+      select: {
+        id: true,
+        headOfFamilyId: true,
+        members: true,
+      },
+    });
+
+    if (!family) {
+      return {
+        success: false,
+        message: 'Family not found.',
+      };
+    }
+
+    // 2. Lepas hubungan kepala keluarga
+    if (family.headOfFamilyId) {
+      await prisma.family.update({
+        where: { id: familyId },
+        data: {
+          headOfFamilyId: null,
+        },
+      });
+    }
+
+    // 3. Lepas hubungan members → set familyId null
+    if (family.members.length > 0) {
+      await prisma.resident.updateMany({
+        where: { familyId },
+        data: { familyId: null },
+      });
+    }
+
+    // 4. Hapus family
+    await prisma.family.delete({
+      where: { id: familyId },
+    });
+
+    return {
+      success: true,
+      message: 'Family deleted successfully.',
+    };
+  } catch (err) {
+    console.error('Error deleting family:', err);
+    return {
+      success: false,
+      message: 'Failed to delete family.',
+    };
+  }
+}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SquarePen } from 'lucide-react';
 import FamilyDetailsComp from '../_components/FamilyDetailsComp';
+import DeleteFamilyButton from '../_components/DeleteFamilyButton';
 
 interface Params {
   familyUrlId: string;
@@ -35,10 +36,8 @@ const FamilyDetailsPage = async ({ params }: FamilyDetailProps) => {
               <SquarePen />
             </Button>
           </Link>
-          {/* <DeleteResidentButton id={residentDetails.id} /> */}
-          {/* <Button size={'icon'} className="rounded-full">
-            <Trash2 />
-          </Button> */}
+
+          <DeleteFamilyButton id={familyDetails.id} />
         </div>
       </ContentCard>
       <FamilyDetailsComp family={familyDetails} />

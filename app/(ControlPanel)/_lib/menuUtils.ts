@@ -11,6 +11,8 @@ import {
   Trees,
   GitFork,
   Columns3Cog,
+  Settings2,
+  Route,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -48,7 +50,7 @@ const allMenuList: MenuItem[] = [
     roles: ['ADMIN', 'OPERATOR'],
     sub: [
       {
-        title: 'Data Keluarga',
+        title: 'Keluarga',
         url: '/families',
         icon: FileUser,
       },
@@ -62,18 +64,18 @@ const allMenuList: MenuItem[] = [
   {
     title: 'Organisasi',
     url: '/#',
-    icon: GitFork,
+    icon: Route,
     roles: ['ADMIN', 'OPERATOR'],
     sub: [
       {
         title: 'Perangkat',
-        url: '/staff',
+        url: '/organitations/staff',
         icon: Briefcase,
       },
       {
-        title: 'Jabatan',
-        url: '/staff/settings',
-        icon: Columns3Cog,
+        title: 'Pengaturan',
+        url: '/organitations/settings',
+        icon: Settings2,
       },
     ],
   },

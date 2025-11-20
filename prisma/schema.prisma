@@ -1,11 +1,18 @@
 datasource db {
   provider = "postgresql"
-  
-  url      = env("DATABASE_URL")
+
+  url = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  EDITOR
+  USER
 }
 
 model User {
@@ -144,101 +151,6 @@ model VillageConfig {
 }
 
 // RESIDENTS SCEMA
-model Family {
-  id               Int    @id @default(autoincrement()) // ID internal
-  urlId            String @unique @default(cuid()) // ID untuk URL
-  familyCardNumber String @unique @db.VarChar(20)
-  address          String
-  dusun            String @db.VarChar(100)
-  rw               String @db.VarChar(10)
-  rt               String @db.VarChar(10)
-
-  // Kepala keluarga (satu keluarga hanya punya satu kepala)
-  headOfFamilyId Int?      @unique
-  headOfFamily   Resident? @relation("HeadOfFamily", fields: [headOfFamilyId], references: [id])
-
-  // Anggota keluarga
-  members Resident[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([dusun, rw, rt])
-}
-
-model Resident {
-  id               Int              @id @default(autoincrement()) // ID internal
-  urlId            String           @unique @default(cuid()) // ID untuk URL
-  nik              String           @unique @db.VarChar(16)
-  fullName         String           @db.VarChar(100)
-  gender           Gender
-  birthPlace       String?
-  birthDate        DateTime?
-  religion         Religion?
-  education        Education?
-  occupation       Occupation?
-  maritalStatus    MaritalStatus?
-  bloodType        BloodType?       @default(UNKNOWN)
-  disabilityType   DisabilityType?  @default(NONE)
-  citizenship      Citizenship?     @default(WNI)
-  passportNumber   String?          @db.VarChar(50)
-  ethnicity        String?          @db.VarChar(100)
-  nationality      String?          @db.VarChar(100) // country name for WNA
-  address          String?          @db.Text
-  dusun            String?
-  rw               String?
-  rt               String?
-  phone            String?
-  email            String?
-  populationStatus PopulationStatus @default(PERMANENT)
-
-  familyRelationship FamilyRelationship? // <--- TAMBAHKAN INI
-
-  // Relasi keluarga
-  familyId Int?
-  family   Family? @relation(fields: [familyId], references: [id])
-
-  // Relasi balik untuk kepala keluarga
-  headOfFamilyFor Family? @relation("HeadOfFamily")
-
-  // Relasi visitor (pendatang)
-  visitor Visitor?
-
-  isActive  Boolean   @default(true)
-  deletedAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@index([familyId])
-  @@index([dusun, rw, rt])
-  @@index([populationStatus])
-  @@index([isActive])
-}
-
-model Visitor {
-  id         Int      @id @default(autoincrement()) // ID internal
-  urlId      String   @unique @default(cuid()) // ID untuk URL
-  residentId Int      @unique
-  resident   Resident @relation(fields: [residentId], references: [id])
-
-  originAddress  String? // alamat asal
-  originVillage  String? // desa asal
-  originDistrict String?
-  originRegency  String?
-  originProvince String?
-  arrivalDate    DateTime? // tanggal datang
-  purpose        String? // tujuan datang (kerja, sekolah, dll)
-  stayType       String? // kontrak, kos, keluarga, dll
-  isStillStaying Boolean   @default(true)
-  departureDate  DateTime? // tanggal keluar
-  notes          String? // keterangan tambahan
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([arrivalDate])
-  @@index([departureDate])
-}
 
 enum Gender {
   MALE
@@ -334,9 +246,157 @@ enum FamilyRelationship {
   OTHER // lainnya
 }
 
-enum UserRole {
-  ADMIN
-  OPERATOR
-  EDITOR
-  USER
+model Family {
+  id               Int    @id @default(autoincrement()) // ID internal
+  urlId            String @unique @default(cuid()) // ID untuk URL
+  familyCardNumber String @unique @db.VarChar(20)
+  address          String
+  dusun            String @db.VarChar(100)
+  rw               String @db.VarChar(10)
+  rt               String @db.VarChar(10)
+
+  // Kepala keluarga (satu keluarga hanya punya satu kepala)
+  headOfFamilyId Int?      @unique
+  headOfFamily   Resident? @relation("HeadOfFamily", fields: [headOfFamilyId], references: [id])
+
+  // Anggota keluarga
+  members Resident[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dusun, rw, rt])
+}
+
+model Resident {
+  id               Int              @id @default(autoincrement()) // ID internal
+  urlId            String           @unique @default(cuid()) // ID untuk URL
+  nik              String           @unique @db.VarChar(16)
+  fullName         String           @db.VarChar(100)
+  gender           Gender
+  birthPlace       String?
+  birthDate        DateTime?
+  religion         Religion?
+  education        Education?
+  occupation       Occupation?
+  maritalStatus    MaritalStatus?
+  bloodType        BloodType?       @default(UNKNOWN)
+  disabilityType   DisabilityType?  @default(NONE)
+  citizenship      Citizenship?     @default(WNI)
+  passportNumber   String?          @db.VarChar(50)
+  ethnicity        String?          @db.VarChar(100)
+  nationality      String?          @db.VarChar(100) // country name for WNA
+  address          String?          @db.Text
+  dusun            String?
+  rw               String?
+  rt               String?
+  phone            String?
+  email            String?
+  populationStatus PopulationStatus @default(PERMANENT)
+
+  familyRelationship FamilyRelationship? // <--- TAMBAHKAN INI
+
+  // Relasi keluarga
+  familyId Int?
+  family   Family? @relation(fields: [familyId], references: [id])
+
+  // Relasi balik untuk kepala keluarga
+  headOfFamilyFor Family? @relation("HeadOfFamily")
+
+  // Relasi visitor (pendatang)
+  visitor        Visitor?
+  staffPositions Staff[]
+
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([familyId])
+  @@index([dusun, rw, rt])
+  @@index([populationStatus])
+  @@index([isActive])
+}
+
+model Visitor {
+  id         Int      @id @default(autoincrement()) // ID internal
+  urlId      String   @unique @default(cuid()) // ID untuk URL
+  residentId Int      @unique
+  resident   Resident @relation(fields: [residentId], references: [id])
+
+  originAddress  String? // alamat asal
+  originVillage  String? // desa asal
+  originDistrict String?
+  originRegency  String?
+  originProvince String?
+  arrivalDate    DateTime? // tanggal datang
+  purpose        String? // tujuan datang (kerja, sekolah, dll)
+  stayType       String? // kontrak, kos, keluarga, dll
+  isStillStaying Boolean   @default(true)
+  departureDate  DateTime? // tanggal keluar
+  notes          String? // keterangan tambahan
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([arrivalDate])
+  @@index([departureDate])
+}
+
+// GOVERMENT SCHEMA
+
+model StaffPositionType {
+  id                Int                @id @default(autoincrement())
+  name              String             @db.VarChar(100)
+  description       String?            @db.Text
+  staffAssignments  Staff[]
+  organizationUnits OrganizationUnit[]
+  staffHistories    StaffHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Staff {
+  id               Int               @id @default(autoincrement())
+  resident         Resident          @relation(fields: [residentId], references: [id])
+  residentId       Int
+  positionType     StaffPositionType @relation(fields: [positionTypeId], references: [id])
+  positionTypeId   Int
+  isActive         Boolean           @default(true)
+  startDate        DateTime
+  endDate          DateTime?
+  staffHistories   StaffHistory[]
+  organizationUnit OrganizationUnit?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StaffHistory {
+  id             Int               @id @default(autoincrement())
+  staffMember    Staff             @relation(fields: [staffId], references: [id])
+  staffId        Int
+  positionType   StaffPositionType @relation(fields: [positionTypeId], references: [id])
+  positionTypeId Int
+  startDate      DateTime
+  endDate        DateTime?
+  note           String?           @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrganizationUnit {
+  id             Int                @id @default(autoincrement())
+  positionType   StaffPositionType  @relation(fields: [positionTypeId], references: [id])
+  positionTypeId Int
+  parent         OrganizationUnit?  @relation("UnitHierarchy", fields: [parentId], references: [id])
+  parentId       Int?
+  children       OrganizationUnit[] @relation("UnitHierarchy")
+  staffMember    Staff?             @relation(fields: [staffId], references: [id])
+  staffId        Int?               @unique // <<< tambahkan @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

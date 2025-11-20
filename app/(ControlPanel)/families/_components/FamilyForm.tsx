@@ -149,9 +149,8 @@ export default function FamilyForm({
 
   // const [lastResults, setLastResults] = useState<ResidentOption[]>([]);
 
+  const members = watch('members');
   useEffect(() => {
-    const members = watch('members');
-
     if (!members || members.length === 0) {
       setMissingHeadWarning('Tambahkan minimal satu anggota keluarga.');
       return;
@@ -164,7 +163,7 @@ export default function FamilyForm({
     } else {
       setMissingHeadWarning(null);
     }
-  }, [watch('members')]);
+  }, [members]);
 
   const onSubmit = async (payload: FamilyCreateInput | FamilyUpdateInput) => {
     console.log('FINAL PAYLOAD:', payload);

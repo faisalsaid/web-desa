@@ -38,7 +38,7 @@ const AddStaffPositionButton = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Tambah Jabatan Baru</DialogTitle>
+          <DialogTitle>Buat Jabatan Baru</DialogTitle>
           <DialogDescription>
             <span className="text-xs">
               Pastikan jabatan yang ingin dibuat belum tersedia

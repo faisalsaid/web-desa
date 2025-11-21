@@ -86,13 +86,13 @@ const ListCard = ({ position }: { position: StaffPositionType }) => {
         <Tooltip>
           <TooltipTrigger>
             {position.staffAssignments.length === 0 ? (
-              <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-slate-200 dark:bg-slate-700">
+              <div className="text-xs size-5  rounded-full text-white flex items-center  justify-center   bg-slate-200 dark:bg-slate-700 ">
                 0
-              </Badge>
+              </div>
             ) : (
-              <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-green-600">
+              <div className="text-xs size-5 bg-green-500 rounded-full text-white flex items-center  justify-center">
                 {position.staffAssignments.length}
-              </Badge>
+              </div>
             )}
           </TooltipTrigger>
           <TooltipContent>

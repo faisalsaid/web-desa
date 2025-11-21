@@ -149,7 +149,7 @@ StaffPositionTypeFormProps) {
               <div className="space-y-0.5">
                 <div className="flex items-center justify-between">
                   <FormLabel
-                    className={`text-base ${
+                    className={`${
                       isNameInvalid ? 'text-muted-foreground' : ''
                     }`}
                   >

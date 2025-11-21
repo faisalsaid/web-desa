@@ -2,7 +2,7 @@
 
 import { StaffPositionType } from '../_lib/organitations.type';
 import AddStaffPositionButton from './AddStaffPositionButton';
-import { GripVertical, MoreHorizontalIcon } from 'lucide-react';
+import { GripVertical, MoreHorizontalIcon, User, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import DeleteStaffPositionButton from './DeleteStaffPositionButton';
 import UpdateStaffPosisitionButton from './UpdateStaffPosisitionButton';
@@ -13,6 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface StaffPositionsProps {
   staffPositions: StaffPositionType[];
@@ -57,15 +63,42 @@ const ListCard = ({ position }: { position: StaffPositionType }) => {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {position.staffAssignments.length === 0 ? (
-          <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-slate-200 dark:bg-slate-700">
-            0
-          </Badge>
+        {position.isUnique ? (
+          <Tooltip>
+            <TooltipTrigger>
+              <User size={18} className="text-orange-400" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Jabatan Tunggal</p>
+            </TooltipContent>
+          </Tooltip>
         ) : (
-          <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-green-600">
-            {position.staffAssignments.length}
-          </Badge>
+          <Tooltip>
+            <TooltipTrigger>
+              <Users size={18} className="text-sky-500" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Jabatan Ganda</p>
+            </TooltipContent>
+          </Tooltip>
         )}
+
+        <Tooltip>
+          <TooltipTrigger>
+            {position.staffAssignments.length === 0 ? (
+              <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-slate-200 dark:bg-slate-700">
+                0
+              </Badge>
+            ) : (
+              <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-green-600">
+                {position.staffAssignments.length}
+              </Badge>
+            )}
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Jumlah perangkat</p>
+          </TooltipContent>
+        </Tooltip>
 
         <div>
           <DropdownMenu>

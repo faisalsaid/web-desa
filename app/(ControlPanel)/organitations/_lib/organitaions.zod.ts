@@ -23,6 +23,7 @@ export const StaffPositionTypeSchema = z.object({
       'Nama jabatan tidak boleh hanya spasi',
     ),
   description: emptyToNull,
+  isUnique: z.boolean(),
 
   // Relasi, optional karena bisa kosong
   staffAssignments: z.array(z.any()).optional(),

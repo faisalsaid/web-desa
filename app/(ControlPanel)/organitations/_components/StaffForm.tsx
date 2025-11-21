@@ -70,7 +70,7 @@ export function StaffForm({
       mode === 'create' ? createStaffSchema : updateStaffSchema,
     ),
     defaultValues: defaultValues ?? {
-      isActive: false,
+      isActive: true,
       startDate: new Date(),
       endDate: null,
       //   organizationUnitId: null,
@@ -357,7 +357,11 @@ export function StaffForm({
           </Button>
 
           {/* Submit */}
-          <Button type="submit" className="">
+          <Button
+            type="submit"
+            className=""
+            disabled={isSubmitting || (isSubmitted && !isValid)}
+          >
             {isSubmitting ? <Spinner /> : <Upload className=" h-4 w-4" />}{' '}
             {mode === 'create' ? 'Tambah Staff' : 'Simpan Perubahan'}
           </Button>

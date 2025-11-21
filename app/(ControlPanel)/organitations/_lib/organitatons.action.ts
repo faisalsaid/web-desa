@@ -172,6 +172,7 @@ export async function updateStaffPosition(
         name: parsedData.name,
         description: parsedData.description ?? null,
         slug,
+        isUnique: parsedData.isUnique,
       },
     });
 

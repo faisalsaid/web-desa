@@ -349,6 +349,7 @@ model StaffPosition {
   id                Int                @id @default(autoincrement())
   name              String             @db.VarChar(100)
   slug              String             @unique
+  isUnique          Boolean            @default(false)
   description       String?            @db.Text
   staffAssignments  Staff[]
   organizationUnits OrganizationUnit[]
@@ -362,7 +363,7 @@ model Staff {
   id               Int               @id @default(autoincrement())
   resident         Resident          @relation(fields: [residentId], references: [id])
   residentId       Int
-  positionType     StaffPosition @relation(fields: [positionTypeId], references: [id])
+  positionType     StaffPosition     @relation(fields: [positionTypeId], references: [id])
   positionTypeId   Int
   isActive         Boolean           @default(true)
   startDate        DateTime
@@ -375,14 +376,14 @@ model Staff {
 }
 
 model StaffHistory {
-  id             Int               @id @default(autoincrement())
-  staffMember    Staff             @relation(fields: [staffId], references: [id])
+  id             Int           @id @default(autoincrement())
+  staffMember    Staff         @relation(fields: [staffId], references: [id])
   staffId        Int
   positionType   StaffPosition @relation(fields: [positionTypeId], references: [id])
   positionTypeId Int
   startDate      DateTime
   endDate        DateTime?
-  note           String?           @db.Text
+  note           String?       @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -390,7 +391,7 @@ model StaffHistory {
 
 model OrganizationUnit {
   id             Int                @id @default(autoincrement())
-  positionType   StaffPosition  @relation(fields: [positionTypeId], references: [id])
+  positionType   StaffPosition      @relation(fields: [positionTypeId], references: [id])
   positionTypeId Int
   parent         OrganizationUnit?  @relation("UnitHierarchy", fields: [parentId], references: [id])
   parentId       Int?

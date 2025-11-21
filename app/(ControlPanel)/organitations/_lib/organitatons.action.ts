@@ -256,15 +256,21 @@ export async function getResidentsToStaffFormOptions() {
 
 // for options resident
 export async function getStaffPositionToStaffFormOptions() {
-  return prisma.staffPosition.findMany({
-    select: {
-      id: true,
-      name: true,
-    },
-    orderBy: {
-      name: 'asc',
+  const types = await prisma.staffPosition.findMany({
+    include: {
+      staffAssignments: {
+        where: { isActive: true },
+        select: { id: true },
+      },
     },
   });
+
+  return types.map((t) => ({
+    id: t.id,
+    name: t.name,
+    isUnique: t.isUnique,
+    isFilled: t.isUnique && t.staffAssignments.length > 0,
+  }));
 }
 
 // for options resident

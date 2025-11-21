@@ -4,7 +4,7 @@ import {
   getStaffPositionToStaffFormOptions,
 } from '../_lib/organitatons.action';
 import StaffPositionsList from '../_components/StaffPositionsList';
-import { getCurrentUser } from '@/app/_lib/root.action';
+// import { getCurrentUser } from '@/app/_lib/root.action';
 import { StaffForm } from '../_components/StaffForm';
 import { Separator } from '@/components/ui/separator';
 
@@ -13,10 +13,9 @@ export default async function SettingsOrganitationsPage() {
 
   // const curentUser = await getCurrentUser();
 
-  // console.log(curentUser);
-
   // const residnetList = await getResidentsToStaffFormOptions();
   const stafPositionsList = await getStaffPositionToStaffFormOptions();
+  console.log('stafPositionsList =>', stafPositionsList);
 
   return (
     <div className="space-y-4">

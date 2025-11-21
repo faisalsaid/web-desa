@@ -45,7 +45,12 @@ import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-type PositionOption = { id: number; name: string };
+type PositionOption = {
+  id: number;
+  name: string;
+  isUnique: boolean;
+  isFilled: boolean;
+};
 // type UnitOption = { id: number; name: string };
 
 type ResidentItem = { id: number; fullName: string; nik: string };
@@ -77,6 +82,7 @@ export function StaffForm({
     },
   });
 
+  const availableTypes = positions.filter((t) => !(t.isUnique && t.isFilled));
   const watchResidentId = form.watch('residentId');
   const watchPositionTypeId = form.watch('positionTypeId');
 
@@ -185,7 +191,7 @@ export function StaffForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {positions.map((pos) => (
+                  {availableTypes.map((pos) => (
                     <SelectItem key={pos.id} value={pos.id.toString()}>
                       {pos.name}
                     </SelectItem>

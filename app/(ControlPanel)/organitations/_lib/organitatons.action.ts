@@ -191,21 +191,54 @@ export async function updateStaffPosition(
 // HANDLE CREATE STAFF =============================================================================
 
 export async function createStaff(input: CreateStaffInput) {
+  // 1. Validasi Zod
   const data = createStaffSchema.parse(input);
 
-  return prisma.staff.create({
+  // 2. Ambil info jabatan
+  const position = await prisma.staffPosition.findUnique({
+    where: { id: data.positionTypeId },
+    select: { isUnique: true },
+  });
+
+  if (!position) {
+    throw new Error('Jabatan tidak ditemukan.');
+  }
+
+  // 3. Jika jabatan tunggal → cek apakah sudah ada staff aktif
+  if (position.isUnique) {
+    const existingActive = await prisma.staff.findFirst({
+      where: {
+        positionTypeId: data.positionTypeId,
+        isActive: true,
+      },
+      select: { id: true, residentId: true },
+    });
+
+    if (existingActive) {
+      return {
+        success: false,
+        message:
+          'Jabatan ini hanya boleh diisi oleh satu orang dan sudah terisi.',
+      };
+    }
+  }
+
+  // 4. Jika lulus, create staff
+  const created = await prisma.staff.create({
     data: {
       residentId: data.residentId,
       positionTypeId: data.positionTypeId,
       startDate: new Date(data.startDate),
       endDate: data.endDate ? new Date(data.endDate) : null,
       isActive: data.isActive ?? true,
-
-      // organizationUnit: data.organizationUnitId
-      //   ? { connect: { id: data.organizationUnitId } }
-      //   : undefined,
     },
   });
+
+  return {
+    success: true,
+    message: 'Perangkatt berhasil ditambahkan.',
+    data: created,
+  };
 }
 
 // for options resident

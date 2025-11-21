@@ -98,39 +98,61 @@ export function StaffForm({
 
     // 1️⃣ Tetapkan pesan
     const loadingMessage = isEdit
-      ? 'Mengupdate staff...'
-      : 'Menyimpan staff...';
+      ? 'Perbahurui perangkat...'
+      : 'Menyimpan perangkat...';
     const successMessage = isEdit
-      ? 'Staff berhasil diupdate!'
-      : 'Staff berhasil dibuat!';
-    const errorMessage = isEdit ? 'Gagal update staff' : 'Gagal membuat staff';
+      ? 'Perangkat berhasil diubah!'
+      : 'Perangkat berhasil dibuat!';
+    const errorMessage = isEdit
+      ? 'Gagal ubah perangkat'
+      : 'Gagal membuat perangkat';
 
     // 2️⃣ Buat toast loading → return toastId
     const toastId = toast.loading(loadingMessage);
 
-    try {
-      // 3️⃣ Panggil API sesuai mode
-      if (isEdit) {
-        // await updateStaff(formData as UpdateStaffInput);
-      } else {
-        await createStaff(formData as CreateStaffInput);
+    if (isEdit) {
+    } else {
+      try {
+        const res = await createStaff(formData);
+        if (!res.success) {
+          toast.error(res.message, { id: toastId });
+        } else {
+          toast.success(res.message, { id: toastId });
+        }
+
+        router.refresh();
+        // eslint-disable-next-line
+      } catch (error) {
+        toast.error(errorMessage, { id: toastId });
+      } finally {
+        handleReset();
       }
-
-      // 4️⃣ Update toast menjadi sukses
-      toast.success(successMessage, { id: toastId });
-
-      handleReset();
-      router.refresh();
-
-      // // optional redirect atau close dialog
-      // if (onSuccess) onSuccess();
-    } catch (err: any) {
-      console.error(err);
-
-      toast.error(errorMessage, {
-        id: toastId, // replace loading toast with error
-      });
     }
+
+    // try {
+    //   // 3️⃣ Panggil API sesuai mode
+    //   if (isEdit) {
+    //     // await updateStaff(formData as UpdateStaffInput);
+    //   } else {
+    //     const res = await createStaff(formData as CreateStaffInput);
+    //     console.log(res);
+    //   }
+
+    //   // 4️⃣ Update toast menjadi sukses
+    //   toast.success(successMessage, { id: toastId });
+
+    //   handleReset();
+    //   router.refresh();
+
+    //   // // optional redirect atau close dialog
+    //   // if (onSuccess) onSuccess();
+    // } catch (err: any) {
+    //   console.error(err);
+
+    //   toast.error(errorMessage, {
+    //     id: toastId, // replace loading toast with error
+    //   });
+    // }
   };
 
   const isValid = form.formState.isValid;
@@ -363,7 +385,7 @@ export function StaffForm({
             disabled={isSubmitting || (isSubmitted && !isValid)}
           >
             {isSubmitting ? <Spinner /> : <Upload className=" h-4 w-4" />}{' '}
-            {mode === 'create' ? 'Tambah Staff' : 'Simpan Perubahan'}
+            {mode === 'create' ? 'Tambah Perangkat' : 'Simpan Perubahan'}
           </Button>
         </div>
       </form>

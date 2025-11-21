@@ -16,6 +16,28 @@ import slugify from 'slugify';
 import { Prisma } from '@prisma/client';
 import { getStaffPositionTypeDetailQuery } from './organitations.type';
 
+// HANDLE CREAT STAFF POSITIONS =================================================================
+
+// get staffpositon to parentPositionId option field
+export async function getStaffPositionOptions() {
+  try {
+    const positions = await prisma.staffPosition.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    return positions;
+  } catch (error) {
+    console.error('Failed to fetch staff positions:', error);
+    throw new Error('Gagal mengambil daftar jabatan.');
+  }
+}
+
 /**
  * Server Action: buat StaffPositionType baru
  * @param data input yang tervalidasi oleh Zod

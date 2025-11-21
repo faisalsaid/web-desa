@@ -41,6 +41,8 @@ export type AutocompleteProps<T> = {
   renderItem?: (item: T) => React.ReactNode;
 
   minLength?: number;
+
+  disabled?: boolean;
 };
 
 export function Autocomplete<T>({
@@ -53,6 +55,7 @@ export function Autocomplete<T>({
   getKey,
   renderItem,
   minLength = 2,
+  disabled,
 }: AutocompleteProps<T>) {
   const [input, setInput] = useState('');
   const [results, setResults] = useState<T[]>([]);
@@ -109,6 +112,7 @@ export function Autocomplete<T>({
             value={input}
             onValueChange={(q) => handleInputChange(q)}
             onFocus={() => results.length > 0 && setOpen(true)}
+            disabled={disabled}
           />
 
           {open && (

@@ -7,6 +7,9 @@ import StaffPositionsList from '../_components/StaffPositionsList';
 // import { getCurrentUser } from '@/app/_lib/root.action';
 import { StaffForm } from '../_components/StaffForm';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Eye } from 'lucide-react';
 
 export default async function SettingsOrganitationsPage() {
   const staffPossitons = await getAllStaffPositionsTypes();
@@ -20,7 +23,19 @@ export default async function SettingsOrganitationsPage() {
   return (
     <div className="space-y-4">
       <ContentCard>
-        <h1 className="text-xl font-semibold">Penetapan Perangkat Desa</h1>
+        <div className="flex gap-4 items-center justify-between">
+          <h1 className="text-xl font-semibold">Penetapan Perangkat Desa</h1>
+          <div>
+            <Button
+              size={'icon'}
+              className="rounded-full bg-sky-400 hover:bg-sky-500 active:bg-sky-300"
+            >
+              <Link href={'staff'}>
+                <Eye />
+              </Link>
+            </Button>
+          </div>
+        </div>
       </ContentCard>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">

@@ -1,6 +1,12 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
-import { getStaffs } from '../_lib/organitatons.action';
+import {
+  getStaffPositionToStaffFormOptions,
+  getStaffs,
+} from '../_lib/organitatons.action';
 import StaffTableComp from '../_components/tables/staff/StaffTableComp';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function StaffPage({
   searchParams,
@@ -18,10 +24,22 @@ export default async function StaffPage({
     search,
   });
 
+  const stafPositionsList = await getStaffPositionToStaffFormOptions();
+
   return (
     <div className="space-y-4">
-      <ContentCard>
+      <ContentCard className="flex gap-4 items-center justify-between">
         <h1 className="text-xl font-semibold">Daftar Perangkat Desa</h1>
+        <div>
+          <Button
+            size={'icon'}
+            className="rounded-full bg-sky-400 hover:bg-sky-500 active:bg-sky-300"
+          >
+            <Link href={'settings'}>
+              <Plus />
+            </Link>
+          </Button>
+        </div>
       </ContentCard>
       <ContentCard>
         <StaffTableComp data={stafDataTable} />

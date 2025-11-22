@@ -11,8 +11,8 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import StaffPositionTypeForm from './StaffPositionForm';
 import { Separator } from '@/components/ui/separator';
+import StaffPositionTypeForm from './StaffPositionForm';
 
 const AddStaffPositionButton = () => {
   const [isOpen, setIsOpen] = useState(false);

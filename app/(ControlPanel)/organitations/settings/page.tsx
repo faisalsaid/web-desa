@@ -15,7 +15,7 @@ export default async function SettingsOrganitationsPage() {
 
   // const residnetList = await getResidentsToStaffFormOptions();
   const stafPositionsList = await getStaffPositionToStaffFormOptions();
-  console.log('stafPositionsList =>', stafPositionsList);
+  // console.log('stafPositionsList =>', stafPositionsList);
 
   return (
     <div className="space-y-4">

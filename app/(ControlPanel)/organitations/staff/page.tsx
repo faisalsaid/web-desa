@@ -24,8 +24,6 @@ export default async function StaffPage({
     search,
   });
 
-  const stafPositionsList = await getStaffPositionToStaffFormOptions();
-
   return (
     <div className="space-y-4">
       <ContentCard className="flex gap-4 items-center justify-between">

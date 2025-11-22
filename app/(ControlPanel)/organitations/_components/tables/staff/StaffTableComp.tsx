@@ -38,10 +38,10 @@ const StaffTableComp = ({ data }: StaffTableCompProsp) => {
   return (
     <div className="space-y-4">
       <div className="flex gap-4 items-center ">
-        <div className="flex gap-2 items-center max-w-96">
-          <InputGroup className=" bg-background w-802">
+        <div className="flex flex-1 gap-2 items-center">
+          <InputGroup className=" bg-background">
             <InputGroupInput
-              placeholder="Cari nama atau jenis perangkat..."
+              placeholder="Nama peagawai atau jenis perangkat..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -62,7 +62,7 @@ const StaffTableComp = ({ data }: StaffTableCompProsp) => {
           className="text-red-500 bg-muted active:bg-red-500 active:text-white hover:bg-red-400  hover:text-white"
           onClick={handleReset}
         >
-          <RefreshCcw /> Clear
+          <RefreshCcw /> <span className="hidden sm:inline-block">Clear</span>
         </Button>
       </div>
       <StaffDataTable

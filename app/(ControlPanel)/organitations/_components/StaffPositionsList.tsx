@@ -3,7 +3,6 @@
 import { StaffPositionType } from '../_lib/organitations.type';
 import AddStaffPositionButton from './AddStaffPositionButton';
 import { GripVertical, MoreHorizontalIcon, User, Users } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import DeleteStaffPositionButton from './DeleteStaffPositionButton';
 import UpdateStaffPosisitionButton from './UpdateStaffPosisitionButton';
 import {

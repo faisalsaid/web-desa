@@ -106,9 +106,9 @@ export function StaffForm({
     const loadingMessage = isEdit
       ? 'Perbahurui perangkat...'
       : 'Menyimpan perangkat...';
-    const successMessage = isEdit
-      ? 'Perangkat berhasil diubah!'
-      : 'Perangkat berhasil dibuat!';
+    // const successMessage = isEdit
+    //   ? 'Perangkat berhasil diubah!'
+    //   : 'Perangkat berhasil dibuat!';
     const errorMessage = isEdit
       ? 'Gagal ubah perangkat'
       : 'Gagal membuat perangkat';

@@ -14,7 +14,11 @@ import {
 import { getCurrentUser } from '@/app/_lib/root.action';
 import slugify from 'slugify';
 import { Prisma } from '@prisma/client';
-import { getStaffPositionTypeDetailQuery } from './organitations.type';
+import {
+  getStaffDetailsQuery,
+  getStaffPositionTypeDetailQuery,
+  StaffType,
+} from './organitations.type';
 
 // HANDLE CREAT STAFF POSITIONS =================================================================
 
@@ -349,3 +353,62 @@ export async function updateStaffAction(input: UpdateStaffInput) {
   });
 }
 // ==================================================================================================
+
+// HANDLE STAFF ////////////////////////////////////////////////////////////////////////////////////////////
+
+// Get all staffs detail with limit and pagination
+
+export type GetStaffs = {
+  success: boolean;
+  data: StaffType[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+  error?: string;
+};
+
+interface GetStaffsParams {
+  page?: number;
+  search?: string;
+  pageSize?: number;
+}
+
+export async function getStaffs({
+  page = 1,
+  pageSize = 10,
+  search = '',
+}: GetStaffsParams): Promise<GetStaffs | null> {
+  const skip = (page - 1) * pageSize;
+
+  const where: Prisma.StaffWhereInput = search
+    ? {
+        OR: [
+          { resident: { fullName: { contains: search, mode: 'insensitive' } } },
+          { positionType: { name: { contains: search, mode: 'insensitive' } } },
+        ],
+      }
+    : {};
+
+  const [total, staffs] = await prisma.$transaction([
+    prisma.staff.count({ where }),
+    prisma.staff.findMany({
+      where,
+      skip,
+      take: pageSize,
+      // distinct: ['residentId'],
+      ...getStaffDetailsQuery,
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
+
+  return {
+    success: true,
+    data: staffs,
+    total,
+    page,
+    totalPages: Math.ceil(total / pageSize),
+  };
+}
+
+//  ////////////////////////////////////////////////////////////////////////////////////////////

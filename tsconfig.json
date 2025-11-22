@@ -23,6 +23,12 @@
       "@auth/core": ["./node_modules/@auth/core"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/(ControlPanel)/organitations/_components/tables/staff/StaffTableComp.tsx"
+  ],
   "exclude": ["node_modules"]
 }

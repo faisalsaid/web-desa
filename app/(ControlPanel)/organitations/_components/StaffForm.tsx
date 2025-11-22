@@ -285,7 +285,7 @@ export function StaffForm({
                         disabled={!watchResidentId}
                       >
                         {field.value
-                          ? field.value.toLocaleDateString()
+                          ? field.value.toLocaleDateString('id-ID')
                           : 'Pilih tanggal'}
                         <Calendar className="ml-auto h-4 w-4" />
                       </Button>

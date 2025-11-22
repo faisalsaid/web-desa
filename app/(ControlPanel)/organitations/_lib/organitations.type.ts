@@ -19,3 +19,24 @@ export const getStaffPositionTypeDetailQuery =
 export type StaffPositionType = Prisma.StaffPositionGetPayload<
   typeof getStaffPositionTypeDetailQuery
 >;
+
+export const getStaffDetailsQuery =
+  Prisma.validator<Prisma.StaffFindManyArgs>()({
+    include: {
+      resident: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      positionType: {
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+export type StaffType = Prisma.StaffGetPayload<typeof getStaffDetailsQuery>;

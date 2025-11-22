@@ -329,6 +329,41 @@ export async function searchResidentToStaff(query: string) {
   });
 }
 
+// Handle delete staff (hard delete )============================================================================
+
+type DeleteStaffResult =
+  | { success: true; data: { id: number } }
+  | { success: false; message: string };
+
+export async function deleteStaff(staffId: number): Promise<DeleteStaffResult> {
+  if (!staffId || Number.isNaN(staffId)) {
+    return {
+      success: false,
+      message: 'Invalid staff ID',
+    };
+  }
+
+  try {
+    const deleted = await prisma.staff.delete({
+      where: { id: staffId },
+      select: { id: true }, // batasi return agar aman
+    });
+
+    return {
+      success: true,
+      data: deleted,
+    };
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : 'Failed to delete staff';
+
+    return {
+      success: false,
+      message: errorMessage,
+    };
+  }
+}
+
 // =================================================================================================
 
 // HANDLE UPDATE STAFF =============================================================================

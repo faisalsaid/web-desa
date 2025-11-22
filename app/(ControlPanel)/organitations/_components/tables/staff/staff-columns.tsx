@@ -6,6 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import DeleteStaffButton from '../../DeleteStaffButton';
 
 export const staffColumns: ColumnDef<StaffType>[] = [
   {
@@ -69,6 +70,13 @@ export const staffColumns: ColumnDef<StaffType>[] = [
             : '-'}
         </div>
       );
+    },
+  },
+  {
+    id: 'action',
+    header: 'aksi',
+    cell: ({ row }) => {
+      return <DeleteStaffButton id={row.original.id} />;
     },
   },
 ];

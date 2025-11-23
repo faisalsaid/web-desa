@@ -46,7 +46,7 @@ export async function middleware(req: NextRequest) {
     '/settings': ['ADMIN'],
     '/village': ['ADMIN', 'OPERATOR'],
     '/residents': ['ADMIN', 'OPERATOR'],
-    '/family': ['ADMIN', 'OPERATOR'],
+    '/families': ['ADMIN', 'OPERATOR'],
     '/organitations': ['ADMIN', 'OPERATOR'],
     '/accounting': ['ADMIN', 'OPERATOR'],
   };

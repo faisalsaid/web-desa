@@ -86,7 +86,7 @@ const allMenuList: MenuItem[] = [
     sub: [
       {
         title: 'APBDES',
-        url: '/apbdes',
+        url: '/apbdesa',
         icon: CircleDollarSign,
       },
       {

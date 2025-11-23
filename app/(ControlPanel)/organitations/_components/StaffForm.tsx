@@ -114,6 +114,7 @@ export function StaffForm({
   };
 
   const onSubmit = async (formData: CreateStaffInput | UpdateStaffInput) => {
+    // console.log('FORM DATA', formData);
     const isEdit = mode === 'update';
 
     // 1️⃣ Tetapkan pesan
@@ -131,14 +132,15 @@ export function StaffForm({
     const toastId = toast.loading(loadingMessage);
 
     if (isEdit) {
-      console.log('FORM DATA', formData);
-
       const res = await updateStaffAction(formData);
 
       if (res.success) {
         toast.success(res.message, { id: toastId });
         router.refresh();
-        closeModal ? closeModal(true) : null;
+
+        if (closeModal) {
+          closeModal(true);
+        }
       } else {
         toast.success(res.message, { id: toastId });
       }

@@ -1,13 +1,9 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
-import {
-  getStaffPositionToStaffFormOptions,
-  getStaffs,
-} from '../_lib/organitatons.action';
+import { getStaffs } from '../_lib/organitatons.action';
 import StaffTableComp from '../_components/tables/staff/StaffTableComp';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import UpdatePerangkatButton from '../_components/UpdatePerangkatButton';
 
 export default async function StaffPage({
   searchParams,

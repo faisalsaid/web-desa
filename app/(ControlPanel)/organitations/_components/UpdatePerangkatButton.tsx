@@ -13,7 +13,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { StaffForm, StaffFormUpdate } from './StaffForm';
-import { UpdateStaffInput } from '../_lib/organitaions.zod';
 
 const UpdatePerangkatButton = ({
   staffData,

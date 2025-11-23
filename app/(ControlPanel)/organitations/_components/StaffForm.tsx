@@ -338,6 +338,8 @@ export function StaffForm({
                         onSelect={(date) => field.onChange(date)}
                         disabled={(date) => date > new Date()} // contoh: tidak bisa pilih tanggal di masa depan
                         captionLayout="dropdown"
+                        startMonth={new Date(1950, 0)} // Januari 1950
+                        endMonth={new Date(new Date().getFullYear(), 11)}
                       />
                     </PopoverContent>
                   </Popover>

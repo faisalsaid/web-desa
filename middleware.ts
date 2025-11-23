@@ -14,10 +14,11 @@ export async function middleware(req: NextRequest) {
 
   // 🚨 WAJIB: Cek user masih ada di database
   if (token?.email) {
-    const res = await fetch(`${req.nextUrl.origin}/api/auth/validate`, {
+    const res = await fetch('/api/auth/validate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: token.email }),
+      cache: 'no-store',
     }).then((r) => r.json());
 
     if (!res.exists) {

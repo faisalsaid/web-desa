@@ -10,6 +10,8 @@ export async function middleware(req: NextRequest) {
     secret: process.env.AUTH_SECRET,
   });
 
+  console.log('MIDLEWARE ', token);
+
   const isLoggedIn = !!token;
 
   // 🚨 WAJIB: Cek user masih ada di database

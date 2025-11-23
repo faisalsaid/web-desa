@@ -72,5 +72,5 @@ export const config = {
     '/accounting/:path*',
     // jangan include /auth/:path* untuk mencegah loop
   ],
-  runtime: 'nodejs', // wajib agar secureCookie berjalan di Vercel
+  // runtime: 'nodejs', // wajib agar secureCookie berjalan di Vercel
 };

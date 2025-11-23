@@ -14,7 +14,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 10 * 60,
   },
-
+  secret: process.env.NEXTAUTH_SECRET, // ✅ WAJIB
   providers: [
     Credentials({
       credentials: {},

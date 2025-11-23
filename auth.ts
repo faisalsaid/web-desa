@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import Credentials from 'next-auth/providers/credentials';
-
 import prisma from './lib/prisma';
 import { loginSchema } from './app/auth/_lib/auth.zod';
 import { compareSync } from 'bcrypt-ts';
@@ -9,12 +8,14 @@ import { compareSync } from 'bcrypt-ts';
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
 
+  secret: process.env.NEXTAUTH_SECRET, // WAJIB
+
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60,
-    updateAge: 10 * 60,
+    maxAge: 30 * 24 * 60 * 60, // 30 hari
+    updateAge: 10 * 60, // refresh token setiap 10 menit
   },
-  secret: process.env.NEXTAUTH_SECRET, // ✅ WAJIB
+
   providers: [
     Credentials({
       credentials: {},
@@ -23,7 +24,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!validated.success) return null;
 
         const { email, password } = validated.data;
-
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.hashedPassword) throw new Error('No user found');
 
@@ -37,80 +37,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async signIn({ user, account, profile }) {
-      // Google login linking logic
-      if (account?.provider === 'google') {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-        });
-
-        if (existingUser) {
-          const googleAcc = await prisma.account.findFirst({
-            where: {
-              provider: 'google',
-              providerAccountId: account.providerAccountId,
-            },
-          });
-
-          if (!googleAcc) {
-            await prisma.account.create({
-              data: {
-                userId: existingUser.id,
-                type: account.type,
-                provider: account.provider,
-                providerAccountId: account.providerAccountId,
-                access_token: account.access_token,
-                id_token: account.id_token,
-                expires_at: account.expires_at,
-                token_type: account.token_type,
-              },
-            });
-          }
-
-          if (!existingUser.image && profile?.picture) {
-            await prisma.user.update({
-              where: { id: existingUser.id },
-              data: { image: profile.picture },
-            });
-          }
-        }
-      }
-
-      return true;
-    },
-
-    // ==============================
-    // 🔐 JWT AUTO INVALIDATION
-    // ==============================
+    // Auto invalidate token jika user dihapus
     async jwt({ token, user }) {
-      // Saat login
       if (user) {
         token.role = user.role;
         return token;
       }
 
-      // Cek apakah user masih ada di database
       const existingUser = await prisma.user.findUnique({
         where: { id: token.sub! },
         select: { id: true },
       });
 
-      if (!existingUser) {
-        token.deleted = true; // ditandai invalid
-      }
+      if (!existingUser) token.deleted = true;
 
       return token;
     },
 
     async session({ session, token }) {
       if (!token || token.deleted) {
-        // jangan return null, tapi hapus user
-        return {
-          ...session,
-          user: undefined,
-        };
+        return { ...session, user: undefined }; // TypeScript-safe
       }
-
       session.user.id = token.sub!;
       session.user.role = token.role;
       return session;

@@ -20,20 +20,11 @@ export async function middleware(req: NextRequest) {
 
   // Redirect ke login jika token tidak ada atau user dihapus
   if (!token || token.deleted) {
-    const res = NextResponse.redirect(
-      new URL('/auth/login?expired=1', req.url),
-    );
-    // Hapus semua cookie authjs
-    res.cookies.delete('__Secure-authjs.session-token');
-    res.cookies.delete('__Secure-authjs.callback-url');
-    res.cookies.delete('__Host-authjs.csrf-token');
-    return res;
-
-    // const out = NextResponse.redirect(new URL('/auth/login', req.url));
-    // out.cookies.delete('__Secure-authjs.session-token');
-    // out.cookies.delete('__Secure-authjs.callback-url');
-    // out.cookies.delete('__Host-authjs.csrf-token');
-    // return out;
+    const out = NextResponse.redirect(new URL('/auth/login', req.url));
+    out.cookies.delete('__Secure-authjs.session-token');
+    out.cookies.delete('__Secure-authjs.callback-url');
+    out.cookies.delete('__Host-authjs.csrf-token');
+    return out;
   }
 
   // Role-based route access

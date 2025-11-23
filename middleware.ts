@@ -79,4 +79,5 @@ export const config = {
     '/organitations/:path*',
     '/accounting/:path*',
   ],
+  runtime: 'nodejs',
 };

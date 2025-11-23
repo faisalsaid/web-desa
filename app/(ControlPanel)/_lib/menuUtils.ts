@@ -85,13 +85,23 @@ const allMenuList: MenuItem[] = [
     roles: ['ADMIN', 'OPERATOR'],
     sub: [
       {
-        title: 'Keuangan',
-        url: '/accounting',
+        title: 'APBDES',
+        url: '/apbdes',
         icon: CircleDollarSign,
       },
       {
-        title: 'APBDES',
-        url: '/accounting/apbdes',
+        title: 'Pendapatan',
+        url: '/apbdes/revenue',
+        icon: Wallet2,
+      },
+      {
+        title: 'belanja',
+        url: '/apbdes/expense',
+        icon: Wallet2,
+      },
+      {
+        title: 'pembiayaan',
+        url: '/apbdes/financing',
         icon: Wallet2,
       },
     ],

@@ -65,11 +65,12 @@ export const config = {
     '/dashboard/:path*',
     '/village/:path*',
     '/residents/:path*',
-    '/family/:path*',
+    '/families/:path*',
     '/users/:path*',
     '/settings/:path*',
     '/organitations/:path*',
     '/accounting/:path*',
+    '/auth/:path*',
     // jangan include /auth/:path* untuk mencegah loop
   ],
   // runtime: 'nodejs', // wajib agar secureCookie berjalan di Vercel

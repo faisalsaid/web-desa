@@ -5,6 +5,13 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Halaman login/register tidak termasuk protected
+  const authRoutes = ['/auth/login', '/auth/register'];
+  if (authRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Ambil token
   let token = null;
   try {
     token = await getToken({
@@ -13,21 +20,26 @@ export async function middleware(req: NextRequest) {
       secureCookie: process.env.NODE_ENV === 'production',
     });
   } catch (err) {
-    console.error('Failed to get token in middleware:', err);
+    console.error('Failed to get token:', err);
   }
 
-  const isLoggedIn = !!token;
+  // ❌ Logout otomatis jika token tidak ada atau user dihapus
+  if (!token?.role || token.deleted) {
+    const res = NextResponse.redirect(
+      new URL('/auth/login?expired=1', req.url),
+    );
 
-  // Redirect ke login jika token tidak ada atau user dihapus
-  if (!token || token.deleted) {
-    const out = NextResponse.redirect(new URL('/auth/login', req.url));
-    out.cookies.delete('__Secure-authjs.session-token');
-    out.cookies.delete('__Secure-authjs.callback-url');
-    out.cookies.delete('__Host-authjs.csrf-token');
-    return out;
+    // Hapus semua cookie authjs
+    res.cookies.delete('__Secure-authjs.session-token');
+    res.cookies.delete('__Secure-authjs.callback-url');
+    res.cookies.delete('__Host-authjs.csrf-token');
+
+    return res;
   }
 
-  // Role-based route access
+  const userRole = token.role;
+
+  // Role-based access
   const protectedRoutes: Record<string, string[]> = {
     '/dashboard': ['ADMIN', 'OPERATOR', 'EDITOR'],
     '/users': ['ADMIN', 'OPERATOR'],
@@ -40,23 +52,14 @@ export async function middleware(req: NextRequest) {
   };
 
   for (const [prefix, roles] of Object.entries(protectedRoutes)) {
-    if (pathname.startsWith(prefix) && !roles.includes(token.role)) {
+    if (pathname.startsWith(prefix) && !roles.includes(userRole)) {
       return NextResponse.redirect(new URL('/unauthorized', req.url));
     }
-  }
-
-  // Block auth routes jika sudah login
-  const blockedAuthRoutes = ['/auth/login', '/auth/register'];
-  if (isLoggedIn && blockedAuthRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
   return NextResponse.next();
 }
 
-// =========================
-// Config matcher + runtime
-// =========================
 export const config = {
   matcher: [
     '/dashboard/:path*',
@@ -65,9 +68,9 @@ export const config = {
     '/family/:path*',
     '/users/:path*',
     '/settings/:path*',
-    '/auth/:path*',
     '/organitations/:path*',
     '/accounting/:path*',
+    // jangan include /auth/:path* untuk mencegah loop
   ],
-  runtime: 'nodejs', // WAJIB agar secureCookie di Vercel tidak crash
+  runtime: 'nodejs', // wajib agar secureCookie berjalan di Vercel
 };

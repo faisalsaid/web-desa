@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
-    secureCookie: process.env.NODE_ENV === 'production',
+    // secureCookie: process.env.NODE_ENV === 'production',
   });
 
   console.log('MIDLEWARE ', token);
@@ -81,5 +81,5 @@ export const config = {
     '/organitations/:path*',
     '/accounting/:path*',
   ],
-  // runtime: 'nodejs',
+  runtime: 'nodejs',
 };

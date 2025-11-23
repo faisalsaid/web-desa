@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
     '/settings': ['ADMIN'],
     '/village': ['ADMIN', 'OPERATOR'],
     '/residents': ['ADMIN', 'OPERATOR'],
-    '/family': ['ADMIN', 'OPERATOR'],
+    '/families': ['ADMIN', 'OPERATOR'],
     '/organitations': ['ADMIN', 'OPERATOR'],
     '/accounting': ['ADMIN', 'OPERATOR'],
   };
@@ -64,7 +64,7 @@ export const config = {
     '/dashboard/:path*',
     '/village/:path*',
     '/residents/:path*',
-    '/family/:path*',
+    '/families/:path*',
     '/users/:path*',
     '/settings/:path*',
     '/auth/:path*',

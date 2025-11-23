@@ -384,7 +384,7 @@ export async function updateStaffAction(input: Partial<UpdateStaffInput>) {
     });
 
     return { success: true, message: 'Berahasil update staf', data: updated };
-    // eselint-disable-next-line
+    // eslint-disable-next-line
   } catch (error) {
     return { success: false, message: 'Gagal update staf' };
   }

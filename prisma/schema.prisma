@@ -402,3 +402,219 @@ model OrganizationUnit {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// SCHEMA KEUANGAN 
+
+/// --------------------------------------------------
+/// ENUMS
+/// --------------------------------------------------
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+/// --------------------------------------------------
+/// APBDes STRUCTURE (Year → Category → Activity → Allocation → Realization)
+/// --------------------------------------------------
+
+model BudgetYear {
+  id          Int     @id @default(autoincrement())
+  year        Int     @unique
+  title       String?
+  isLocked    Boolean @default(false)
+  isFinalized Boolean @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // audit
+  createdById Int?
+  updatedById Int?
+
+  categories BudgetCategory[]
+}
+
+model BudgetCategory {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  year   BudgetYear @relation(fields: [yearId], references: [id])
+  yearId Int
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById Int?
+  updatedById Int?
+
+  activities BudgetActivity[]
+
+  @@index([yearId])
+}
+
+model BudgetActivity {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  isLocked    Boolean @default(false)
+
+  category   BudgetCategory @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById Int?
+  updatedById Int?
+
+  allocations BudgetAllocation[]
+
+  @@index([categoryId])
+}
+
+model BudgetAllocation {
+  id       Int     @id @default(autoincrement())
+  amount   Decimal @default(0) @db.Decimal(20, 2)
+  notes    String?
+  isLocked Boolean @default(false)
+
+  activity   BudgetActivity @relation(fields: [activityId], references: [id])
+  activityId Int
+
+  fundingSource   FundingSource? @relation(fields: [fundingSourceId], references: [id])
+  fundingSourceId Int?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById Int?
+  updatedById Int?
+
+  realizations BudgetRealization[]
+
+  @@index([activityId])
+  @@index([fundingSourceId])
+}
+
+model BudgetRealization {
+  id     Int       @id @default(autoincrement())
+  amount Decimal   @default(0) @db.Decimal(20, 2)
+  date   DateTime?
+  notes  String?
+
+  allocation   BudgetAllocation @relation(fields: [allocationId], references: [id])
+  allocationId Int
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById Int?
+  updatedById Int?
+
+  transactions FinancialTransaction[]
+
+  @@index([allocationId])
+  @@index([date])
+}
+
+/// --------------------------------------------------
+/// FUNDING SOURCES
+/// --------------------------------------------------
+
+model FundingSource {
+  id          Int     @id @default(autoincrement())
+  name        String
+  code        String? @unique
+  description String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById Int?
+  updatedById Int?
+
+  allocations BudgetAllocation[]
+}
+
+/// --------------------------------------------------
+/// BANK ACCOUNTS & TRANSACTIONS
+/// --------------------------------------------------
+
+model VillageBankAccount {
+  id             Int     @id @default(autoincrement())
+  bankName       String
+  accountNumber  String  @unique
+  ownerName      String
+  openingBalance Decimal @default(0) @db.Decimal(20, 2)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById Int?
+  updatedById Int?
+
+  transactions FinancialTransaction[]
+
+  @@index([accountNumber])
+}
+
+model FinancialTransaction {
+  id                Int             @id @default(autoincrement())
+  transactionNumber String          @unique
+  date              DateTime
+  amount            Decimal         @db.Decimal(20, 2)
+  type              TransactionType
+  notes             String?
+  balanceAfter      Decimal?        @db.Decimal(20, 2) // saldo setelah transaksi
+
+  realization   BudgetRealization @relation(fields: [realizationId], references: [id])
+  realizationId Int
+
+  account   VillageBankAccount? @relation(fields: [accountId], references: [id])
+  accountId Int?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById Int?
+  updatedById Int?
+
+  attachments TransactionAttachment[]
+
+  @@index([date])
+  @@index([realizationId])
+  @@index([accountId])
+}
+
+model TransactionAttachment {
+  id            Int                  @id @default(autoincrement())
+  transaction   FinancialTransaction @relation(fields: [transactionId], references: [id])
+  transactionId Int
+
+  path         String
+  filename     String
+  contentType  String?
+  size         Int?
+  uploadedAt   DateTime @default(now())
+  uploadedById Int?
+
+  @@index([transactionId])
+}
+
+/// --------------------------------------------------
+/// AUDIT LOG (OPTIONAL BUT HIGHLY RECOMMENDED)
+/// --------------------------------------------------
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  actorId     Int?
+  action      String
+  targetTable String?
+  targetId    Int?
+  payload     Json?
+  createdAt   DateTime @default(now())
+
+  @@index([actorId])
+  @@index([targetTable, targetId])
+}

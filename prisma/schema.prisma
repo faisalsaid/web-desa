@@ -406,12 +406,14 @@ model OrganizationUnit {
 // APBDES ===============================================================================
 
 model BudgetYear {
-  id        Int       @id @default(autoincrement())
-  year      Int       @unique
-  isActive  Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id          Int       @id @default(autoincrement())
+  year        Int       @unique
+  isActive    Boolean   @default(false)
+  isLocked    Boolean   @default(false) // lock year when finalized
+  isFinalized Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
   revenues  Revenue[]
   expenses  Expense[]

@@ -14,7 +14,9 @@ export async function middleware(req: NextRequest) {
 
   // 🚨 WAJIB: Cek user masih ada di database
   if (token?.email) {
-    const res = await fetch('/api/auth/validate', {
+    const apiUrl = new URL('/api/auth/validate', req.nextUrl.origin);
+
+    const res = await fetch(apiUrl.toString(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: token.email }),
@@ -23,8 +25,11 @@ export async function middleware(req: NextRequest) {
 
     if (!res.exists) {
       const out = NextResponse.redirect(new URL('/auth/login', req.url));
-      out.cookies.delete('next-auth.session-token');
-      out.cookies.delete('__Secure-next-auth.session-token');
+      out.cookies.delete('authjs.session-token');
+      out.cookies.delete('__Secure-authjs.session-token');
+      out.cookies.delete('__Host-authjs.session-token');
+      out.cookies.delete('__Secure-authjs.callback-url');
+      out.cookies.delete('__Host-authjs.csrf-token');
       return out;
     }
   }

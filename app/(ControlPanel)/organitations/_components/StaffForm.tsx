@@ -31,6 +31,7 @@ import { Autocomplete } from '@/components/autocomplete';
 import {
   createStaff,
   searchResidentToStaff,
+  updateStaffAction,
 } from '../_lib/organitatons.action';
 import {
   Popover,
@@ -55,11 +56,23 @@ type PositionOption = {
 
 type ResidentItem = { id: number; fullName: string; nik: string };
 
+export type StaffFormUpdate = {
+  id: number;
+  residentId: number;
+  residentName: string;
+  positionTypeId: number;
+  positionName: string;
+  startDate: Date;
+  endDate?: Date | null | undefined;
+  isActive?: boolean | undefined;
+};
+
 type StaffFormProps = {
-  mode: 'create' | 'update';
-  defaultValues?: Partial<UpdateStaffInput>;
-  positions: PositionOption[];
+  mode?: 'create' | 'update';
+  defaultValues?: StaffFormUpdate;
+  positions?: PositionOption[];
   //   units: UnitOption[];
+  closeModal?: (value?: boolean) => void;
 };
 
 export function StaffForm({
@@ -67,6 +80,7 @@ export function StaffForm({
   defaultValues,
   // residents,
   positions,
+  closeModal,
 }: StaffFormProps) {
   const router = useRouter();
 
@@ -82,7 +96,9 @@ export function StaffForm({
     },
   });
 
-  const availableTypes = positions.filter((t) => !(t.isUnique && t.isFilled));
+  const availableTypes = positions
+    ? positions?.filter((t) => !(t.isUnique && t.isFilled))
+    : null;
   const watchResidentId = form.watch('residentId');
   const watchPositionTypeId = form.watch('positionTypeId');
 
@@ -98,8 +114,6 @@ export function StaffForm({
   };
 
   const onSubmit = async (formData: CreateStaffInput | UpdateStaffInput) => {
-    console.log('FORM DATA', formData);
-
     const isEdit = mode === 'update';
 
     // 1️⃣ Tetapkan pesan
@@ -117,6 +131,17 @@ export function StaffForm({
     const toastId = toast.loading(loadingMessage);
 
     if (isEdit) {
+      console.log('FORM DATA', formData);
+
+      const res = await updateStaffAction(formData);
+
+      if (res.success) {
+        toast.success(res.message, { id: toastId });
+        router.refresh();
+        closeModal ? closeModal(true) : null;
+      } else {
+        toast.success(res.message, { id: toastId });
+      }
     } else {
       try {
         const res = await createStaff(formData);
@@ -175,70 +200,86 @@ export function StaffForm({
         className="space-y-6"
       >
         {/* Position Type */}
-        <FormField
-          control={form.control}
-          name="positionTypeId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Jabatan</FormLabel>
-              <Select
-                onValueChange={(v) => field.onChange(Number(v))}
-                defaultValue={field.value?.toString()}
-              >
-                <FormControl className="bg-background w-full">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih Jabatan" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {availableTypes.map((pos) => (
-                    <SelectItem key={pos.id} value={pos.id.toString()}>
-                      {pos.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/* Resident */}
-        <FormField
-          control={form.control}
-          name="residentId"
-          render={({ field }) => (
-            <Autocomplete<ResidentItem>
-              disabled={!watchPositionTypeId}
-              label="Resident"
-              placeholder={
-                !watchPositionTypeId
-                  ? 'Pilih jabatan terlebih dahulu'
-                  : 'Cari resident...'
-              }
-              // bentuk data di form = id number
-              value={selectedResident} // tidak dipakai karena kita simpan id
-              onChange={(resident) => {
-                setSelectedResident(resident || null);
-                field.onChange(resident?.id ?? null);
-              }}
-              search={async (q) => {
-                return await searchResidentToStaff(q);
-              }}
-              displayValue={(item) =>
-                item ? `${item.fullName} – ${item.nik}` : ''
-              }
-              getKey={(item) => item.id}
-              // renderItem={(item) => (
-              //   <div className="flex flex-col">
-              //     <span className="font-medium">{item.fullName}</span>
-              //     <span className="text-xs text-muted-foreground">
-              //       NIK: {item.nik}
-              //     </span>
-              //   </div>
-              // )}
-            />
-          )}
-        />
+
+        {availableTypes ? (
+          <FormField
+            control={form.control}
+            name="positionTypeId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Jabatan</FormLabel>
+                <Select
+                  onValueChange={(v) => field.onChange(Number(v))}
+                  defaultValue={field.value?.toString()}
+                >
+                  <FormControl className="bg-background w-full">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih Jabatan" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {availableTypes.map((pos) => (
+                      <SelectItem key={pos.id} value={pos.id.toString()}>
+                        {pos.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <div className="p-2 border rounded-lg">
+            <p className="text-muted-foreground">Jabantan </p>
+            <p className="text-lg">{defaultValues?.positionName}</p>
+          </div>
+        )}
+
+        {availableTypes ? (
+          <FormField
+            control={form.control}
+            name="residentId"
+            render={({ field }) => (
+              <Autocomplete<ResidentItem>
+                disabled={!watchPositionTypeId}
+                label="Resident"
+                placeholder={
+                  !watchPositionTypeId
+                    ? 'Pilih jabatan terlebih dahulu'
+                    : 'Cari resident...'
+                }
+                // bentuk data di form = id number
+                value={selectedResident} // tidak dipakai karena kita simpan id
+                onChange={(resident) => {
+                  setSelectedResident(resident || null);
+                  field.onChange(resident?.id ?? null);
+                }}
+                search={async (q) => {
+                  return await searchResidentToStaff(q);
+                }}
+                displayValue={(item) =>
+                  item ? `${item.fullName} – ${item.nik}` : ''
+                }
+                getKey={(item) => item.id}
+                // renderItem={(item) => (
+                //   <div className="flex flex-col">
+                //     <span className="font-medium">{item.fullName}</span>
+                //     <span className="text-xs text-muted-foreground">
+                //       NIK: {item.nik}
+                //     </span>
+                //   </div>
+                // )}
+              />
+            )}
+          />
+        ) : (
+          <div className="p-2 border rounded-lg">
+            <p className="text-muted-foreground">Nama : </p>
+            <p className="text-lg">{defaultValues?.residentName}</p>
+          </div>
+        )}
+
         {/* Organization Unit */}
         {/* <FormField
           control={form.control}
@@ -374,17 +415,27 @@ export function StaffForm({
         />
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            className="text-red-500"
-            onClick={() => {
-              handleReset();
-            }}
-          >
-            <RefreshCwIcon />
-            Reset
-          </Button>
+          {closeModal ? (
+            <Button
+              className="bg-red-400 text-white"
+              type="button"
+              onClick={() => closeModal()}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              className="text-red-500"
+              onClick={() => {
+                handleReset();
+              }}
+            >
+              <RefreshCwIcon />
+              Reset
+            </Button>
+          )}
 
           {/* Submit */}
           <Button

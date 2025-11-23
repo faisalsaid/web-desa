@@ -7,6 +7,7 @@ import StaffTableComp from '../_components/tables/staff/StaffTableComp';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import UpdatePerangkatButton from '../_components/UpdatePerangkatButton';
 
 export default async function StaffPage({
   searchParams,
@@ -28,7 +29,7 @@ export default async function StaffPage({
     <div className="space-y-4">
       <ContentCard className="flex gap-4 items-center justify-between">
         <h1 className="text-xl font-semibold">Daftar Perangkat Desa</h1>
-        <div>
+        <div className="flex gap-2">
           <Button
             size={'icon'}
             className="rounded-full bg-sky-400 hover:bg-sky-500 active:bg-sky-300"

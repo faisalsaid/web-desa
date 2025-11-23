@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Edit2 } from 'lucide-react';
 import {
   Dialog,
   DialogTrigger,
@@ -12,9 +12,14 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import StaffPositionTypeForm from './StaffPositionForm';
+import { StaffForm, StaffFormUpdate } from './StaffForm';
+import { UpdateStaffInput } from '../_lib/organitaions.zod';
 
-const AddStaffPositionButton = () => {
+const UpdatePerangkatButton = ({
+  staffData,
+}: {
+  staffData: StaffFormUpdate;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -22,25 +27,29 @@ const AddStaffPositionButton = () => {
       <DialogTrigger asChild>
         <Button
           size="icon"
-          className="rounded-full bg-sky-500 hover:bg-sky-600"
+          className="rounded-full text-green-400"
+          variant={'outline'}
         >
-          <Plus />
+          <Edit2 />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Buat Jabatan Baru</DialogTitle>
+          <DialogTitle>Edit Staff</DialogTitle>
           <DialogDescription>
-            <span className="text-xs">
-              Pastikan jabatan yang ingin dibuat belum tersedia
-            </span>
+            <span className="text-xs"></span>
           </DialogDescription>
         </DialogHeader>
         <Separator />
-        <StaffPositionTypeForm closeModal={() => setIsOpen(false)} />
+        <StaffForm
+          mode="update"
+          defaultValues={staffData}
+          closeModal={() => setIsOpen(false)}
+        />
+        {/* <StaffPositionTypeForm closeModal={() => setIsOpen(false)} /> */}
       </DialogContent>
     </Dialog>
   );
 };
 
-export default AddStaffPositionButton;
+export default UpdatePerangkatButton;

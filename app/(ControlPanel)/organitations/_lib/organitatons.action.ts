@@ -19,6 +19,7 @@ import {
   getStaffPositionTypeDetailQuery,
   StaffType,
 } from './organitations.type';
+import { success } from 'zod';
 
 // HANDLE CREAT STAFF POSITIONS =================================================================
 
@@ -368,24 +369,25 @@ export async function deleteStaff(staffId: number): Promise<DeleteStaffResult> {
 
 // HANDLE UPDATE STAFF =============================================================================
 
-export async function updateStaffAction(input: UpdateStaffInput) {
+export async function updateStaffAction(input: Partial<UpdateStaffInput>) {
   const data = updateStaffSchema.parse(input);
 
-  return prisma.staff.update({
-    where: { id: data.id },
-    data: {
-      residentId: data.residentId,
-      positionTypeId: data.positionTypeId,
-      startDate: new Date(data.startDate),
-      endDate: data.endDate ? new Date(data.endDate) : null,
-      isActive: data.isActive ?? true,
+  try {
+    const updated = await prisma.staff.update({
+      where: { id: data.id },
+      data: {
+        residentId: data.residentId,
+        positionTypeId: data.positionTypeId,
+        startDate: new Date(data.startDate),
+        endDate: data.endDate ? new Date(data.endDate) : null,
+        isActive: data.isActive ?? true,
+      },
+    });
 
-      // organizationUnit:
-      //   data.organizationUnitId === null
-      //     ? { disconnect: true }
-      //     : { connect: { id: data.organizationUnitId } },
-    },
-  });
+    return { success: true, message: 'Berahasil update staf', data: updated };
+  } catch (error) {
+    return { success: false, message: 'Gagal update staf' };
+  }
 }
 // ==================================================================================================
 

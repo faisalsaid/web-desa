@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import DeleteStaffButton from '../../DeleteStaffButton';
+import UpdatePerangkatButton from '../../UpdatePerangkatButton';
 
 export const staffColumns: ColumnDef<StaffType>[] = [
   {
@@ -76,7 +77,24 @@ export const staffColumns: ColumnDef<StaffType>[] = [
     id: 'action',
     header: 'aksi',
     cell: ({ row }) => {
-      return <DeleteStaffButton id={row.original.id} />;
+      const data = row.original; // <--- ambil semua data row
+
+      const formData = {
+        id: data.id,
+        residentId: data.residentId,
+        residentName: data.resident.fullName,
+        positionTypeId: data.positionTypeId,
+        positionName: data.positionType.name,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        isActive: data.isActive,
+      };
+      return (
+        <div className="flex gap-2">
+          <UpdatePerangkatButton staffData={formData} />
+          <DeleteStaffButton id={row.original.id} />
+        </div>
+      );
     },
   },
 ];

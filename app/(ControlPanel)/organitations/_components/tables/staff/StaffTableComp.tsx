@@ -37,10 +37,11 @@ const StaffTableComp = ({ data }: StaffTableCompProsp) => {
   };
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 items-center ">
+      <div className="flex gap-2 items-center ">
         <div className="flex flex-1 gap-2 items-center">
           <InputGroup className=" bg-background">
             <InputGroupInput
+              className="text-sm"
               placeholder="Nama peagawai atau jenis perangkat..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}

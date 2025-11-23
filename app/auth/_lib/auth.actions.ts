@@ -177,3 +177,13 @@ export async function resetPasswordAction(
     throw err;
   }
 }
+
+// HANDEL CHEK USER IS EXIST BY EMAIL===========================================
+
+export async function checkUserExistByEmail(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  return user !== null; // true jika user ada
+}

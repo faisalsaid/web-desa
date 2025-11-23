@@ -8,70 +8,51 @@ import { compareSync } from 'bcrypt-ts';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    // updateAge: 24 * 60 * 60, // Refresh the token daily.
-    updateAge: 10 * 60, // Refresh the token daily.
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 10 * 60,
   },
+
   providers: [
     Credentials({
       credentials: {},
-
       authorize: async (credentials) => {
-        // console.log('authCredentials ==>>', credentials);
+        const validated = loginSchema.safeParse(credentials);
+        if (!validated.success) return null;
 
-        // validate crendetials input
-        const validatedFields = loginSchema.safeParse(credentials);
+        const { email, password } = validated.data;
 
-        if (!validatedFields.success) {
-          return null;
-        }
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user || !user.hashedPassword) throw new Error('No user found');
 
-        // desctruction credentials
-        const { email, password } = validatedFields.data;
+        const match = compareSync(password, user.hashedPassword);
+        if (!match) return null;
 
-        // check user exist and have password
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
-
-        if (!user || !user.hashedPassword) {
-          throw new Error('No user found');
-        }
-
-        // compare hashed password
-        const passwordMatch = compareSync(password, user.hashedPassword);
-
-        if (!passwordMatch) {
-          return null;
-        }
-
-        // remove hashPassord before send
         const { hashedPassword, ...cleanUser } = user;
-        // console.log('authCredentials ==>>', cleanUser);
-
         return cleanUser;
       },
     }),
   ],
+
   callbacks: {
     async signIn({ user, account, profile }) {
+      // Google login linking logic
       if (account?.provider === 'google') {
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email! },
         });
 
-        // If the user already exists and there's no linked Google account, link it.
         if (existingUser) {
-          const existingGoogleAccount = await prisma.account.findFirst({
+          const googleAcc = await prisma.account.findFirst({
             where: {
               provider: 'google',
               providerAccountId: account.providerAccountId,
             },
           });
 
-          if (!existingGoogleAccount) {
+          if (!googleAcc) {
             await prisma.account.create({
               data: {
                 userId: existingUser.id,
@@ -86,7 +67,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             });
           }
 
-          // ✅ Update the image if it doesn't exist yet.
           if (!existingUser.image && profile?.picture) {
             await prisma.user.update({
               where: { id: existingUser.id },
@@ -99,13 +79,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true;
     },
 
+    // ==============================
+    // 🔐 JWT AUTO INVALIDATION
+    // ==============================
     async jwt({ token, user }) {
-      if (user) token.role = user.role;
+      // Saat login
+      if (user) {
+        token.role = user.role;
+        return token;
+      }
+
+      // Cek apakah user masih ada di database
+      const existingUser = await prisma.user.findUnique({
+        where: { id: token.sub! },
+        select: { id: true },
+      });
+
+      if (!existingUser) {
+        token.deleted = true; // ditandai invalid
+      }
+
       return token;
     },
 
     async session({ session, token }) {
-      session.user.id = token.sub;
+      if (token.deleted) {
+        // session tetap dikembalikan, tapi user dihapus
+        session.user = null as any;
+        return session;
+      }
+
+      session.user.id = token.sub!;
       session.user.role = token.role;
       return session;
     },

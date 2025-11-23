@@ -9,6 +9,9 @@ import {
   Briefcase,
   Settings2,
   Route,
+  CircleDollarSign,
+  Wallet,
+  Wallet2,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -72,6 +75,24 @@ const allMenuList: MenuItem[] = [
         title: 'Pengaturan',
         url: '/organitations/settings',
         icon: Settings2,
+      },
+    ],
+  },
+  {
+    title: 'Keuangan',
+    url: '/#',
+    icon: CircleDollarSign,
+    roles: ['ADMIN', 'OPERATOR'],
+    sub: [
+      {
+        title: 'Keuangan',
+        url: '/accounting',
+        icon: CircleDollarSign,
+      },
+      {
+        title: 'APBDES',
+        url: '/accounting/apbdes',
+        icon: Wallet2,
       },
     ],
   },

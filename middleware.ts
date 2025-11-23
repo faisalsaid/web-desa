@@ -12,6 +12,7 @@ export async function middleware(req: NextRequest) {
   });
 
   console.log('MIDLEWARE ', token);
+  console.log('NEXTAUTH_SECRET ', process.env.NEXTAUTH_SECRET);
 
   const isLoggedIn = !!token;
 

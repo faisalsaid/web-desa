@@ -103,10 +103,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }) {
-      if (token.deleted) {
-        // session tetap dikembalikan, tapi user dihapus
-        session.user = null as any;
-        return session;
+      if (!token || token.deleted) {
+        // jangan return null, tapi hapus user
+        return {
+          ...session,
+          user: undefined,
+        };
       }
 
       session.user.id = token.sub!;

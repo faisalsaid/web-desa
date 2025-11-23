@@ -20,6 +20,10 @@ export async function middleware(req: NextRequest) {
 
   // Redirect ke login jika token tidak ada atau user dihapus
   if (!token || token.deleted) {
+    const res = NextResponse.redirect(
+      new URL('/auth/login?expired=1', req.url),
+    );
+
     const out = NextResponse.redirect(new URL('/auth/login', req.url));
     out.cookies.delete('__Secure-authjs.session-token');
     out.cookies.delete('__Secure-authjs.callback-url');

@@ -20,11 +20,14 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Send } from 'lucide-react';
+import { RefreshCcw, Send } from 'lucide-react';
 
 type FormData = z.infer<typeof BudgetYearCreateSchema>;
 
-export function BudgetYearForm() {
+interface BudgetYearFormProps {
+  closeModal?: () => void;
+}
+export function BudgetYearForm({ closeModal }: BudgetYearFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(BudgetYearCreateSchema),
     defaultValues: {
@@ -142,6 +145,10 @@ export function BudgetYearForm() {
           <Button
             className="text-red-400 bg-muted hover:bg-red-500 hover:text-slate-100"
             type="button"
+            onClick={() => {
+              form.reset();
+              closeModal ? closeModal() : null;
+            }}
           >
             Cancel
           </Button>

@@ -12,10 +12,13 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
 
 const AddBudgetYearComp = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button size={'icon'} className="rounded-full">
           <Plus />
@@ -28,7 +31,7 @@ const AddBudgetYearComp = () => {
         </DialogHeader>
         <Separator />
         <div>
-          <BudgetYearForm />
+          <BudgetYearForm closeModal={() => setIsOpen(false)} />
         </div>
       </DialogContent>
     </Dialog>

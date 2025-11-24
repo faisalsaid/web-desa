@@ -54,6 +54,9 @@ export function BudgetYearForm({ closeModal }: BudgetYearFormProps) {
           id: toastId,
         });
         form.reset();
+        if (closeModal) {
+          closeModal();
+        }
       } catch (error: unknown) {
         console.error(error);
         toast.error('Failed to create Budget Year', {

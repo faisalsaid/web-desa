@@ -28,7 +28,7 @@ const RevenueTable = ({
     router.push(`revenue?q=${encodeURIComponent(value)}&page=1`);
   };
 
-  const goToPage = (page: number) => {
+  const handlePagination = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', page.toString());
     router.push(`revenue?${params.toString()}`);
@@ -48,14 +48,14 @@ const RevenueTable = ({
           basePath="revenue"
           defaultLimit={10}
           paramName="pageSize"
-          options={[5, 10, 20, 50, 100]}
+          options={[10, 20, 50, 100]}
         />
 
         {/* Pagination */}
         <TablePagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={(page) => goToPage(page)}
+          onPageChange={(page) => handlePagination(page)}
         />
       </div>
     </div>

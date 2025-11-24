@@ -83,11 +83,7 @@ export const columns: ColumnDef<GetRevenueResult>[] = [
           initialData={row.original}
           buttonVariant={'outline'}
         />
-
         <DeleteRevenueButton id={row.original.id} />
-        {/* <Button size={'icon'} className="rounded-full" variant={'outline'}>
-          <Trash2 />
-        </Button> */}
       </div>
     ),
   },

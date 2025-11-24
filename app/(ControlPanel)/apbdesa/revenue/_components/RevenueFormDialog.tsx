@@ -158,7 +158,11 @@ export function RevenueFormDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="rounded-full" size={'icon'} variant={buttonVariant}>
-          {isUpdate ? <Edit2 /> : <Plus />}
+          {isUpdate ? (
+            <Edit2 className="text-lime-400 size-4" />
+          ) : (
+            <Plus className=" size-4" />
+          )}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">

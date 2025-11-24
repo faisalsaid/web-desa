@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import z from 'zod';
 import { BudgetYearCreateSchema } from '../_lib/apbdesa.zod';
-import { createBudgetYear } from '../_lib/apdesa.action';
+import { createBudgetYear } from '../_lib/apbdesa.action';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';

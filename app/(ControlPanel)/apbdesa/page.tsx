@@ -12,7 +12,6 @@ import {
 
 export default async function ApbdesaPage() {
   const yearListOptions = await getBudgetYearsOptions();
-  console.log(yearListOptions);
 
   return (
     <div className="space-y-4">

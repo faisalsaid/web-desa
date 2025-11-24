@@ -91,17 +91,17 @@ const allMenuList: MenuItem[] = [
       },
       {
         title: 'Pendapatan',
-        url: '/apbdes/revenue',
+        url: '/apbdesa/revenue',
         icon: Wallet2,
       },
       {
         title: 'belanja',
-        url: '/apbdes/expense',
+        url: '/apbdesa/expense',
         icon: Wallet2,
       },
       {
         title: 'pembiayaan',
-        url: '/apbdes/financing',
+        url: '/apbdesa/financing',
         icon: Wallet2,
       },
     ],

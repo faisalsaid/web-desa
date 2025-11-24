@@ -32,3 +32,9 @@ export const RT_LIST: Option[] = Array.from({ length: 12 }, (_, i) => {
   const val = (i + 1).toString().padStart(2, '0');
   return { key: val, value: val };
 });
+
+export const RevenueCategoryOptions = [
+  { value: 'OWN_SOURCE', label: 'PAD' },
+  { value: 'TRANSFER', label: 'Transfer' },
+  { value: 'OTHER', label: 'Lain-lain' },
+] as const;

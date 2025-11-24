@@ -14,7 +14,7 @@ import RevenueTable from './_components/table/RevenueTable';
 import { RevenueCategory } from '@prisma/client';
 
 interface RevenuePageProps {
-  search?: string;
+  q?: string;
   yearId?: number;
   category?: RevenueCategory;
   page?: number;
@@ -27,16 +27,18 @@ export default async function RevenuePage({
 }) {
   const params = await searchParams;
   const page = Number(params.page ?? 1);
-  const search = params.search ?? '';
+  const search = params.q ?? '';
   const limit = 10;
   const category = params.category;
   const yearId = params.yearId;
+
   const yearListOptions = await getBudgetYearsOptions();
 
   const {
     data: allRevenue,
     total,
     totalPages,
+    page: thePage,
   } = await getRevenueDataTable({ page, search, limit, category, yearId });
 
   const defaultValue =

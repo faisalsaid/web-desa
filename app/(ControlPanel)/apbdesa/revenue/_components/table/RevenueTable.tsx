@@ -11,17 +11,29 @@ import { FormEvent, useState } from 'react';
 
 interface RevenueTableProps {
   allRevenues: GetRevenueResult[];
+  totalPages: number;
+  currentPage: number;
+  search?: string;
 }
-
-const RevenueTable = ({ allRevenues }: RevenueTableProps) => {
+const RevenueTable = ({
+  allRevenues,
+  totalPages,
+  currentPage,
+  search: defaultSearch = '',
+}: RevenueTableProps) => {
   const router = useRouter();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<string>(defaultSearch);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault(); // cegah reload page
     // redirect ke /revenue?q=search
     router.push(`revenue?q=${encodeURIComponent(search)}`);
   };
+
+  const goToPage = (page: number) => {
+    router.push(`revenue?q=${encodeURIComponent(search)}&page=${page}`);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -37,6 +49,35 @@ const RevenueTable = ({ allRevenues }: RevenueTableProps) => {
         </form>
       </div>
       <RevenueDataTable columns={columns} data={allRevenues} />
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-2">
+          <Button
+            disabled={currentPage <= 1}
+            onClick={() => goToPage(currentPage - 1)}
+          >
+            Prev
+          </Button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Button
+              key={page}
+              variant={page === currentPage ? 'default' : 'outline'}
+              onClick={() => goToPage(page)}
+            >
+              {page}
+            </Button>
+          ))}
+
+          <Button
+            disabled={currentPage >= totalPages}
+            onClick={() => goToPage(currentPage + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

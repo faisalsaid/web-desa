@@ -56,8 +56,8 @@ const RevenueTable = ({
       </div>
       <RevenueDataTable columns={columns} data={allRevenues} />
 
-      <div className=" sm:flex items-center gap-4">
-        <div className="hidden sm:block">
+      <div className="sm:flex items-center gap-4">
+        <div className="hidden sm:flex">
           <LimitSelector
             basePath="revenue"
             defaultLimit={10}
@@ -65,13 +65,14 @@ const RevenueTable = ({
             options={[10, 20, 50, 100]}
           />
         </div>
-
         {/* Pagination */}
-        <TablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => handlePagination(page)}
-        />
+        <div className="sm:flex-1">
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => handlePagination(page)}
+          />
+        </div>
       </div>
     </div>
   );

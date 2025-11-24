@@ -23,7 +23,7 @@ export const ResetButton: FC<ResetButtonProps> = ({
       onClick={onReset}
     >
       <RefreshCcw size={18} />
-      <span className="hidden">{label}</span>
+      <span className="hidden sm:block">{label}</span>
     </Button>
   );
 };

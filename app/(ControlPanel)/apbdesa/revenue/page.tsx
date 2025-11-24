@@ -38,13 +38,13 @@ export default async function RevenuePage({
 
   const {
     data: allRevenue,
-    total,
+    // total,
     totalPages,
     page: thePage,
   } = await getRevenueDataTable({ page, search, limit, category, yearId });
 
-  const defaultValue =
-    yearListOptions.length > 0 ? yearListOptions[0].id : undefined;
+  // const defaultValue =
+  //   yearListOptions.length > 0 ? yearListOptions[0].id : undefined;
 
   return (
     <div className="space-y-4">
@@ -66,6 +66,8 @@ export default async function RevenuePage({
           {yearListOptions ? <RevenueFormDialog mode="create" /> : null}
         </div>
       </ContentCard>
+
+      <ContentCard>Grafik</ContentCard>
 
       <ContentCard>
         <RevenueTable

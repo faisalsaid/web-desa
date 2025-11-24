@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Edit2, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/helper';
 import { RevenueFormDialog } from '../RevenueFormDialog';
+import { RevenueCategoryOptions } from '@/lib/staticData';
 
 // // This type is used to define the shape of our data.
 // // You can use a Zod schema here if you want.
@@ -25,6 +26,17 @@ export const columns: ColumnDef<GetRevenueResult>[] = [
   {
     accessorKey: 'description',
     header: 'Deskripsi',
+  },
+  {
+    accessorKey: 'category',
+    header: 'Kategori',
+    cell: ({ row }) => {
+      const catgoryTranslate = RevenueCategoryOptions.find(
+        (p) => p.value === row.original.category,
+      );
+
+      return <p>{catgoryTranslate?.label}</p>;
+    },
   },
   {
     accessorKey: 'budget',

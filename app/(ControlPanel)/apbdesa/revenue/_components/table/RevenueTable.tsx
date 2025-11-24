@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
+import { LimitSelector } from './LimitSelector';
 
 interface RevenueTableProps {
   allRevenues: GetRevenueResult[];
@@ -39,6 +40,7 @@ const RevenueTable = ({
       <div>
         <form onSubmit={handleSubmit} className="flex items-center gap-1">
           <Input
+            className="bg-background"
             placeholder="e.g : Pendapatan retribusi"
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -49,35 +51,38 @@ const RevenueTable = ({
         </form>
       </div>
       <RevenueDataTable columns={columns} data={allRevenues} />
+      <div className="flex items-center gap-4">
+        <LimitSelector />
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-2">
-          <Button
-            disabled={currentPage <= 1}
-            onClick={() => goToPage(currentPage - 1)}
-          >
-            Prev
-          </Button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 mt-2 flex-1">
             <Button
-              key={page}
-              variant={page === currentPage ? 'default' : 'outline'}
-              onClick={() => goToPage(page)}
+              disabled={currentPage <= 1}
+              onClick={() => goToPage(currentPage - 1)}
             >
-              {page}
+              Prev
             </Button>
-          ))}
 
-          <Button
-            disabled={currentPage >= totalPages}
-            onClick={() => goToPage(currentPage + 1)}
-          >
-            Next
-          </Button>
-        </div>
-      )}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={page === currentPage ? 'default' : 'outline'}
+                onClick={() => goToPage(page)}
+              >
+                {page}
+              </Button>
+            ))}
+
+            <Button
+              disabled={currentPage >= totalPages}
+              onClick={() => goToPage(currentPage + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

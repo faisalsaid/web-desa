@@ -11,22 +11,37 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface LimitSelectorProps {
-  defaultLimit?: number;
+  defaultLimit?: number; // default limit jika query tidak ada
+  options?: number[]; // pilihan limit, default [5,10,20]
+  basePath?: string; // base path untuk push URL, default "/revenue"
+  paramName?: string; // nama query param, default "limit"
+  onChange?: (newLimit: number) => void; // callback opsional
 }
 
 export const LimitSelector: FC<LimitSelectorProps> = ({
   defaultLimit = 10,
+  options = [5, 10, 20],
+  basePath = 'dashboard',
+  paramName = 'limit',
+  onChange,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentLimit = Number(searchParams.get('limit') ?? defaultLimit);
+
+  const currentLimit = Number(searchParams.get(paramName) ?? defaultLimit);
 
   const handleChange = (val: string) => {
     const newLimit = Number(val);
+
+    // update query string
     const params = new URLSearchParams(searchParams.toString());
-    params.set('limit', newLimit.toString());
-    params.set('page', '1'); // reset page ke 1 saat limit berubah
-    router.push(`revenue?${params.toString()}`);
+    params.set(paramName, newLimit.toString());
+    params.set('page', '1'); // reset page ke 1
+
+    router.push(`${basePath}?${params.toString()}`);
+
+    // panggil callback opsional
+    onChange?.(newLimit);
   };
 
   return (
@@ -35,7 +50,7 @@ export const LimitSelector: FC<LimitSelectorProps> = ({
         <SelectValue placeholder="Limit" />
       </SelectTrigger>
       <SelectContent>
-        {[5, 10, 20].map((num) => (
+        {options.map((num) => (
           <SelectItem key={num} value={num.toString()}>
             {num}
           </SelectItem>

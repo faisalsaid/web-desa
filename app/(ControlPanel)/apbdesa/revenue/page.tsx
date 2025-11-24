@@ -18,7 +18,7 @@ interface RevenuePageProps {
   yearId?: number;
   category?: RevenueCategory;
   page?: number;
-  limit?: number;
+  pageSize?: number;
 }
 export default async function RevenuePage({
   searchParams,
@@ -28,7 +28,7 @@ export default async function RevenuePage({
   const params = await searchParams;
   const page = Number(params.page ?? 1);
   const search = params.q ?? '';
-  const limit = Number(params.limit ?? 10);
+  const limit = Number(params.pageSize ?? 10);
   const category = params.category;
   const yearId = params.yearId;
 

@@ -1,14 +1,12 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
 import { GetRevenueResult } from '../../_lib/revenue.type';
 import { columns } from './revenue-column';
 import { RevenueDataTable } from './revenue-data-table';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
 import { LimitSelector } from './LimitSelector';
+import { RevenueTableSearchForm } from './RevenueTableSearchForm';
 
 interface RevenueTableProps {
   allRevenues: GetRevenueResult[];
@@ -23,36 +21,31 @@ const RevenueTable = ({
   search: defaultSearch = '',
 }: RevenueTableProps) => {
   const router = useRouter();
-  const [search, setSearch] = useState<string>(defaultSearch);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault(); // cegah reload page
-    // redirect ke /revenue?q=search
-    router.push(`revenue?q=${encodeURIComponent(search)}`);
+  const handleSearch = (value: string) => {
+    router.push(`revenue?q=${encodeURIComponent(value)}&page=1`);
   };
 
   const goToPage = (page: number) => {
-    router.push(`revenue?q=${encodeURIComponent(search)}&page=${page}`);
+    router.push(`revenue?q=${encodeURIComponent(defaultSearch)}&page=${page}`);
   };
 
   return (
     <div className="space-y-4">
       <div>
-        <form onSubmit={handleSubmit} className="flex items-center gap-1">
-          <Input
-            className="bg-background"
-            placeholder="e.g : Pendapatan retribusi"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button type="submit">
-            <Search />
-            Search
-          </Button>
-        </form>
+        <RevenueTableSearchForm
+          defaultSearch={defaultSearch}
+          onSearch={handleSearch}
+        />
       </div>
       <RevenueDataTable columns={columns} data={allRevenues} />
       <div className="flex items-center gap-4">
-        <LimitSelector />
+        <LimitSelector
+          basePath="revenue"
+          defaultLimit={10}
+          paramName="pageSize"
+          options={[5, 10, 20, 50, 100]}
+        />
 
         {/* Pagination */}
         {totalPages > 1 && (

@@ -12,6 +12,8 @@ import { RevenueFormDialog } from './_components/RevenueFormDialog';
 import { getRevenueDataTable } from './_lib/revenue.actions';
 import RevenueTable from './_components/table/RevenueTable';
 import { RevenueCategory } from '@prisma/client';
+import { BudgetYearSelector } from '../_components/BudgetYearSelector';
+import { YearFilterSelector } from '../_components/YearFilterSelector';
 
 interface RevenuePageProps {
   q?: string;
@@ -28,9 +30,9 @@ export default async function RevenuePage({
   const params = await searchParams;
   const page = Number(params.page ?? 1);
   const search = params.q ?? '';
-  const limit = Number(params.pageSize ?? 10);
+  const limit = params.pageSize ? Number(params.pageSize) : undefined;
   const category = params.category;
-  const yearId = params.yearId;
+  const yearId = params.yearId ? Number(params.yearId) : undefined;
 
   const yearListOptions = await getBudgetYearsOptions();
 
@@ -54,18 +56,10 @@ export default async function RevenuePage({
               Tahun Anggaran Kosong{' '}
             </div>
           ) : (
-            <Select defaultValue={defaultValue?.toString() || ''}>
-              <SelectTrigger className="w-32 bg-background">
-                <SelectValue placeholder="Tahun" />
-              </SelectTrigger>
-              <SelectContent>
-                {yearListOptions.map((budget) => (
-                  <SelectItem key={budget.id} value={budget.id.toString()}>
-                    {budget.year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <YearFilterSelector
+              yearListOptions={yearListOptions}
+              basePath="revenue"
+            />
           )}
 
           {yearListOptions ? <RevenueFormDialog mode="create" /> : null}

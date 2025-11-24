@@ -31,7 +31,8 @@ export const RevenueTableSearchForm: FC<RevenueSearchFormProps> = ({
       />
       <Button type="submit">
         <Search />
-        Search
+
+        <span className="hidden sm:block">Search</span>
       </Button>
     </form>
   );

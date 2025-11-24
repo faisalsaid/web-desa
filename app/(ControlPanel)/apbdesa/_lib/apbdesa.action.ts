@@ -13,8 +13,6 @@ import {
 export async function createBudgetYear(
   input: z.infer<typeof BudgetYearCreateSchema>,
 ): Promise<GetBudgetYearResult> {
-  console.log('ACTION INPUT', input);
-
   const data = BudgetYearCreateSchema.parse(input);
 
   return prisma.budgetYear.create({
@@ -38,6 +36,22 @@ export async function getBudgetYears(): Promise<GetBudgetYearResult[]> {
   return prisma.budgetYear.findMany({
     orderBy: { year: 'desc' },
     ...getBudgetYearQuery,
+  });
+}
+
+// READ ALL for OPTIONS
+export async function getBudgetYearsOptions(): Promise<
+  {
+    id: number;
+    year: number;
+  }[]
+> {
+  return prisma.budgetYear.findMany({
+    orderBy: { year: 'desc' },
+    select: {
+      id: true,
+      year: true,
+    },
   });
 }
 

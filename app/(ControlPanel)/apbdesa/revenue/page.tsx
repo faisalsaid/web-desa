@@ -9,9 +9,13 @@ import {
 } from '@/components/ui/select';
 import { getBudgetYearsOptions } from '../_lib/apbdesa.action';
 import { RevenueFormDialog } from './_components/RevenueFormDialog';
+import { getAllRevenue } from './_lib/revenue.actions';
+import RevenueTable from './_components/table/RevenueTable';
 
 export default async function RevenuePage() {
   const yearListOptions = await getBudgetYearsOptions();
+
+  const allRevenue = await getAllRevenue();
 
   const defaultValue =
     yearListOptions.length > 0 ? yearListOptions[0].id : undefined;
@@ -40,13 +44,12 @@ export default async function RevenuePage() {
             </Select>
           )}
 
-          {yearListOptions ? (
-            <RevenueFormDialog
-              mode="create"
-              yearListOptions={yearListOptions}
-            />
-          ) : null}
+          {yearListOptions ? <RevenueFormDialog mode="create" /> : null}
         </div>
+      </ContentCard>
+
+      <ContentCard>
+        <RevenueTable allRevenues={allRevenue} />
       </ContentCard>
     </div>
   );

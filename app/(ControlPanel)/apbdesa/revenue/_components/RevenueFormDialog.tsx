@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, startTransition } from 'react';
+import { useState, startTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -8,7 +8,6 @@ import {
   RevenueCreateInput,
   RevenueUpdateSchema,
   RevenueUpdateInput,
-  RevenueCategoryEnum,
 } from '../_lib/revenue.zod';
 import { createRevenue, updateRevenue } from '../_lib/revenue.actions';
 import { toast } from 'sonner';
@@ -50,21 +49,43 @@ import {
 } from '@/components/ui/input-group';
 import { RevenueCategoryOptions } from '@/lib/staticData';
 import { Separator } from '@/components/ui/separator';
+import { formatCurrency } from '@/lib/utils/helper';
+import { getBudgetYearsOptions } from '../../_lib/apbdesa.action';
+import { useRouter } from 'next/navigation';
 
 interface DialogRevenueFormProps {
   mode: 'create' | 'update';
   initialData?: RevenueUpdateInput;
-  yearListOptions: { id: number; year: number }[];
+  // yearListOptions: { id: number; year: number }[];
   onSuccess?: () => void;
 }
 
 export function RevenueFormDialog({
   mode,
   initialData,
-  yearListOptions,
+  // yearListOptions,
   onSuccess,
 }: DialogRevenueFormProps) {
+  const router = useRouter();
   const isUpdate = mode === 'update';
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [yearListOptions, setYearListOptions] = useState<
+    { id: number; year: number }[]
+  >([]);
+
+  // Ambil year list options saat mount
+  useEffect(() => {
+    let isMounted = true;
+    getBudgetYearsOptions().then((years) => {
+      if (isMounted) {
+        setYearListOptions(years);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const form = useForm<RevenueCreateInput | RevenueUpdateInput>({
     resolver: zodResolver(isUpdate ? RevenueUpdateSchema : RevenueCreateSchema),
@@ -76,9 +97,6 @@ export function RevenueFormDialog({
       realized: 0,
     },
   });
-
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (values: RevenueCreateInput | RevenueUpdateInput) => {
     setLoading(true);
@@ -103,6 +121,7 @@ export function RevenueFormDialog({
         toast.error('Tindakan gagal', { id: toastId });
       } finally {
         setLoading(false);
+        router.refresh();
       }
     });
   };
@@ -162,7 +181,6 @@ export function RevenueFormDialog({
                         onChange={field.onChange}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -228,12 +246,15 @@ export function RevenueFormDialog({
                         <InputGroupText>Rp</InputGroupText>
                       </InputGroupAddon>
                       <InputGroupInput
-                        className="no-spin"
-                        type="number"
+                        type="text" // harus text kalau mau format ribuan
                         placeholder="0"
-                        {...field}
-                        value={field.value ?? 0}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        value={formatCurrency(field.value ?? 0)} // tampilkan format
+                        onChange={(e) => {
+                          const numeric =
+                            parseInt(e.target.value.replace(/\D/g, ''), 10) ||
+                            0;
+                          field.onChange(numeric); // simpan sebagai number
+                        }}
                         disabled={!descriptionValue}
                       />
                       <InputGroupAddon align="inline-end">
@@ -259,12 +280,16 @@ export function RevenueFormDialog({
                         <InputGroupText>Rp</InputGroupText>
                       </InputGroupAddon>
                       <InputGroupInput
-                        type="number"
+                        type="text" // harus text kalau mau format ribuan
                         placeholder="0"
-                        {...field}
-                        value={field.value ?? 0}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        disabled={!budgeValue}
+                        value={formatCurrency(field.value ?? 0)} // tampilkan format
+                        onChange={(e) => {
+                          const numeric =
+                            parseInt(e.target.value.replace(/\D/g, ''), 10) ||
+                            0;
+                          field.onChange(numeric); // simpan sebagai number
+                        }}
+                        disabled={!descriptionValue}
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupText>.00</InputGroupText>

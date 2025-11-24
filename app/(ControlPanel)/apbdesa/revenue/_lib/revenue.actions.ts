@@ -42,6 +42,15 @@ export async function getAllRevenue(): Promise<GetRevenueResult[]> {
   });
 }
 
+// -------- READ ALL BY YEAR --------
+export async function getAllRevenueByYear(): Promise<GetRevenueResult[]> {
+  return prisma.revenue.findMany({
+    where: { deletedAt: null },
+    orderBy: { createdAt: 'desc' },
+    ...getRevenueQuery,
+  });
+}
+
 // -------- UPDATE --------
 export async function updateRevenue(
   input: RevenueUpdateInput,

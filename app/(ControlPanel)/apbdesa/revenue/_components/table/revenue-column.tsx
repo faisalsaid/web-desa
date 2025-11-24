@@ -7,6 +7,7 @@ import { Edit2, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/helper';
 import { RevenueFormDialog } from '../RevenueFormDialog';
 import { RevenueCategoryOptions } from '@/lib/staticData';
+import DeleteRevenueButton from './DeleteRevenueButton';
 
 // // This type is used to define the shape of our data.
 // // You can use a Zod schema here if you want.
@@ -60,7 +61,10 @@ export const columns: ColumnDef<GetRevenueResult>[] = [
     id: 'charge',
     header: 'Selisih',
     cell: ({ row }) => {
-      const result = row.original.budget - row.original.realized;
+      const budget = Number(row.original.budget); // string → number
+      const realized = Number(row.original.realized);
+
+      const result = budget - realized;
       return (
         <p className="text-right flex items-center justify-between gap-2 ">
           <span>Rp.</span> <span>{formatCurrency(result)}</span>
@@ -79,9 +83,11 @@ export const columns: ColumnDef<GetRevenueResult>[] = [
           initialData={row.original}
           buttonVariant={'outline'}
         />
-        <Button size={'icon'} className="rounded-full" variant={'outline'}>
+
+        <DeleteRevenueButton id={row.original.id} />
+        {/* <Button size={'icon'} className="rounded-full" variant={'outline'}>
           <Trash2 />
-        </Button>
+        </Button> */}
       </div>
     ),
   },

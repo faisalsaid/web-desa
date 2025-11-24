@@ -133,7 +133,7 @@ export async function updateRevenue(
 }
 
 // -------- SOFT DELETE --------
-export async function deleteRevenue(
+export async function softDeleteRevenue(
   input: z.infer<typeof RevenueDeleteSchema>,
 ): Promise<GetRevenueResult> {
   const { id } = RevenueDeleteSchema.parse(input);

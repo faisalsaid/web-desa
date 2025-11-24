@@ -108,6 +108,13 @@ export function RevenueFormDialog({
     },
   });
 
+  // FIX — Update form ketika initialData berubah saat dialog dibuka
+  useEffect(() => {
+    if (open && initialData && isUpdate) {
+      form.reset(initialData);
+    }
+  }, [open, initialData, isUpdate, form]);
+
   const handleSubmit = (values: RevenueCreateInput | RevenueUpdateInput) => {
     console.log(values);
 

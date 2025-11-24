@@ -61,7 +61,7 @@ export function RevenueDataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
-                className="even:bg-muted/20 odd:bg-white"
+                className="even:bg-muted/20 odd:bg-background"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

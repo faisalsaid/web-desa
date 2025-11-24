@@ -10,8 +10,8 @@ export const RevenueSchema = z.object({
   yearId: z.number().int(),
   category: RevenueCategoryEnum,
   description: z.string().min(1),
-  budget: z.number().int().min(0),
-  realized: z.number().int().min(0),
+  budget: z.string(),
+  realized: z.string(),
 });
 
 // CREATE

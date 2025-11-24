@@ -24,7 +24,7 @@ export const RevenueTableSearchForm: FC<RevenueSearchFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-1">
       <Input
-        className="bg-background"
+        className="bg-background text-sm"
         placeholder="e.g : Pendapatan retribusi"
         value={search}
         onChange={(e) => setSearch(e.target.value)}

@@ -59,6 +59,7 @@ export default async function RevenuePage({
             <YearFilterSelector
               yearListOptions={yearListOptions}
               basePath="revenue"
+              allTimeLabel="Semua"
             />
           )}
 

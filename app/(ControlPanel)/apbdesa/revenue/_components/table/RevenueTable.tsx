@@ -55,13 +55,16 @@ const RevenueTable = ({
         <ResetButton onReset={handleReset} />
       </div>
       <RevenueDataTable columns={columns} data={allRevenues} />
-      <div className="flex items-center gap-4">
-        <LimitSelector
-          basePath="revenue"
-          defaultLimit={10}
-          paramName="pageSize"
-          options={[10, 20, 50, 100]}
-        />
+
+      <div className=" sm:flex items-center gap-4">
+        <div className="hidden sm:block">
+          <LimitSelector
+            basePath="revenue"
+            defaultLimit={10}
+            paramName="pageSize"
+            options={[10, 20, 50, 100]}
+          />
+        </div>
 
         {/* Pagination */}
         <TablePagination

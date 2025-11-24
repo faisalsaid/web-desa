@@ -11,45 +11,90 @@ import {
 import { getRevenueQuery, GetRevenueResult } from './revenue.type';
 import z from 'zod';
 import { RevenueCategory } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
 // -------- CREATE --------
 export async function createRevenue(
   input: RevenueCreateInput,
 ): Promise<GetRevenueResult> {
+  // Validasi input dengan Zod
   const data = RevenueCreateSchema.parse(input);
 
-  return prisma.revenue.create({
-    data,
+  // Simpan ke database
+  const result = await prisma.revenue.create({
+    data: {
+      ...data,
+      budget: new Decimal(data.budget),
+      realized: new Decimal(data.realized),
+    },
     ...getRevenueQuery,
   });
+
+  // Konversi Decimal ke string agar aman dikirim ke frontend
+  const sanitizedResult: GetRevenueResult = {
+    ...result,
+    budget: result.budget.toString(),
+    realized: result.realized.toString(),
+  };
+
+  return sanitizedResult;
 }
 
 // -------- READ BY ID --------
 export async function getRevenueById(
   id: number,
 ): Promise<GetRevenueResult | null> {
-  return prisma.revenue.findUnique({
+  const result = await prisma.revenue.findUnique({
     where: { id },
     ...getRevenueQuery,
   });
+
+  if (!result) return null;
+
+  // Konversi Decimal ke string untuk frontend
+  const sanitizedResult: GetRevenueResult = {
+    ...result,
+    budget: result.budget.toString(),
+    realized: result.realized.toString(),
+  };
+
+  return sanitizedResult;
 }
 
 // -------- READ ALL --------
 export async function getAllRevenue(): Promise<GetRevenueResult[]> {
-  return prisma.revenue.findMany({
+  const results = await prisma.revenue.findMany({
     where: { deletedAt: null },
     orderBy: { createdAt: 'desc' },
     ...getRevenueQuery,
   });
+
+  // Konversi Decimal ke string
+  const sanitizedResults: GetRevenueResult[] = results.map((item) => ({
+    ...item,
+    budget: item.budget.toString(),
+    realized: item.realized.toString(),
+  }));
+
+  return sanitizedResults;
 }
 
 // -------- READ ALL BY YEAR --------
 export async function getAllRevenueByYear(): Promise<GetRevenueResult[]> {
-  return prisma.revenue.findMany({
+  const results = await prisma.revenue.findMany({
     where: { deletedAt: null },
     orderBy: { createdAt: 'desc' },
     ...getRevenueQuery,
   });
+
+  // Konversi Decimal ke string
+  const sanitizedResults: GetRevenueResult[] = results.map((item) => ({
+    ...item,
+    budget: item.budget.toString(),
+    realized: item.realized.toString(),
+  }));
+
+  return sanitizedResults;
 }
 
 // -------- UPDATE --------
@@ -60,11 +105,31 @@ export async function updateRevenue(
 
   const { id, ...updateData } = data;
 
-  return prisma.revenue.update({
+  // Pastikan budget dan realized dikonversi ke Decimal jika ada
+  const prismaUpdateData: any = {
+    ...updateData,
+  };
+  if (updateData.budget !== undefined) {
+    prismaUpdateData.budget = new Decimal(updateData.budget);
+  }
+  if (updateData.realized !== undefined) {
+    prismaUpdateData.realized = new Decimal(updateData.realized);
+  }
+
+  const result = await prisma.revenue.update({
     where: { id },
-    data: updateData,
+    data: prismaUpdateData,
     ...getRevenueQuery,
   });
+
+  // Konversi Decimal ke string untuk frontend
+  const sanitizedResult: GetRevenueResult = {
+    ...result,
+    budget: result.budget.toString(),
+    realized: result.realized.toString(),
+  };
+
+  return sanitizedResult;
 }
 
 // -------- SOFT DELETE --------
@@ -73,11 +138,20 @@ export async function deleteRevenue(
 ): Promise<GetRevenueResult> {
   const { id } = RevenueDeleteSchema.parse(input);
 
-  return prisma.revenue.update({
+  const result = await prisma.revenue.update({
     where: { id },
     data: { deletedAt: new Date() },
     ...getRevenueQuery,
   });
+
+  // Konversi Decimal ke string agar aman untuk frontend
+  const sanitizedResult: GetRevenueResult = {
+    ...result,
+    budget: result.budget.toString(),
+    realized: result.realized.toString(),
+  };
+
+  return sanitizedResult;
 }
 
 export interface GetRevenueDataTableParams {
@@ -126,8 +200,14 @@ export async function getRevenueDataTable(
     take: limit,
   });
 
+  const sanitizedData = data.map((item) => ({
+    ...item,
+    budget: (item.budget as Decimal).toString(),
+    realized: (item.realized as Decimal).toString(),
+  }));
+
   return {
-    data,
+    data: sanitizedData,
     total,
     page,
     totalPages: Math.ceil(total / limit),

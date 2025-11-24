@@ -46,7 +46,7 @@ export const LimitSelector: FC<LimitSelectorProps> = ({
 
   return (
     <Select value={currentLimit.toString()} onValueChange={handleChange}>
-      <SelectTrigger className="w-20 bg-background">
+      <SelectTrigger className="w-18 bg-background">
         <SelectValue placeholder="Limit" />
       </SelectTrigger>
       <SelectContent>

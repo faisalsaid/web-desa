@@ -426,8 +426,8 @@ model Revenue {
   yearId      Int
   category    RevenueCategory
   description String
-  budget      Int
-  realized    Int
+  budget      Decimal
+  realized    Decimal
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   deletedAt   DateTime?
@@ -447,8 +447,8 @@ model Expense {
   yearId      Int
   sector      ExpenseSector
   description String
-  budget      Int
-  realized    Int
+  budget      Decimal
+  realized    Decimal
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   deletedAt   DateTime?
@@ -470,7 +470,7 @@ model Financing {
   yearId      Int
   type        FinancingType
   description String
-  amount      Int
+  amount      Decimal
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   deletedAt   DateTime?

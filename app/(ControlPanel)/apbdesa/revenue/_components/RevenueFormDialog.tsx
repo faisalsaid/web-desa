@@ -103,12 +103,14 @@ export function RevenueFormDialog({
       yearId: yearListOptions[0]?.id,
       category: 'OWN_SOURCE',
       description: '',
-      budget: 0,
-      realized: 0,
+      budget: '0',
+      realized: '0',
     },
   });
 
   const handleSubmit = (values: RevenueCreateInput | RevenueUpdateInput) => {
+    console.log(values);
+
     setLoading(true);
     const toastId = toast.loading(
       isUpdate ? 'Mengubah pendapatan...' : 'Merekam pendapatan...',
@@ -142,8 +144,8 @@ export function RevenueFormDialog({
         yearId: yearListOptions[0]?.id,
         category: 'OWN_SOURCE',
         description: '',
-        budget: 0,
-        realized: 0,
+        budget: '',
+        realized: '',
       },
     );
     setOpen(false);
@@ -256,14 +258,13 @@ export function RevenueFormDialog({
                         <InputGroupText>Rp</InputGroupText>
                       </InputGroupAddon>
                       <InputGroupInput
-                        type="text" // harus text kalau mau format ribuan
+                        type="text"
                         placeholder="0"
-                        value={formatCurrency(field.value ?? 0)} // tampilkan format
+                        value={formatCurrency(field.value ?? '0')} // hanya untuk tampil
                         onChange={(e) => {
-                          const numeric =
-                            parseInt(e.target.value.replace(/\D/g, ''), 10) ||
-                            0;
-                          field.onChange(numeric); // simpan sebagai number
+                          // Ambil angka murni, hapus ribuan dan karakter non-digit
+                          const numericStr = e.target.value.replace(/\D/g, '');
+                          field.onChange(numericStr || '0'); // simpan string murni
                         }}
                         disabled={!descriptionValue}
                       />
@@ -290,16 +291,15 @@ export function RevenueFormDialog({
                         <InputGroupText>Rp</InputGroupText>
                       </InputGroupAddon>
                       <InputGroupInput
-                        type="text" // harus text kalau mau format ribuan
+                        type="text"
                         placeholder="0"
-                        value={formatCurrency(field.value ?? 0)} // tampilkan format
+                        value={formatCurrency(field.value ?? '0')} // hanya untuk tampil
                         onChange={(e) => {
-                          const numeric =
-                            parseInt(e.target.value.replace(/\D/g, ''), 10) ||
-                            0;
-                          field.onChange(numeric); // simpan sebagai number
+                          // Ambil angka murni, hapus ribuan dan karakter non-digit
+                          const numericStr = e.target.value.replace(/\D/g, '');
+                          field.onChange(numericStr || '0'); // simpan string murni
                         }}
-                        disabled={!descriptionValue}
+                        disabled={!budgeValue}
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupText>.00</InputGroupText>

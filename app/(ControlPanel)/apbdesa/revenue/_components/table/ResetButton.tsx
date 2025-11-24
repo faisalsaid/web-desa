@@ -16,9 +16,14 @@ export const ResetButton: FC<ResetButtonProps> = ({
   size = 'default',
 }) => {
   return (
-    <Button type="button" variant="outline" size={size} onClick={onReset}>
+    <Button
+      type="button"
+      className="bg-muted border-red-400/50 border text-red-400"
+      size={size}
+      onClick={onReset}
+    >
       <RefreshCcw size={18} />
-      {label}
+      <span className="hidden">{label}</span>
     </Button>
   );
 };

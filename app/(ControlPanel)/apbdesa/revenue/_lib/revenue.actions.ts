@@ -10,6 +10,7 @@ import {
 } from './revenue.zod';
 import { getRevenueQuery, GetRevenueResult } from './revenue.type';
 import z from 'zod';
+import { RevenueCategory } from '@prisma/client';
 
 // -------- CREATE --------
 export async function createRevenue(
@@ -77,4 +78,58 @@ export async function deleteRevenue(
     data: { deletedAt: new Date() },
     ...getRevenueQuery,
   });
+}
+
+export interface GetRevenueDataTableParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  yearId?: number;
+  category?: RevenueCategory;
+}
+
+export interface GetRevenueDataTableResult {
+  data: GetRevenueResult[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export async function getRevenueDataTable(
+  params: GetRevenueDataTableParams,
+): Promise<GetRevenueDataTableResult> {
+  const { page = 1, limit = 10, search, yearId, category } = params;
+
+  const where: any = {
+    deletedAt: null, // exclude soft-deleted
+  };
+
+  if (search) {
+    where.description = { contains: search, mode: 'insensitive' };
+  }
+
+  if (yearId) {
+    where.yearId = yearId;
+  }
+
+  if (category) {
+    where.category = category;
+  }
+
+  const total = await prisma.revenue.count({ where });
+
+  const data = await prisma.revenue.findMany({
+    where,
+    ...getRevenueQuery,
+    orderBy: { createdAt: 'desc' },
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+
+  return {
+    data,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }

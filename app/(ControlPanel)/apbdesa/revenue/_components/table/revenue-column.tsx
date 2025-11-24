@@ -57,8 +57,8 @@ export const columns: ColumnDef<GetRevenueResult>[] = [
     ),
   },
   {
-    id: 'serapan',
-    header: 'Serapan',
+    id: 'charge',
+    header: 'Selisih',
     cell: ({ row }) => {
       const result = row.original.budget - row.original.realized;
       return (
@@ -73,8 +73,12 @@ export const columns: ColumnDef<GetRevenueResult>[] = [
     id: 'action',
     header: 'Aksi',
     cell: ({ row }) => (
-      <div className="flex gap-2 items-center">
-        <RevenueFormDialog mode="update" initialData={row.original} />
+      <div className="flex gap-1 items-center">
+        <RevenueFormDialog
+          mode="update"
+          initialData={row.original}
+          buttonVariant={'outline'}
+        />
         <Button size={'icon'} className="rounded-full" variant={'outline'}>
           <Trash2 />
         </Button>

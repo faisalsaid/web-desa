@@ -58,6 +58,15 @@ interface DialogRevenueFormProps {
   initialData?: RevenueUpdateInput;
   // yearListOptions: { id: number; year: number }[];
   onSuccess?: () => void;
+  buttonVariant?:
+    | 'default'
+    | 'link'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | null
+    | undefined;
 }
 
 export function RevenueFormDialog({
@@ -65,6 +74,7 @@ export function RevenueFormDialog({
   initialData,
   // yearListOptions,
   onSuccess,
+  buttonVariant = 'default',
 }: DialogRevenueFormProps) {
   const router = useRouter();
   const isUpdate = mode === 'update';
@@ -145,7 +155,7 @@ export function RevenueFormDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full" size={'icon'}>
+        <Button className="rounded-full" size={'icon'} variant={buttonVariant}>
           {isUpdate ? <Edit2 /> : <Plus />}
         </Button>
       </DialogTrigger>

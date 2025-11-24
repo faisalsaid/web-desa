@@ -9,13 +9,35 @@ import {
 } from '@/components/ui/select';
 import { getBudgetYearsOptions } from '../_lib/apbdesa.action';
 import { RevenueFormDialog } from './_components/RevenueFormDialog';
-import { getAllRevenue } from './_lib/revenue.actions';
+import { getRevenueDataTable } from './_lib/revenue.actions';
 import RevenueTable from './_components/table/RevenueTable';
+import { RevenueCategory } from '@prisma/client';
 
-export default async function RevenuePage() {
+interface RevenuePageProps {
+  search?: string;
+  yearId?: number;
+  category?: RevenueCategory;
+  page?: number;
+  limit?: number;
+}
+export default async function RevenuePage({
+  searchParams,
+}: {
+  searchParams: Promise<RevenuePageProps>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page ?? 1);
+  const search = params.search ?? '';
+  const limit = 10;
+  const category = params.category;
+  const yearId = params.yearId;
   const yearListOptions = await getBudgetYearsOptions();
 
-  const allRevenue = await getAllRevenue();
+  const {
+    data: allRevenue,
+    total,
+    totalPages,
+  } = await getRevenueDataTable({ page, search, limit, category, yearId });
 
   const defaultValue =
     yearListOptions.length > 0 ? yearListOptions[0].id : undefined;

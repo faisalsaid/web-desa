@@ -2,10 +2,15 @@ import z from 'zod';
 
 export const BudgetYearSchema = z.object({
   id: z.number().int(),
-  year: z.number().int().min(4).max(4),
-  isActive: z.boolean().default(false),
-  isLocked: z.boolean().default(false),
-  isFinalized: z.boolean().default(false),
+  year: z
+    .number()
+    .int()
+    .refine((val) => val >= 1000 && val <= 9999, {
+      message: 'Year must be a 4-digit number',
+    }),
+  isActive: z.boolean(),
+  isLocked: z.boolean(),
+  isFinalized: z.boolean(),
 });
 
 // DELETE

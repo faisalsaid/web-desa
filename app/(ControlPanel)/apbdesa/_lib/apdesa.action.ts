@@ -1,3 +1,5 @@
+'use server';
+
 import prisma from '@/lib/prisma';
 import { getBudgetYearQuery, GetBudgetYearResult } from './apbdesa.type';
 import z from 'zod';
@@ -11,6 +13,8 @@ import {
 export async function createBudgetYear(
   input: z.infer<typeof BudgetYearCreateSchema>,
 ): Promise<GetBudgetYearResult> {
+  console.log('ACTION INPUT', input);
+
   const data = BudgetYearCreateSchema.parse(input);
 
   return prisma.budgetYear.create({

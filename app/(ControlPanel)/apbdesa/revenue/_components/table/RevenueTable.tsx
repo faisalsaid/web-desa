@@ -8,6 +8,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { LimitSelector } from './LimitSelector';
 import { RevenueTableSearchForm } from './RevenueTableSearchForm';
 import { TablePagination } from './TablePagination';
+import { ResetButton } from './ResetButton';
+import { useState } from 'react';
 
 interface RevenueTableProps {
   allRevenues: GetRevenueResult[];
@@ -24,6 +26,8 @@ const RevenueTable = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const [searchResetKey, setSearchResetKey] = useState(0);
+
   const handleSearch = (value: string) => {
     router.push(`revenue?q=${encodeURIComponent(value)}&page=1`);
   };
@@ -34,13 +38,22 @@ const RevenueTable = ({
     router.push(`revenue?${params.toString()}`);
   };
 
+  const handleReset = () => {
+    router.push('revenue');
+    setSearchResetKey((prev) => prev + 1); // paksa re-render input
+  };
+
   return (
     <div className="space-y-4">
-      <div>
-        <RevenueTableSearchForm
-          defaultSearch={defaultSearch}
-          onSearch={handleSearch}
-        />
+      <div className="flex gap-2 items-center w-full ">
+        <div className="flex-1">
+          <RevenueTableSearchForm
+            key={searchResetKey}
+            defaultSearch={defaultSearch}
+            onSearch={handleSearch}
+          />
+        </div>
+        <ResetButton onReset={handleReset} />
       </div>
       <RevenueDataTable columns={columns} data={allRevenues} />
       <div className="flex items-center gap-4">

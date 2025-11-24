@@ -150,7 +150,7 @@ export function BudgetYearForm({ closeModal }: BudgetYearFormProps) {
               closeModal ? closeModal() : null;
             }}
           >
-            Cancel
+            Batalkan
           </Button>
           <Button type="submit" disabled={loading}>
             <Send />

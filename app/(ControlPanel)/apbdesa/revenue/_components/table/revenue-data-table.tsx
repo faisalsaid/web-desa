@@ -32,14 +32,17 @@ export function RevenueDataTable<TData, TValue>({
   });
 
   return (
-    <div className="overflow-hidden rounded-md border">
+    <div className="overflow-hidden rounded-md border ">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="bg-lime-600 text-white font-semibold"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -58,6 +61,7 @@ export function RevenueDataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                className="even:bg-muted/20 odd:bg-white"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

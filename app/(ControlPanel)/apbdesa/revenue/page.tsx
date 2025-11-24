@@ -15,6 +15,7 @@ import { RevenueCategory } from '@prisma/client';
 import { BudgetYearSelector } from '../_components/BudgetYearSelector';
 import { YearFilterSelector } from '../_components/YearFilterSelector';
 import RevenueSummary from './_components/RevenueSummary';
+import RevenueCategoryCard from './_components/RevenueCategoryCard';
 
 interface RevenuePageProps {
   q?: string;
@@ -119,8 +120,9 @@ export default async function RevenuePage({
           {yearListOptions ? <RevenueFormDialog mode="create" /> : null}
         </div>
       </ContentCard>
-      <div className="grid sm:grid-cols-2">
+      <div className="grid sm:grid-cols-2 gap-4">
         <RevenueSummary summary={summary} />
+        <RevenueCategoryCard />
       </div>
 
       <ContentCard>

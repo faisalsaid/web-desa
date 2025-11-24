@@ -11,7 +11,7 @@ const layout = async ({
         <AppSidebar />
         <main className="w-full">
           <CPNavbar />
-          <div className="p-4">{children}</div>
+          <div className="p-4 bg-primary-foreground">{children}</div>
         </main>
       </SidebarProvider>
     </>

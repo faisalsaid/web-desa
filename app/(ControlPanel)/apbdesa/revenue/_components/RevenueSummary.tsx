@@ -27,9 +27,9 @@ interface Props {
 const RevenueSummary = ({ summary }: Props) => {
   return (
     // <div className="bg-linear-to-tl from-lime-200 to-lime-600 p-2 rounded-xl space-y-2">
-    <div className="bg-muted p-3 rounded-xl space-y-3">
+    <div className="bg-background p-3 rounded-xl space-y-3">
       <div className=" text-lg font-semibold">Rangkuman</div>
-      <div className="bg-background p-3 rounded-lg text-muted-foreground space-y-2 ">
+      <div className="bg-muted p-3 rounded-lg text-muted-foreground space-y-2 ">
         <div className="flex gap-2 items-center justify-between">
           <div className="space-y-3 font-semibold">
             <div className="flex items-center gap-2 text-lime-500">
@@ -43,7 +43,11 @@ const RevenueSummary = ({ summary }: Props) => {
               <BanknoteArrowUp />
             </div>
           </div>
-          <PercentageDonut percentage={summary.percentage} size={65} />
+          <PercentageDonut
+            percentage={summary.percentage}
+            size={65}
+            bgColor="text-muted"
+          />
         </div>
         <Separator className="bg-lime-100/30" />
         <div className="flex gap-4 items-center justify-center text-xs">

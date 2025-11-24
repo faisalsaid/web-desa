@@ -13,6 +13,9 @@ import { RevenueFormDialog } from './_components/RevenueFormDialog';
 export default async function RevenuePage() {
   const yearListOptions = await getBudgetYearsOptions();
 
+  const defaultValue =
+    yearListOptions.length > 0 ? yearListOptions[0].id : undefined;
+
   return (
     <div className="space-y-4">
       <ContentCard className="flex items-center justify-between">
@@ -23,7 +26,7 @@ export default async function RevenuePage() {
               Tahun Anggaran Kosong{' '}
             </div>
           ) : (
-            <Select>
+            <Select defaultValue={defaultValue?.toString() || ''}>
               <SelectTrigger className="w-32 bg-background">
                 <SelectValue placeholder="Tahun" />
               </SelectTrigger>

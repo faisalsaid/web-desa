@@ -4,9 +4,10 @@ import { GetRevenueResult } from '../../_lib/revenue.type';
 import { columns } from './revenue-column';
 import { RevenueDataTable } from './revenue-data-table';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { LimitSelector } from './LimitSelector';
 import { RevenueTableSearchForm } from './RevenueTableSearchForm';
+import { TablePagination } from './TablePagination';
 
 interface RevenueTableProps {
   allRevenues: GetRevenueResult[];
@@ -21,13 +22,16 @@ const RevenueTable = ({
   search: defaultSearch = '',
 }: RevenueTableProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleSearch = (value: string) => {
     router.push(`revenue?q=${encodeURIComponent(value)}&page=1`);
   };
 
   const goToPage = (page: number) => {
-    router.push(`revenue?q=${encodeURIComponent(defaultSearch)}&page=${page}`);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`revenue?${params.toString()}`);
   };
 
   return (
@@ -48,33 +52,11 @@ const RevenueTable = ({
         />
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center gap-2 mt-2 flex-1">
-            <Button
-              disabled={currentPage <= 1}
-              onClick={() => goToPage(currentPage - 1)}
-            >
-              Prev
-            </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={page === currentPage ? 'default' : 'outline'}
-                onClick={() => goToPage(page)}
-              >
-                {page}
-              </Button>
-            ))}
-
-            <Button
-              disabled={currentPage >= totalPages}
-              onClick={() => goToPage(currentPage + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        )}
+        <TablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => goToPage(page)}
+        />
       </div>
     </div>
   );

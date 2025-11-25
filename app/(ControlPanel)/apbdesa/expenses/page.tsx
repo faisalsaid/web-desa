@@ -7,6 +7,7 @@ import ExpenseFormDialog from './_components/ExpenseFormDialog';
 import ExpesnseTable from './_components/expensetable/ExpesnseTable';
 import ExpenseSumaryComp from './_components/ExpenseSumary';
 import { ExpemseSectorOptions } from '@/lib/enum';
+import { ExpenseSectorChart } from './_components/ExpenseSectorChart';
 
 interface Props {
   q?: string;
@@ -61,8 +62,9 @@ export default async function ExpensesPage({
         </div>
       </ContentCard>
 
-      <div className="sm:grid sm:grid-cols-2">
+      <div className="sm:grid sm:grid-cols-2 sm:gap-4">
         <ExpenseSumaryComp summary={summary} />
+        <ExpenseSectorChart sector={summary.sectors} />
       </div>
 
       <ContentCard>

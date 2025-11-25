@@ -21,7 +21,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function ExpenseDataTable<TData, TValue>({
+export function ExpenseDataTableComp<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -41,7 +41,7 @@ export function ExpenseDataTable<TData, TValue>({
                 return (
                   <TableHead
                     key={header.id}
-                    className="bg-lime-600 text-white font-semibold"
+                    className="bg-pink-600 text-white font-semibold"
                   >
                     {header.isPlaceholder
                       ? null

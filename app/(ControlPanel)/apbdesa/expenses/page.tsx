@@ -4,6 +4,7 @@ import { getBudgetYearsOptions } from '../_lib/apbdesa.action';
 import { getExpenseDataTable } from './_lib/expense.actions';
 import { ExpenseSector } from '@prisma/client';
 import ExpenseFormDialog from './_components/ExpenseFormDialog';
+import ExpesnseTable from './_components/expensetable/ExpesnseTable';
 
 interface Props {
   q?: string;
@@ -57,6 +58,10 @@ export default async function ExpensesPage({
           <ExpenseFormDialog triggerLabel="Rekam Belanja" />
           {/* {yearListOptions ? <RevenueFormDialog mode="create" /> : null} */}
         </div>
+      </ContentCard>
+
+      <ContentCard>
+        <ExpesnseTable expanseDataTable={allExpense} />
       </ContentCard>
     </div>
   );

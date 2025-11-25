@@ -87,7 +87,7 @@ export async function createExpense(
 }
 
 export async function updateExpense(
-  urlId: string,
+  id: number,
   form: ExpenseUpdate, // <-- typed safe
 ): Promise<GetExpenseResult> {
   const parsed = expenseUpdateSchema.parse(form);
@@ -98,7 +98,7 @@ export async function updateExpense(
     parsed.realized !== undefined ? toDecimal(parsed.realized) : undefined;
 
   const updated = await prisma.expense.update({
-    where: { urlId },
+    where: { id },
     data: {
       ...parsed,
       budget: cleanBudget,

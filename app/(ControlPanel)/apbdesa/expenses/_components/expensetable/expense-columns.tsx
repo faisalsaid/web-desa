@@ -1,32 +1,23 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { GetRevenueResult } from '../../_lib/revenue.type';
+import { GetExpenseResult } from '../../_lib/expense.type';
 import { formatCurrency } from '@/lib/utils/helper';
-import { RevenueFormDialog } from '../RevenueFormDialog';
-import { RevenueCategoryOptions } from '@/lib/staticData';
-import DeleteRevenueButton from './DeleteRevenueButton';
+import { ExpemseSectorOptions } from '@/lib/enum';
+import ExpenseFormDialog from '../ExpenseFormDialog';
+import ExpenseDeleteButton from './ExpenseDeleteButton';
 
-export const columns: ColumnDef<GetRevenueResult>[] = [
+export const expenseColumns: ColumnDef<GetExpenseResult>[] = [
   {
     accessorKey: 'year',
-    header: 'Tahun Anggaran',
+    header: 'Tahun',
     cell: ({ row }) => <p>{row.original.year.year}</p>,
   },
+  { accessorKey: 'description', header: 'Deskripsi' },
   {
-    accessorKey: 'description',
-    header: 'Deskripsi',
-  },
-  {
-    accessorKey: 'category',
-    header: 'Kategori',
-    cell: ({ row }) => {
-      const catgoryTranslate = RevenueCategoryOptions.find(
-        (p) => p.value === row.original.category,
-      );
-
-      return <p>{catgoryTranslate?.label}</p>;
-    },
+    accessorKey: 'sector',
+    header: 'Sektor',
+    cell: ({ row }) => <p>{ExpemseSectorOptions[row.original.sector]}</p>,
   },
   {
     accessorKey: 'budget',
@@ -61,18 +52,24 @@ export const columns: ColumnDef<GetRevenueResult>[] = [
       );
     },
   },
-
   {
     id: 'action',
     header: 'Aksi',
     cell: ({ row }) => (
       <div className="flex gap-1 items-center">
-        <RevenueFormDialog
-          mode="update"
-          initialData={row.original}
+        <ExpenseFormDialog
+          triggerLabel="Update"
+          expenseId={row.original.id}
+          defaultValues={row.original}
           buttonVariant={'outline'}
         />
-        <DeleteRevenueButton id={row.original.id} />
+        <ExpenseDeleteButton id={row.original.id} />
+        {/* <RevenueFormDialog
+            mode="update"
+            initialData={row.original}
+            buttonVariant={'outline'}
+          />
+          <DeleteRevenueButton id={row.original.id} /> */}
       </div>
     ),
   },

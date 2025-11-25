@@ -38,7 +38,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Plus, Send } from 'lucide-react';
+import { Edit2, Plus, Send } from 'lucide-react';
 import { BudgetYearSelector } from '../../_components/BudgetYearSelector';
 import { getBudgetYearsOptions } from '../../_lib/apbdesa.action';
 import { Separator } from '@/components/ui/separator';
@@ -55,18 +55,28 @@ import { useRouter } from 'next/navigation';
 
 interface ExpenseFormProps {
   defaultValues?: ExpenseUpdate;
-  expenseId?: string; // untuk update
+  expenseId?: number; // untuk update
   onSuccess?: () => void;
   triggerLabel: string;
   dialogTitle?: string;
+  buttonVariant?:
+    | 'default'
+    | 'link'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | null
+    | undefined;
 }
 
 export default function ExpenseFormDialog({
   defaultValues,
   expenseId,
   // onSuccess,
-  triggerLabel,
+  // triggerLabel,
   dialogTitle = 'Form Belanja',
+  buttonVariant = 'default',
 }: ExpenseFormProps) {
   const router = useRouter();
 
@@ -100,6 +110,13 @@ export default function ExpenseFormDialog({
       realized: '',
     },
   });
+
+  // FIX — Update form ketika initialData berubah saat dialog dibuka
+  useEffect(() => {
+    if (open && defaultValues && isUpdate) {
+      form.reset(defaultValues);
+    }
+  }, [open, defaultValues, isUpdate, form]);
 
   const descriptionValue = form.watch('description');
 
@@ -151,16 +168,13 @@ export default function ExpenseFormDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div>
-          <Button className="rounded-full sm:hidden" size={'icon'}>
-            <Plus />
-            <span className="hidden">{triggerLabel}</span>
-          </Button>
-          <Button className="hidden md:flex">
-            <Plus />
-            <span className="block">{triggerLabel}</span>
-          </Button>
-        </div>
+        <Button className="rounded-full" size={'icon'} variant={buttonVariant}>
+          {expenseId ? (
+            <Edit2 className="text-lime-400 size-4" />
+          ) : (
+            <Plus className=" size-4" />
+          )}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>

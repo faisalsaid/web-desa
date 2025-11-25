@@ -10,7 +10,7 @@ import {
 } from './revenue.zod';
 import { getRevenueQuery, GetRevenueResult } from './revenue.type';
 import z from 'zod';
-import { RevenueCategory } from '@prisma/client';
+import { Prisma, RevenueCategory } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
 // -------- CREATE --------
@@ -103,18 +103,14 @@ export async function updateRevenue(
 ): Promise<GetRevenueResult> {
   const data = RevenueUpdateSchema.parse(input);
 
-  const { id, ...updateData } = data;
+  const { id, budget, realized, ...rest } = data;
 
-  // Pastikan budget dan realized dikonversi ke Decimal jika ada
-  const prismaUpdateData: any = {
-    ...updateData,
+  // 👉 strictly typed object for Prisma update
+  const prismaUpdateData: Prisma.RevenueUncheckedUpdateInput = {
+    ...rest,
+    ...(budget !== undefined && { budget: new Decimal(budget) }),
+    ...(realized !== undefined && { realized: new Decimal(realized) }),
   };
-  if (updateData.budget !== undefined) {
-    prismaUpdateData.budget = new Decimal(updateData.budget);
-  }
-  if (updateData.realized !== undefined) {
-    prismaUpdateData.realized = new Decimal(updateData.realized);
-  }
 
   const result = await prisma.revenue.update({
     where: { id },
@@ -122,14 +118,11 @@ export async function updateRevenue(
     ...getRevenueQuery,
   });
 
-  // Konversi Decimal ke string untuk frontend
-  const sanitizedResult: GetRevenueResult = {
+  return {
     ...result,
     budget: result.budget.toString(),
     realized: result.realized.toString(),
   };
-
-  return sanitizedResult;
 }
 
 // -------- SOFT DELETE --------
@@ -174,15 +167,16 @@ export async function getRevenueDataTable(
 ): Promise<GetRevenueDataTableResult> {
   const { page = 1, limit = 10, search, yearId, category } = params;
 
-  const where: any = {
-    deletedAt: null, // exclude soft-deleted
+  // 👉 strictly typed
+  const where: Prisma.RevenueWhereInput = {
+    deletedAt: null,
   };
 
   if (search) {
     where.description = { contains: search, mode: 'insensitive' };
   }
 
-  if (yearId) {
+  if (yearId !== undefined) {
     where.yearId = yearId;
   }
 
@@ -202,8 +196,8 @@ export async function getRevenueDataTable(
 
   const sanitizedData = data.map((item) => ({
     ...item,
-    budget: (item.budget as Decimal).toString(),
-    realized: (item.realized as Decimal).toString(),
+    budget: item.budget.toString(),
+    realized: item.realized.toString(),
   }));
 
   return {

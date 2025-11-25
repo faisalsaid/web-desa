@@ -2,8 +2,6 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { GetRevenueResult } from '../../_lib/revenue.type';
-import { Button } from '@/components/ui/button';
-import { Edit2, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/helper';
 import { RevenueFormDialog } from '../RevenueFormDialog';
 import { RevenueCategoryOptions } from '@/lib/staticData';

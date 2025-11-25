@@ -10,7 +10,6 @@ import {
   Settings2,
   Route,
   CircleDollarSign,
-  Wallet,
   Wallet2,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';

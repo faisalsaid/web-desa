@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, startTransition, useTransition } from 'react';
+import { useState, startTransition } from 'react';
 
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { RefreshCcw, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 type FormData = z.infer<typeof BudgetYearCreateSchema>;
 
@@ -150,7 +150,9 @@ export function BudgetYearForm({ closeModal }: BudgetYearFormProps) {
             type="button"
             onClick={() => {
               form.reset();
-              closeModal ? closeModal() : null;
+              if (closeModal) {
+                closeModal();
+              }
             }}
           >
             Batalkan

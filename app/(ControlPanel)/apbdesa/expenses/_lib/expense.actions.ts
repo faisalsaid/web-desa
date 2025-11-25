@@ -10,6 +10,7 @@ import {
 } from './expense.type';
 import { expenseCreateSchema, expenseUpdateSchema } from './expense.zod';
 import { toDecimal } from '@/lib/utils/helper';
+import { ExpenseSector, Prisma } from '@prisma/client';
 
 // import { prisma } from "@/lib/prisma";
 // import { toDecimal } from "@/lib/decimal";
@@ -114,16 +115,15 @@ export async function getExpenseDataTable(
 
   const offset = (page - 1) * limit;
 
-  // ========== WHERE CONDITIONS ==========
-  const where: any = {
+  // ============================================================
+  // TYPE-SAFE WHERE (NO ANY)
+  // ============================================================
+  const where: Prisma.ExpenseWhereInput = {
     deletedAt: null,
   };
 
   if (search) {
-    where.OR = [
-      { description: { contains: search, mode: 'insensitive' } },
-      { sector: { contains: search, mode: 'insensitive' } },
-    ];
+    where.OR = [{ description: { contains: search, mode: 'insensitive' } }];
   }
 
   if (yearId) {
@@ -131,19 +131,21 @@ export async function getExpenseDataTable(
   }
 
   if (sector) {
-    where.sector = sector as any;
+    where.sector = sector as ExpenseSector; // SAFE ENUM CAST
   }
 
-  // ========== COUNT ==========
+  // ============================================================
+  // COUNT
+  // ============================================================
   const total = await prisma.expense.count({ where });
 
-  // ========== DATA FETCH (Typed With getExpenseQuery) ==========
+  // ============================================================
+  // DATA FETCH (typed)
+  // ============================================================
   const data = await prisma.expense.findMany({
     ...getExpenseQuery,
     where,
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy: { createdAt: 'desc' },
     skip: offset,
     take: limit,
   });

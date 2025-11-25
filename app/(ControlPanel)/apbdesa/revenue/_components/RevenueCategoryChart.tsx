@@ -1,14 +1,14 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
+// import { TrendingUp } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 import { RevenueCategoryOptions } from '@/lib/enum';
 
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
+  // CardDescription,
+  // CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';

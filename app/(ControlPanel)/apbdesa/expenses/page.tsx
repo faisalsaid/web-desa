@@ -15,12 +15,14 @@ export default async function ExpensesPage({
 }: {
   searchParams: Promise<Props>;
 }) {
-  const params = await searchParams;
-  const page = Number(params.page ?? 1);
-  const search = params.q ?? '';
-  const limit = params.pageSize ? Number(params.pageSize) : undefined;
-  // const category = params.category;
-  const yearId = params.yearId ? Number(params.yearId) : undefined;
+  console.log(searchParams);
+
+  // const params = await searchParams;
+  // const page = Number(params.page ?? 1);
+  // const search = params.q ?? '';
+  // const limit = params.pageSize ? Number(params.pageSize) : undefined;
+  // // const category = params.category;
+  // const yearId = params.yearId ? Number(params.yearId) : undefined;
 
   const yearListOptions = await getBudgetYearsOptions();
 

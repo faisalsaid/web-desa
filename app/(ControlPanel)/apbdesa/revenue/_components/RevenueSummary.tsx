@@ -5,23 +5,10 @@ import { Separator } from '@/components/ui/separator';
 import { RevenueCategoryOptions } from '@/lib/staticData';
 import { formatCurrency } from '@/lib/utils/helper';
 import { BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
-
-type Category = {
-  type: string;
-  totalBudget: number;
-  totalRealized: number;
-  items: number;
-};
-
-type Summary = {
-  totalBudget: number;
-  totalRealized: number;
-  percentage: number;
-  category: Category[];
-};
+import { RevenueSummaryType } from '../page';
 
 interface Props {
-  summary: Summary;
+  summary: RevenueSummaryType;
 }
 
 const RevenueSummary = ({ summary }: Props) => {
@@ -50,13 +37,24 @@ const RevenueSummary = ({ summary }: Props) => {
           />
         </div>
         <Separator className="bg-lime-100/30" />
-        <div className="flex gap-4 items-center justify-center text-xs">
+        <div className="flex gap-4 items-center justify-center text-xs ">
           {summary.category.map((category) => {
             const res = RevenueCategoryOptions.find(
-              (p) => p.value === category.type,
+              (p) => p.value === category.category,
             );
+
+            const categoryColors: Record<string, string> = {
+              OWN_SOURCE: 'bg-orange-400 ',
+              TRANSFER: 'bg-purple-400 ',
+              OTHER: 'bg-slate-400 ',
+            };
             return (
-              <Badge key={category.type} className="flex items-center gap-1">
+              <Badge
+                key={category.category}
+                className={`flex items-center gap-1 text-slate-50 ${
+                  categoryColors[category.category]
+                }`}
+              >
                 <p>{res?.label}</p> :<p>{category.items}</p>
               </Badge>
             );

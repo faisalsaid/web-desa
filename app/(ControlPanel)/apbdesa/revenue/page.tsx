@@ -17,6 +17,21 @@ import { YearFilterSelector } from '../_components/YearFilterSelector';
 import RevenueSummary from './_components/RevenueSummary';
 import RevenueCategoryCard from './_components/RevenueCategoryCard';
 
+export type RevenueCategoryType = {
+  category: string;
+  totalBudget: number;
+  totalRealized: number;
+  items: number;
+  percentage: number;
+};
+
+export type RevenueSummaryType = {
+  totalBudget: number;
+  totalRealized: number;
+  percentage: number;
+  category: RevenueCategoryType[];
+};
+
 interface RevenuePageProps {
   q?: string;
   yearId?: number;
@@ -40,7 +55,6 @@ export default async function RevenuePage({
 
   const {
     data: allRevenue,
-    // total,
     totalPages,
     page: thePage,
   } = await getRevenueDataTable({ page, search, limit, category, yearId });
@@ -70,27 +84,35 @@ export default async function RevenuePage({
   > = {};
 
   for (const item of allRevenue) {
-    const type = item.category;
+    const cat = item.category;
 
-    if (!categoryMap[type]) {
-      categoryMap[type] = {
+    if (!categoryMap[cat]) {
+      categoryMap[cat] = {
         totalBudget: 0,
         totalRealized: 0,
         items: 0,
       };
     }
 
-    categoryMap[type].totalBudget += Number(item.budget);
-    categoryMap[type].totalRealized += Number(item.realized);
-    categoryMap[type].items += 1;
+    categoryMap[cat].totalBudget += Number(item.budget);
+    categoryMap[cat].totalRealized += Number(item.realized);
+    categoryMap[cat].items += 1;
   }
 
-  const categorySummary = Object.keys(categoryMap).map((key) => ({
-    type: key,
-    totalBudget: categoryMap[key].totalBudget,
-    totalRealized: categoryMap[key].totalRealized,
-    items: categoryMap[key].items,
-  }));
+  const categorySummary = Object.keys(categoryMap).map((cat) => {
+    const entry = categoryMap[cat];
+
+    return {
+      category: cat,
+      totalBudget: entry.totalBudget,
+      totalRealized: entry.totalRealized,
+      items: entry.items,
+      percentage:
+        entry.totalBudget > 0
+          ? Math.round((entry.totalRealized / entry.totalBudget) * 100)
+          : 0,
+    };
+  });
 
   /* --- FINAL OBJECT --- */
   const summary = {
@@ -122,7 +144,7 @@ export default async function RevenuePage({
       </ContentCard>
       <div className="grid sm:grid-cols-2 gap-4">
         <RevenueSummary summary={summary} />
-        <RevenueCategoryCard />
+        <RevenueCategoryCard category={categorySummary} />
       </div>
 
       <ContentCard>

@@ -1,6 +1,9 @@
+import { RevenueCategoryEnum } from '@/app/(ControlPanel)/apbdesa/revenue/_lib/revenue.zod';
 import { FamilyRelationshipEnum } from '@/app/(ControlPanel)/families/_lib/families.zod';
 
 type FamilyRelationship = keyof typeof FamilyRelationshipEnum.enum;
+
+type RevenueCategory = keyof typeof RevenueCategoryEnum.enum;
 
 // Mapping enum ke label bahasa Indonesia
 export const religionLabels: Record<string, string> = {
@@ -90,4 +93,9 @@ export const familyRelationshipLabels: Record<FamilyRelationship, string> = {
   PARENT: 'Orang Tua',
   SIBLING: 'Saudara',
   OTHER: 'Lainnya',
+};
+export const RevenueCategoryOptions: Record<RevenueCategory, string> = {
+  OWN_SOURCE: 'PAD',
+  TRANSFER: 'Transfer',
+  OTHER: 'Lain-lain',
 };

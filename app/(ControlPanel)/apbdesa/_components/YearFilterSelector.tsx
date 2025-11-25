@@ -27,7 +27,7 @@ export const YearFilterSelector: FC<YearFilterSelectorProps> = ({
   yearListOptions,
   defaultYearId,
   paramName = 'yearId',
-  basePath = '/revenue',
+  basePath = '/dashboard',
   allTimeLabel = 'All Time',
 }) => {
   const router = useRouter();

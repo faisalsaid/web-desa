@@ -3,6 +3,7 @@ import { YearFilterSelector } from '../_components/YearFilterSelector';
 import { getBudgetYearsOptions } from '../_lib/apbdesa.action';
 import { getExpenseDataTable } from './_lib/expense.actions';
 import { ExpenseSector } from '@prisma/client';
+import ExpenseFormDialog from './_components/ExpenseFormDialog';
 
 interface Props {
   q?: string;
@@ -48,11 +49,12 @@ export default async function ExpensesPage({
           ) : (
             <YearFilterSelector
               yearListOptions={yearListOptions}
-              basePath="revenue"
+              basePath="expenses"
               allTimeLabel="Semua"
             />
           )}
 
+          <ExpenseFormDialog triggerLabel="Rekam Belanja" />
           {/* {yearListOptions ? <RevenueFormDialog mode="create" /> : null} */}
         </div>
       </ContentCard>

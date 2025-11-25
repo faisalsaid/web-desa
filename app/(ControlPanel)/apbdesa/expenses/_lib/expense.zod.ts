@@ -18,10 +18,10 @@ export const expenseSectorEnum = z.enum([
 export const expenseBaseSchema = z.object({
   yearId: z.number(),
   sector: expenseSectorEnum,
-  description: z.string().min(1),
+  description: z.string().min(3, 'Wajib masukan deskripsi'),
   budget: z.string().regex(/^\d+(\.\d+)?$/, 'Invalid decimal format'),
   realized: z.string().regex(/^\d+(\.\d+)?$/, 'Invalid decimal format'),
-  deletedAt: z.string().datetime().nullable().optional(),
+  deletedAt: z.date().nullable().optional(),
 });
 
 //

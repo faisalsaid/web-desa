@@ -93,10 +93,12 @@ export default function ExpenseFormDialog({
       yearId: yearListOptions[0]?.id,
       sector: ExpenseSector.GOVERNMENT_ADMIN,
       description: '',
-      budget: '0',
-      realized: '0',
+      budget: '',
+      realized: '',
     },
   });
+
+  const descriptionValue = form.watch('description');
 
   function onSubmit(values: ExpenseUpdate | ExpenseCreate) {
     console.log(values);
@@ -134,8 +136,8 @@ export default function ExpenseFormDialog({
         yearId: yearListOptions[0]?.id,
         sector: ExpenseSector.GOVERNMENT_ADMIN,
         description: '',
-        budget: '0',
-        realized: '0',
+        budget: '',
+        realized: '',
       },
     );
     setOpen(false);
@@ -255,7 +257,7 @@ export default function ExpenseFormDialog({
                           const numericStr = e.target.value.replace(/\D/g, '');
                           field.onChange(numericStr || '0'); // simpan string murni
                         }}
-                        // disabled={!budgeValue}
+                        disabled={!descriptionValue}
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupText>.00</InputGroupText>
@@ -288,7 +290,7 @@ export default function ExpenseFormDialog({
                           const numericStr = e.target.value.replace(/\D/g, '');
                           field.onChange(numericStr || '0'); // simpan string murni
                         }}
-                        // disabled={!budgeValue}
+                        disabled={!descriptionValue}
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupText>.00</InputGroupText>

@@ -4,9 +4,9 @@ import { GetRevenueResult } from '../../_lib/revenue.type';
 import { columns } from './revenue-column';
 import { RevenueDataTable } from './revenue-data-table';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LimitSelector } from './LimitSelector';
+import { LimitSelector } from '../../../_components/LimitSelector';
 import { TableSearchForm } from '../../../_components/TableSearchForm';
-import { TablePagination } from './TablePagination';
+import { TablePagination } from '../../../_components/TablePagination';
 import { ResetButton } from '../../../_components/ResetButton';
 import { useState } from 'react';
 

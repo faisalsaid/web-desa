@@ -61,7 +61,11 @@ export default async function ExpensesPage({
       </ContentCard>
 
       <ContentCard>
-        <ExpesnseTable expanseDataTable={allExpense} />
+        <ExpesnseTable
+          expanseDataTable={allExpense}
+          currentPage={meta.page}
+          totalPages={meta.totalPages}
+        />
       </ContentCard>
     </div>
   );

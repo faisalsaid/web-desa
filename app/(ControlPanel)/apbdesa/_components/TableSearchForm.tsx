@@ -8,10 +8,12 @@ import { Search } from 'lucide-react';
 interface RevenueSearchFormProps {
   defaultSearch?: string;
   onSearch: (value: string) => void;
+  placeholder?: string;
 }
 
-export const RevenueTableSearchForm: FC<RevenueSearchFormProps> = ({
+export const TableSearchForm: FC<RevenueSearchFormProps> = ({
   defaultSearch = '',
+  placeholder = 'Cari...',
   onSearch,
 }) => {
   const [search, setSearch] = useState(defaultSearch);
@@ -25,7 +27,7 @@ export const RevenueTableSearchForm: FC<RevenueSearchFormProps> = ({
     <form onSubmit={handleSubmit} className="flex items-center gap-1">
       <Input
         className="bg-background text-sm"
-        placeholder="e.g : Pendapatan retribusi"
+        placeholder={placeholder}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />

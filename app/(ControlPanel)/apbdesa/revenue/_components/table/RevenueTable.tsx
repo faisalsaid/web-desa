@@ -5,9 +5,9 @@ import { columns } from './revenue-column';
 import { RevenueDataTable } from './revenue-data-table';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LimitSelector } from './LimitSelector';
-import { RevenueTableSearchForm } from './RevenueTableSearchForm';
+import { TableSearchForm } from '../../../_components/TableSearchForm';
 import { TablePagination } from './TablePagination';
-import { ResetButton } from './ResetButton';
+import { ResetButton } from '../../../_components/ResetButton';
 import { useState } from 'react';
 
 interface RevenueTableProps {
@@ -46,10 +46,11 @@ const RevenueTable = ({
     <div className="space-y-4">
       <div className="flex gap-2 items-center w-full ">
         <div className="flex-1">
-          <RevenueTableSearchForm
+          <TableSearchForm
             key={searchResetKey}
             defaultSearch={defaultSearch}
             onSearch={handleSearch}
+            placeholder="e.g : Retrubusi pasar..."
           />
         </div>
         <ResetButton onReset={handleReset} />

@@ -1,11 +1,13 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
 import { YearFilterSelector } from '../_components/YearFilterSelector';
 import { getBudgetYearsOptions } from '../_lib/apbdesa.action';
+import { getExpenseDataTable } from './_lib/expense.actions';
+import { ExpenseSector } from '@prisma/client';
 
 interface Props {
   q?: string;
   yearId?: number;
-  // category?: RevenueCategory;
+  sector?: ExpenseSector;
   page?: number;
   pageSize?: number;
 }
@@ -15,16 +17,24 @@ export default async function ExpensesPage({
 }: {
   searchParams: Promise<Props>;
 }) {
-  console.log(searchParams);
-
-  // const params = await searchParams;
-  // const page = Number(params.page ?? 1);
-  // const search = params.q ?? '';
-  // const limit = params.pageSize ? Number(params.pageSize) : undefined;
-  // // const category = params.category;
-  // const yearId = params.yearId ? Number(params.yearId) : undefined;
+  const params = await searchParams;
+  const page = Number(params.page ?? 1);
+  const search = params.q ?? '';
+  const limit = params.pageSize ? Number(params.pageSize) : 10;
+  const sector = params.sector;
+  const yearId = params.yearId ? Number(params.yearId) : undefined;
 
   const yearListOptions = await getBudgetYearsOptions();
+
+  const { data: allExpense, meta } = await getExpenseDataTable({
+    page,
+    search,
+    limit,
+    sector,
+    yearId,
+  });
+
+  console.log(allExpense, meta);
 
   return (
     <div className="space-y-4">

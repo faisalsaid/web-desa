@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { ExpenseSector, Prisma } from '@prisma/client';
 
 export const getExpenseQuery = Prisma.validator<Prisma.ExpenseFindManyArgs>()({
   select: {
@@ -20,7 +20,23 @@ export const getExpenseQuery = Prisma.validator<Prisma.ExpenseFindManyArgs>()({
   },
 });
 
-export type GetExpenseResult = Prisma.ExpenseGetPayload<typeof getExpenseQuery>;
+// export type GetExpenseResult = Prisma.ExpenseGetPayload<typeof getExpenseQuery>;
+
+export type GetExpenseResult = {
+  id: number;
+  urlId: string;
+  yearId: number;
+  sector: ExpenseSector;
+  description: string;
+  budget: string; // sudah string
+  realized: string; // sudah string
+  year: {
+    id: number;
+    year: number;
+    isActive: boolean;
+  };
+};
+
 export type GetExpenseList = GetExpenseResult[];
 
 export interface ExpenseDataTableParams {

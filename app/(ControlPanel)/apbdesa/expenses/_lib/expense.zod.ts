@@ -16,12 +16,12 @@ export const expenseSectorEnum = z.enum([
 //   Digunakan sebagai dasar derive untuk create & update
 //
 export const expenseBaseSchema = z.object({
-  yearId: z.number(),
+  yearId: z.number().int(),
   sector: expenseSectorEnum,
   description: z.string().min(3, 'Wajib masukan deskripsi'),
   budget: z.string().regex(/^\d+(\.\d+)?$/, 'Invalid decimal format'),
   realized: z.string().regex(/^\d+(\.\d+)?$/, 'Invalid decimal format'),
-  deletedAt: z.date().nullable().optional(),
+  // deletedAt: z.date().nullable().optional(),
 });
 
 //

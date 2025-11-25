@@ -51,6 +51,7 @@ import {
 } from '@/components/ui/input-group';
 import { formatCurrency } from '@/lib/utils/helper';
 import { ExpemseSectorOptions } from '@/lib/enum';
+import { useRouter } from 'next/navigation';
 
 interface ExpenseFormProps {
   defaultValues?: ExpenseUpdate;
@@ -67,6 +68,8 @@ export default function ExpenseFormDialog({
   triggerLabel,
   dialogTitle = 'Form Belanja',
 }: ExpenseFormProps) {
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const isUpdate = !!expenseId;
@@ -103,34 +106,36 @@ export default function ExpenseFormDialog({
   function onSubmit(values: ExpenseUpdate | ExpenseCreate) {
     console.log(values);
 
-    // toast.promise(
-    //   new Promise((resolve, reject) => {
-    //     startTransition(async () => {
-    //       try {
-    //         if (expenseId) {
-    //           await updateExpense(expenseId, values);
-    //         } else {
-    //           await createExpense(values);
-    //         }
-    //         resolve('success');
-    //         onSuccess?.();
-    //         setOpen(false);
-    //       } catch (err) {
-    //         reject(err);
-    //       }
-    //     });
-    //   }),
-    //   {
-    //     loading: expenseId ? 'Menyimpan perubahan...' : 'Menambah data...',
-    //     success: expenseId
-    //       ? 'Berhasil memperbarui belanja.'
-    //       : 'Berhasil menambahkan belanja.',
-    //     error: 'Gagal memproses data.',
-    //   },
-    // );
+    const promise = new Promise<void>(async (resolve, reject) => {
+      startTransition(async () => {
+        try {
+          if (expenseId) {
+            await updateExpense(expenseId, values as ExpenseUpdate);
+          } else {
+            await createExpense(values as ExpenseCreate);
+          }
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+
+    toast.promise(promise, {
+      loading: expenseId ? 'Menyimpan perubahan...' : 'Menambah data...',
+      success: expenseId
+        ? 'Berhasil memperbarui belanja.'
+        : 'Berhasil menambahkan belanja.',
+      error: 'Gagal memproses data.',
+    });
+
+    promise.finally(() => {
+      handleReset();
+      router.refresh();
+    });
   }
 
-  const handleCancel = () => {
+  const handleReset = () => {
     form.reset(
       defaultValues ?? {
         yearId: yearListOptions[0]?.id,
@@ -310,11 +315,7 @@ export default function ExpenseFormDialog({
             />
 
             <div className="flex items-center justify-end gap-4">
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={handleCancel}
-              >
+              <Button type="button" variant="destructive" onClick={handleReset}>
                 Batal
               </Button>
 

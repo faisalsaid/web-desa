@@ -8,7 +8,12 @@ import {
   getExpenseQuery,
   GetExpenseResult,
 } from './expense.type';
-import { expenseCreateSchema, expenseUpdateSchema } from './expense.zod';
+import {
+  ExpenseCreate,
+  expenseCreateSchema,
+  ExpenseUpdate,
+  expenseUpdateSchema,
+} from './expense.zod';
 import { toDecimal } from '@/lib/utils/helper';
 import { ExpenseSector, Prisma } from '@prisma/client';
 
@@ -28,22 +33,39 @@ export async function getExpenses(): Promise<GetExpenseList> {
     orderBy: { createdAt: 'desc' },
   });
 
-  return data;
+  // sanitize Decimal -> string
+  return data.map((item) => ({
+    ...item,
+    budget: item.budget.toString(),
+    realized: item.realized.toString(),
+  }));
 }
 
 export async function getExpenseByUrlId(
   urlId: string,
 ): Promise<GetExpenseResult | null> {
-  return await prisma.expense.findUnique({
+  const expense = await prisma.expense.findUnique({
     ...getExpenseQuery,
     where: { urlId },
   });
+
+  if (!expense) return null;
+
+  return {
+    ...expense,
+    budget: expense.budget.toString(),
+    realized: expense.realized.toString(),
+  };
 }
 
 // CREATE ────────────────────────────────────────────────────────────
-export async function createExpense(form: unknown): Promise<GetExpenseResult> {
+export async function createExpense(
+  form: ExpenseCreate,
+): Promise<GetExpenseResult> {
+  // validasi schema (masih perlu agar runtime aman)
   const parsed = expenseCreateSchema.parse(form);
 
+  // sanitize Decimal untuk Prisma
   const cleanBudget = toDecimal(parsed.budget);
   const cleanRealized = toDecimal(parsed.realized);
 
@@ -56,19 +78,22 @@ export async function createExpense(form: unknown): Promise<GetExpenseResult> {
     select: getExpenseQuery.select,
   });
 
-  return created;
+  // konversi Decimal ke string agar aman dikirim ke client
+  return {
+    ...created,
+    budget: created.budget.toString(),
+    realized: created.realized.toString(),
+  };
 }
 
-// UPDATE ────────────────────────────────────────────────────────────
 export async function updateExpense(
   urlId: string,
-  form: unknown,
+  form: ExpenseUpdate, // <-- typed safe
 ): Promise<GetExpenseResult> {
   const parsed = expenseUpdateSchema.parse(form);
 
   const cleanBudget =
     parsed.budget !== undefined ? toDecimal(parsed.budget) : undefined;
-
   const cleanRealized =
     parsed.realized !== undefined ? toDecimal(parsed.realized) : undefined;
 
@@ -82,18 +107,28 @@ export async function updateExpense(
     select: getExpenseQuery.select,
   });
 
-  return updated;
+  // sanitize Decimal -> string sebelum dikirim ke client
+  return {
+    ...updated,
+    budget: updated.budget.toString(),
+    realized: updated.realized.toString(),
+  };
 }
 
 // DELETE (Soft Delete) ──────────────────────────────────────────────
-export async function deleteExpense(urlId: string): Promise<GetExpenseResult> {
+export async function deleteExpense(id: number): Promise<GetExpenseResult> {
   const deleted = await prisma.expense.update({
-    where: { urlId },
+    where: { id },
     data: { deletedAt: new Date() },
     select: getExpenseQuery.select,
   });
 
-  return deleted;
+  // sanitize Decimal -> string
+  return {
+    ...deleted,
+    budget: deleted.budget.toString(),
+    realized: deleted.realized.toString(),
+  };
 }
 
 // HANDLE GET EXPENSE DATA TABLE
@@ -142,13 +177,22 @@ export async function getExpenseDataTable(
   // ============================================================
   // DATA FETCH (typed)
   // ============================================================
-  const data = await prisma.expense.findMany({
+  const dataRaw = await prisma.expense.findMany({
     ...getExpenseQuery,
     where,
     orderBy: { createdAt: 'desc' },
     skip: offset,
     take: limit,
   });
+
+  // ============================================================
+  // SANITIZE DECIMAL -> STRING
+  // ============================================================
+  const data = dataRaw.map((item) => ({
+    ...item,
+    budget: item.budget.toString(),
+    realized: item.realized.toString(),
+  }));
 
   return {
     data,

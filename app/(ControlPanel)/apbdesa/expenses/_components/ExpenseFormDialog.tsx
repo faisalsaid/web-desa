@@ -1,6 +1,6 @@
 'use client';
 
-import { useTransition, useState } from 'react';
+import { useTransition, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ExpenseSector } from '@prisma/client';
@@ -38,7 +38,19 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
+import { Plus, Send } from 'lucide-react';
+import { BudgetYearSelector } from '../../_components/BudgetYearSelector';
+import { getBudgetYearsOptions } from '../../_lib/apbdesa.action';
+import { Separator } from '@/components/ui/separator';
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { formatCurrency } from '@/lib/utils/helper';
+import { ExpemseSectorOptions } from '@/lib/enum';
 
 interface ExpenseFormProps {
   defaultValues?: ExpenseUpdate;
@@ -51,18 +63,34 @@ interface ExpenseFormProps {
 export default function ExpenseFormDialog({
   defaultValues,
   expenseId,
-  onSuccess,
+  // onSuccess,
   triggerLabel,
   dialogTitle = 'Form Belanja',
 }: ExpenseFormProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const isUpdate = !!expenseId;
+  const [yearListOptions, setYearListOptions] = useState<
+    { id: number; year: number }[]
+  >([]);
+
+  // Ambil year list options saat mount
+  useEffect(() => {
+    let isMounted = true;
+    getBudgetYearsOptions().then((years) => {
+      if (isMounted) {
+        setYearListOptions(years);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const form = useForm<ExpenseUpdate | ExpenseCreate>({
     resolver: zodResolver(isUpdate ? expenseUpdateSchema : expenseCreateSchema),
     defaultValues: defaultValues ?? {
-      yearId: 0,
+      yearId: yearListOptions[0]?.id,
       sector: ExpenseSector.GOVERNMENT_ADMIN,
       description: '',
       budget: '0',
@@ -100,6 +128,19 @@ export default function ExpenseFormDialog({
     // );
   }
 
+  const handleCancel = () => {
+    form.reset(
+      defaultValues ?? {
+        yearId: yearListOptions[0]?.id,
+        sector: ExpenseSector.GOVERNMENT_ADMIN,
+        description: '',
+        budget: '0',
+        realized: '0',
+      },
+    );
+    setOpen(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -122,51 +163,61 @@ export default function ExpenseFormDialog({
           </DialogDescription>
         </DialogHeader>
 
+        <Separator />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Year */}
-            <FormField
-              control={form.control}
-              name="yearId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tahun Anggaran</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="block md:flex items-center gap-4 space-y-4 sm:space-y-0">
+              {/* Year */}
+              <FormField
+                control={form.control}
+                name="yearId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tahun Anggaran </FormLabel>
+                    <FormControl>
+                      <BudgetYearSelector
+                        yearListOptions={yearListOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Sector */}
-            <FormField
-              control={form.control}
-              name="sector"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sektor</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Pilih sektor" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.values(ExpenseSector).map((sec) => (
-                          <SelectItem key={sec} value={sec}>
-                            {sec.replace(/_/g, ' ')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              {/* Sector */}
+              <FormField
+                control={form.control}
+                name="sector"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Sektor</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-full ">
+                          <SelectValue placeholder="Pilih sektor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(ExpemseSectorOptions).map(
+                            ([key, label]) => (
+                              <SelectItem key={key} value={key}>
+                                {label}
+                              </SelectItem>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             {/* Description */}
             <FormField
@@ -189,9 +240,27 @@ export default function ExpenseFormDialog({
               name="budget"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Anggaran (Rp)</FormLabel>
+                  <FormLabel>Anggaran</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>Rp</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        type="text"
+                        placeholder="0"
+                        value={formatCurrency(field.value ?? '0')} // hanya untuk tampil
+                        onChange={(e) => {
+                          // Ambil angka murni, hapus ribuan dan karakter non-digit
+                          const numericStr = e.target.value.replace(/\D/g, '');
+                          field.onChange(numericStr || '0'); // simpan string murni
+                        }}
+                        // disabled={!budgeValue}
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>.00</InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -204,25 +273,62 @@ export default function ExpenseFormDialog({
               name="realized"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Realisasi (Rp)</FormLabel>
+                  <FormLabel>Realisiasi</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>Rp</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        type="text"
+                        placeholder="0"
+                        value={formatCurrency(field.value ?? '0')} // hanya untuk tampil
+                        onChange={(e) => {
+                          // Ambil angka murni, hapus ribuan dan karakter non-digit
+                          const numericStr = e.target.value.replace(/\D/g, '');
+                          field.onChange(numericStr || '0'); // simpan string murni
+                        }}
+                        // disabled={!budgeValue}
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>.00</InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
+                // <FormItem>
+                //   <FormLabel>Realisasi (Rp)</FormLabel>
+                //   <FormControl>
+                //     <Input {...field} />
+                //   </FormControl>
+                //   <FormMessage />
+                // </FormItem>
               )}
             />
 
-            <Button type="submit" disabled={isPending}>
-              {expenseId ? 'Simpan Perubahan' : 'Tambah Belanja'}
-            </Button>
+            <div className="flex items-center justify-end gap-4">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleCancel}
+              >
+                Batal
+              </Button>
+
+              <Button type="submit" disabled={isPending}>
+                <Send />
+                {expenseId ? 'Simpan Perubahan' : 'Tambah Belanja'}
+              </Button>
+            </div>
           </form>
         </Form>
 
+        <Separator />
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Batal
-          </Button>
+          <p className="text-xs text-muted-foreground italic">
+            Pastikan data yang dimasukan valid
+          </p>
         </DialogFooter>
       </DialogContent>
     </Dialog>

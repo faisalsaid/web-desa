@@ -1,9 +1,11 @@
 import { RevenueCategoryEnum } from '@/app/(ControlPanel)/apbdesa/revenue/_lib/revenue.zod';
 import { FamilyRelationshipEnum } from '@/app/(ControlPanel)/families/_lib/families.zod';
+import { ExpenseSector } from '@prisma/client';
 
 type FamilyRelationship = keyof typeof FamilyRelationshipEnum.enum;
 
 type RevenueCategory = keyof typeof RevenueCategoryEnum.enum;
+// type Ex = keyof typeof RevenueCategoryEnum.enum;
 
 // Mapping enum ke label bahasa Indonesia
 export const religionLabels: Record<string, string> = {
@@ -98,4 +100,12 @@ export const RevenueCategoryOptions: Record<RevenueCategory, string> = {
   OWN_SOURCE: 'PAD',
   TRANSFER: 'Transfer',
   OTHER: 'Lain-lain',
+};
+
+export const ExpemseSectorOptions: Record<ExpenseSector, string> = {
+  GOVERNMENT_ADMIN: 'Pemerintahan',
+  DEVELOPMENT: 'Pembangunan',
+  COMMUNITY_GUIDANCE: 'Pembinaan',
+  EMERGENCY: 'Pemberdayaan',
+  EMPOWERMENT: 'Bencana / Mendesak',
 };

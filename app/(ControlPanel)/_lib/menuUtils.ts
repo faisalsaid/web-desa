@@ -95,12 +95,12 @@ const allMenuList: MenuItem[] = [
         icon: Wallet2,
       },
       {
-        title: 'belanja',
-        url: '/apbdesa/expense',
+        title: 'Belanja',
+        url: '/apbdesa/expenses',
         icon: Wallet2,
       },
       {
-        title: 'pembiayaan',
+        title: 'Pembiayaan',
         url: '/apbdesa/financing',
         icon: Wallet2,
       },

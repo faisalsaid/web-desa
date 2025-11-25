@@ -21,3 +21,12 @@ export const getExpenseQuery = Prisma.validator<Prisma.ExpenseFindManyArgs>()({
 });
 
 export type GetExpenseResult = Prisma.ExpenseGetPayload<typeof getExpenseQuery>;
+export type GetExpenseList = GetExpenseResult[];
+
+export interface ExpenseDataTableParams {
+  page: number;
+  limit: number;
+  search?: string;
+  yearId?: number;
+  sector?: string;
+}

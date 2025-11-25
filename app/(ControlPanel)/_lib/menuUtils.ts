@@ -78,13 +78,13 @@ const allMenuList: MenuItem[] = [
     ],
   },
   {
-    title: 'Keuangan',
+    title: 'APBDESA',
     url: '/#',
     icon: CircleDollarSign,
     roles: ['ADMIN', 'OPERATOR'],
     sub: [
       {
-        title: 'APBDES',
+        title: 'Dashboard',
         url: '/apbdesa',
         icon: CircleDollarSign,
       },

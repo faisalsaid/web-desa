@@ -19,7 +19,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 // import { RevenueCategoryType } from '../page';
-import { ExpenseSector, RevenueCategory } from '@prisma/client';
+import { ExpenseSector } from '@prisma/client';
 import { ExpenseSummaryItem } from '../page';
 
 export const description = 'A multiple bar chart';

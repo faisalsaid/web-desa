@@ -96,7 +96,7 @@ export interface ExpenseSummaryArray {
   sectors: ExpenseSummaryItem[];
 }
 
-export function generateExpenseSummaryArray(
+function generateExpenseSummaryArray(
   expenses: Array<{
     sector: ExpenseSector;
     budget: string;

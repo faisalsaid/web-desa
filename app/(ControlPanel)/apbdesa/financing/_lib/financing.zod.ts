@@ -2,12 +2,8 @@ import { z } from 'zod';
 import { FinancingType as PrismaFinancingType } from '@prisma/client';
 
 // Prisma enum → Zod enum
-export const FinancingTypeEnum = z.enum(
-  Object.values(PrismaFinancingType) as [string, ...string[]],
-);
-
-// TypeScript type → gunakan langsung dari Prisma
-export type FinancingType = PrismaFinancingType;
+export const FinancingTypeEnum = z.enum(['RECEIPT', 'EXPENDITURE']);
+export type FinancingType = z.infer<typeof FinancingTypeEnum>;
 
 export const AmountSchema = z
   .union([z.string(), z.number()])

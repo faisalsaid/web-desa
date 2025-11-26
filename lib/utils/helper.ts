@@ -12,7 +12,7 @@ export function parseCurrency(value: string): number {
   return parseInt(value.replace(/\./g, '').replace(/\D/g, ''), 10);
 }
 
-// src/lib/decimal.ts
+// app/lib/decimal.ts
 export function toDecimal(input: string): string {
   const clean = input.replace(/[^0-9.]/g, '');
 

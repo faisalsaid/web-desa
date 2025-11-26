@@ -65,7 +65,7 @@ const FinancingTableComp = ({
             basePath="financing"
             defaultLimit={10}
             paramName="pageSize"
-            options={[2, 10, 20, 50, 100]}
+            options={[10, 20, 50, 100]}
           />
         </div>
         {/* Pagination */}

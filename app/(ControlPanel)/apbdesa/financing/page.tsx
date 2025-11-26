@@ -9,6 +9,7 @@ import { YearFilterSelector } from '../_components/YearFilterSelector';
 import FinancingFormDialog from './_components/FinancingFormDialog';
 import FinancingTableComp from './_components/financing-table/FinancingTableComp';
 import { FinancingList } from './_lib/financing.type';
+import FinancingSummaryCard from './_components/FinancingSummary';
 
 interface Props {
   q?: string;
@@ -52,6 +53,11 @@ export default async function FinancingPage({
     result.success && result.data ? result.data.meta.totalPages : 0;
   // ---------------------------------------------
 
+  if (result.success) {
+    const summary = summarizeFinancingWithPercent(result.data.rows);
+    console.log(summary);
+  }
+
   return (
     <div className="space-y-4">
       <ContentCard className="flex items-center justify-between">
@@ -72,6 +78,14 @@ export default async function FinancingPage({
           <FinancingFormDialog />
         </div>
       </ContentCard>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {result.success && result.data && (
+          <FinancingSummaryCard
+            summary={summarizeFinancingWithPercent(result.data.rows)}
+          />
+        )}
+      </div>
       <ContentCard>
         <FinancingTableComp
           financingDataTable={rows}
@@ -81,4 +95,52 @@ export default async function FinancingPage({
       </ContentCard>
     </div>
   );
+}
+
+type FinancingSummaryWithPercent = {
+  totalReceipt: number;
+  totalExpenditure: number;
+  transactionCount: number;
+  percentReceiptAmount: number;
+  percentExpenditureAmount: number;
+  percentReceiptCount: number;
+  percentExpenditureCount: number;
+};
+
+function summarizeFinancingWithPercent(
+  rows: {
+    amount: string;
+    type: 'RECEIPT' | 'EXPENDITURE';
+  }[],
+): FinancingSummaryWithPercent {
+  const totalReceipt = rows
+    .filter((r) => r.type === 'RECEIPT')
+    .reduce((acc, r) => acc + Number(r.amount), 0);
+
+  const totalExpenditure = rows
+    .filter((r) => r.type === 'EXPENDITURE')
+    .reduce((acc, r) => acc + Number(r.amount), 0);
+
+  const transactionCount = rows.length;
+
+  const totalAmount = totalReceipt + totalExpenditure;
+
+  const receiptCount = rows.filter((r) => r.type === 'RECEIPT').length;
+  const expenditureCount = rows.filter((r) => r.type === 'EXPENDITURE').length;
+
+  return {
+    totalReceipt,
+    totalExpenditure,
+    transactionCount,
+    percentReceiptAmount: totalAmount ? (totalReceipt / totalAmount) * 100 : 0,
+    percentExpenditureAmount: totalAmount
+      ? (totalExpenditure / totalAmount) * 100
+      : 0,
+    percentReceiptCount: transactionCount
+      ? (receiptCount / transactionCount) * 100
+      : 0,
+    percentExpenditureCount: transactionCount
+      ? (expenditureCount / transactionCount) * 100
+      : 0,
+  };
 }

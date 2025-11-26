@@ -15,35 +15,6 @@ import {
 } from './financing.type';
 import { toDecimal } from '@/lib/utils/helper';
 import { FinancingType, Prisma } from '@prisma/client';
-// import { toDecimal } from "@/lib/utils/decimal";
-// import {
-//   FinancingInput,
-//   FinancingUpdateInput,
-//   FinancingResult
-// } from "@/lib/types/financing.types";
-// import {
-//   getFinancingQuery
-// } from "@/lib/queries/financing.query";
-// import {
-//   mapFinancing,
-//   mapFinancingList
-// } from "@/lib/mappers/financing.mapper";
-
-// export function mapFinancing(f: FinancingResult): FinancingResult {
-//   return {
-//     ...f,
-//     amount: f.amount.toString(),
-//     year: {
-//       id: f.year.id,
-//       year: f.year.year,
-//       isLocked: f.year.isLocked,
-//     },
-//   };
-// }
-
-// export function mapFinancingList(list: FinancingList): FinancingResult[] {
-//   return list.map(mapFinancing);
-// }
 
 // SAFE RETURN TYPE
 type ActionResult<T> =

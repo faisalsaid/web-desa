@@ -39,7 +39,18 @@ import {
   FinancingUpdateDataSchema,
 } from '../_lib/financing.zod';
 import { getBudgetYearsOptions } from '../../_lib/apbdesa.action';
-import { Edit2, Plus } from 'lucide-react';
+import { Edit2, Plus, Send } from 'lucide-react';
+import { BudgetYearSelector } from '../../_components/BudgetYearSelector';
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { formatCurrency } from '@/lib/utils/helper';
+import { createFinancing, updateFinancing } from '../_lib/financing.actions';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   defaultValues?: FinancingUpdateData;
@@ -58,16 +69,18 @@ interface Props {
 
 export default function FinancingFormDialog({
   defaultValues,
-  mode = 'create',
   buttonVariant = 'default',
+  financingId,
 }: Props) {
+  const isUpdate = !!financingId;
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [yearListOptions, setYearListOptions] = useState<
     { id: number; year: number }[]
   >([]);
 
-  const isUpdate = mode === 'update';
   // Ambil year list options saat mount
   useEffect(() => {
     let isMounted = true;
@@ -83,7 +96,7 @@ export default function FinancingFormDialog({
 
   const form = useForm<FinancingCreateInput | FinancingUpdateData>({
     resolver: zodResolver(
-      mode === 'update' ? FinancingUpdateDataSchema : FinancingCreateSchema,
+      isUpdate ? FinancingUpdateDataSchema : FinancingCreateSchema,
     ),
     defaultValues: defaultValues ?? {
       yearId: yearListOptions[0]?.id,
@@ -93,18 +106,60 @@ export default function FinancingFormDialog({
     },
   });
 
-  const [loading, setLoading] = useState(false);
+  // FIX — Update form ketika initialData berubah saat dialog dibuka
+  useEffect(() => {
+    if (open && defaultValues && isUpdate) {
+      form.reset(defaultValues);
+    }
+  }, [open, defaultValues, isUpdate, form]);
+
+  const descriptionValue = form.watch('description');
 
   async function handleSubmit(
     values: FinancingCreateInput | FinancingUpdateData,
   ) {
     console.log(values);
+
+    const promise = new Promise<void>(async (resolve, reject) => {
+      startTransition(async () => {
+        try {
+          if (isUpdate) {
+            await updateFinancing(financingId, values as FinancingUpdateData);
+          } else {
+            await createFinancing(values as FinancingCreateInput);
+          }
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+
+    toast.promise(promise, {
+      loading: isUpdate ? 'Menyimpan perubahan...' : 'Menambah data...',
+      success: isUpdate
+        ? 'Berhasil memperbarui pembiayaan.'
+        : 'Berhasil menambahkan pembiayaan.',
+      error: 'Gagal memproses data.',
+    });
+
+    promise.finally(() => {
+      handleReset();
+      router.refresh();
+    });
   }
 
-  function handleCancel() {
-    form.reset();
+  const handleReset = () => {
+    form.reset(
+      defaultValues ?? {
+        yearId: yearListOptions[0]?.id,
+        type: FinancingType.RECEIPT,
+        description: '',
+        amount: '',
+      },
+    );
     setOpen(false);
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -120,7 +175,7 @@ export default function FinancingFormDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Tambah Pembiayaan' : 'Edit Pembiayaan'}
+            {!isUpdate ? 'Tambah Pembiayaan' : 'Edit Pembiayaan'}
           </DialogTitle>
         </DialogHeader>
 
@@ -129,48 +184,55 @@ export default function FinancingFormDialog({
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="yearId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tahun Anggaran</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="2025" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Jenis Pembiayaan</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+            <div className="flex items-center gap-4">
+              <FormField
+                control={form.control}
+                name="yearId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tahun Anggaran</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Pilih jenis" />
-                      </SelectTrigger>
+                      <BudgetYearSelector
+                        yearListOptions={yearListOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                        className="w-32"
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value={FinancingType.RECEIPT}>
-                        Penerimaan
-                      </SelectItem>
-                      <SelectItem value={FinancingType.EXPENDITURE}>
-                        Pengeluaran
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Jenis Pembiayaan</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl className="w-full">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih jenis" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={FinancingType.RECEIPT}>
+                          Penerimaan
+                        </SelectItem>
+                        <SelectItem value={FinancingType.EXPENDITURE}>
+                          Pengeluaran
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -193,7 +255,25 @@ export default function FinancingFormDialog({
                 <FormItem>
                   <FormLabel>Jumlah</FormLabel>
                   <FormControl>
-                    <Input placeholder="12000000" {...field} />
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>Rp</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        type="text"
+                        placeholder="0"
+                        value={formatCurrency(field.value ?? '0')} // hanya untuk tampil
+                        onChange={(e) => {
+                          // Ambil angka murni, hapus ribuan dan karakter non-digit
+                          const numericStr = e.target.value.replace(/\D/g, '');
+                          field.onChange(numericStr || '0'); // simpan string murni
+                        }}
+                        disabled={!descriptionValue}
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupText>.00</InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -203,14 +283,15 @@ export default function FinancingFormDialog({
             <DialogFooter>
               <Button
                 type="button"
-                variant="outline"
-                onClick={handleCancel}
-                disabled={loading}
+                variant="destructive"
+                onClick={handleReset}
+                disabled={isPending}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading}>
-                {mode === 'create' ? 'Simpan' : 'Update'}
+              <Button type="submit" disabled={isPending}>
+                <Send />
+                {isUpdate ? 'Simpan' : 'Update'}
               </Button>
             </DialogFooter>
           </form>

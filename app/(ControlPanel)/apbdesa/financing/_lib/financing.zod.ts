@@ -14,9 +14,9 @@ export const AmountSchema = z
  * Base
  */
 export const FinancingBaseSchema = z.object({
-  yearId: z.number().int().positive(),
+  yearId: z.number('Wajib pilih').int().positive(),
   type: FinancingTypeEnum,
-  description: z.string().min(1).max(2000),
+  description: z.string().min(3, 'Wajib! Minimal 3 karakter').max(2000),
   amount: AmountSchema, // ← STRING setelah transform
 });
 

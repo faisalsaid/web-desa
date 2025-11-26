@@ -47,7 +47,7 @@ export default async function FinancingPage({
   return (
     <div className="space-y-4">
       <ContentCard className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Financing Page</h1>
+        <h1 className="text-xl font-semibold">Financing</h1>
         <div className="flex items-center justify-center gap-2">
           {yearListOptions.length === 0 ? (
             <div className="text-xs border bg-muted p-2 rounded-md text-muted-foreground">

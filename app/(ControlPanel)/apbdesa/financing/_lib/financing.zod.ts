@@ -6,7 +6,7 @@ export const FinancingTypeEnum = z.enum(['RECEIPT', 'EXPENDITURE']);
 export type FinancingType = z.infer<typeof FinancingTypeEnum>;
 
 export const AmountSchema = z
-  .union([z.string(), z.number()])
+  .union([z.string()])
   .transform((val) => String(val).trim())
   .refine((s) => /^-?\d+(\.\d+)?$/.test(s), 'Amount harus angka valid');
 

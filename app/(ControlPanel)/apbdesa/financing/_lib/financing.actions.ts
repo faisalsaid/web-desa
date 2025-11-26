@@ -179,7 +179,7 @@ export async function deleteFinancing(
 
 // GET FINANCE DATA TABEL
 
-type PaginationResult = {
+export type FinancingTableResult = {
   rows: FinancingList;
   meta: {
     page: number;
@@ -191,7 +191,7 @@ type PaginationResult = {
 
 export async function getFinanceDataTable(
   params: FinancingDataTableParams,
-): Promise<ActionResult<PaginationResult>> {
+): Promise<ActionResult<FinancingTableResult>> {
   try {
     const { page, limit, search, yearId, financeType } = params;
 
@@ -230,6 +230,7 @@ export async function getFinanceDataTable(
       ...item,
       amount: item.amount.toString(),
     }));
+
     return {
       success: true,
       data: {

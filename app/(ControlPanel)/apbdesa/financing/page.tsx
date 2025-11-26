@@ -74,7 +74,7 @@ export default async function FinancingPage({
       </ContentCard>
       <ContentCard>
         <FinancingTableComp
-          expanseDataTable={rows}
+          financingDataTable={rows}
           currentPage={currentPage}
           totalPages={totalPages}
         />

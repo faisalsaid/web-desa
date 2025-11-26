@@ -1,22 +1,60 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FinancingList } from '../../_lib/financing.type';
 import { financingColumns } from './financing-columns';
 import { FinancingDataTableComp } from './finaning-data-table';
+import { useState } from 'react';
+import { TableSearchForm } from '../../../_components/TableSearchForm';
+import { ResetButton } from '../../../_components/ResetButton';
 
 interface Props {
-  expanseDataTable: FinancingList;
+  financingDataTable: FinancingList;
   search?: string;
   totalPages: number;
   currentPage: number;
 }
 
-const FinancingTableComp = ({ expanseDataTable }: Props) => {
+const FinancingTableComp = ({
+  financingDataTable,
+  search: defaultSearch = '',
+  totalPages,
+  currentPage,
+}: Props) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchResetKey, setSearchResetKey] = useState(0);
+
+  const handleSearch = (value: string) => {
+    router.push(`financing?q=${encodeURIComponent(value)}&page=1`);
+  };
+
+  const handlePagination = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`financing?${params.toString()}`);
+  };
+
+  const handleReset = () => {
+    router.push('financing');
+    setSearchResetKey((prev) => prev + 1); // paksa re-render input
+  };
   return (
-    <div>
+    <div className="space-y-4">
+      <div className="flex gap-2 items-center w-full ">
+        <div className="flex-1">
+          <TableSearchForm
+            key={searchResetKey}
+            defaultSearch={defaultSearch}
+            onSearch={handleSearch}
+            placeholder="e.g : Tambah modal saham desa..."
+          />
+        </div>
+        <ResetButton onReset={handleReset} />
+      </div>
       <FinancingDataTableComp
         columns={financingColumns}
-        data={expanseDataTable}
+        data={financingDataTable}
       />
     </div>
   );

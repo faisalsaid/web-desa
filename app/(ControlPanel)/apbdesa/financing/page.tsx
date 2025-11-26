@@ -7,6 +7,8 @@ import {
 } from './_lib/financing.actions';
 import { YearFilterSelector } from '../_components/YearFilterSelector';
 import FinancingFormDialog from './_components/FinancingFormDialog';
+import FinancingTableComp from './_components/financing-table/FinancingTableComp';
+import { FinancingList } from './_lib/financing.type';
 
 interface Props {
   q?: string;
@@ -38,10 +40,8 @@ export default async function FinancingPage({
     yearId,
   });
 
-  let bucket: FinancingTableResult;
-
   if (result.success) {
-    bucket = result.data;
+    console.log(result.data.rows);
   }
 
   return (
@@ -63,6 +63,13 @@ export default async function FinancingPage({
 
           <FinancingFormDialog />
         </div>
+      </ContentCard>
+      <ContentCard>
+        <FinancingTableComp
+          expanseDataTable={result.success ? result.data.rows : []}
+          currentPage={result.success ? result.data.meta.page : 1}
+          totalPages={result.success ? result.data.meta.totalPages : 0}
+        />
       </ContentCard>
     </div>
   );

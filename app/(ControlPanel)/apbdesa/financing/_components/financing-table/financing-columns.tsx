@@ -4,6 +4,7 @@ import { formatCurrency } from '@/lib/utils/helper';
 import { ColumnDef } from '@tanstack/react-table';
 import { FinancingResult } from '../../_lib/financing.type';
 import FinancingFormDialog from '../FinancingFormDialog';
+import FinancingDeleteButton from '../FinancingDeleteButton';
 
 export const financingColumns: ColumnDef<FinancingResult>[] = [
   {
@@ -40,6 +41,7 @@ export const financingColumns: ColumnDef<FinancingResult>[] = [
           buttonVariant={'outline'}
           defaultValues={row.original}
         />
+        <FinancingDeleteButton id={row.original.id} />
       </div>
     ),
   },

@@ -7,6 +7,8 @@ import { FinancingDataTableComp } from './finaning-data-table';
 import { useState } from 'react';
 import { TableSearchForm } from '../../../_components/TableSearchForm';
 import { ResetButton } from '../../../_components/ResetButton';
+import { LimitSelector } from '../../../_components/LimitSelector';
+import { TablePagination } from '../../../_components/TablePagination';
 
 interface Props {
   financingDataTable: FinancingList;
@@ -56,6 +58,25 @@ const FinancingTableComp = ({
         columns={financingColumns}
         data={financingDataTable}
       />
+
+      <div className="sm:flex items-center gap-4">
+        <div className="hidden sm:flex">
+          <LimitSelector
+            basePath="financing"
+            defaultLimit={10}
+            paramName="pageSize"
+            options={[2, 10, 20, 50, 100]}
+          />
+        </div>
+        {/* Pagination */}
+        <div className="sm:flex-1">
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => handlePagination(page)}
+          />
+        </div>
+      </div>
     </div>
   );
 };

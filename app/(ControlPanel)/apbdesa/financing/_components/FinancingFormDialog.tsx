@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription,
+  // DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,7 +54,6 @@ import { useRouter } from 'next/navigation';
 
 interface Props {
   defaultValues?: FinancingUpdateData;
-  mode?: 'create' | 'update';
   financingId?: number;
   buttonVariant?:
     | 'default'
@@ -106,6 +105,13 @@ export default function FinancingFormDialog({
     },
   });
 
+  useEffect(() => {
+    if (open && yearListOptions.length > 0) {
+      const current = form.getValues('yearId');
+      if (current) form.setValue('yearId', current);
+    }
+  }, [yearListOptions, open]);
+
   // FIX — Update form ketika initialData berubah saat dialog dibuka
   useEffect(() => {
     if (open && defaultValues && isUpdate) {
@@ -124,7 +130,10 @@ export default function FinancingFormDialog({
       startTransition(async () => {
         try {
           if (isUpdate) {
-            await updateFinancing(financingId, values as FinancingUpdateData);
+            await updateFinancing(
+              financingId as number,
+              values as FinancingUpdateData,
+            );
           } else {
             await createFinancing(values as FinancingCreateInput);
           }

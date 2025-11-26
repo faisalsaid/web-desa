@@ -78,11 +78,11 @@ export default function ExpenseFormDialog({
   dialogTitle = 'Form Belanja',
   buttonVariant = 'default',
 }: ExpenseFormProps) {
+  const isUpdate = !!expenseId;
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const isUpdate = !!expenseId;
   const [yearListOptions, setYearListOptions] = useState<
     { id: number; year: number }[]
   >([]);

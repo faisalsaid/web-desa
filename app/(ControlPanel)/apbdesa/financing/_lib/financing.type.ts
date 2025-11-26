@@ -11,6 +11,7 @@ export const getFinancingQuery =
       id: true,
       urlId: true,
       type: true,
+      yearId: true,
       description: true,
       amount: true,
       createdAt: true,
@@ -41,6 +42,7 @@ export type FinancingResult = {
   type: FinancingType;
   description: string;
   amount: string;
+  yearId: number;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

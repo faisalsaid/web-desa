@@ -40,9 +40,17 @@ export default async function FinancingPage({
     yearId,
   });
 
-  if (result.success) {
-    console.log(result.data.rows);
-  }
+  // ---------------------------------------------
+  // 🔒 SAFE FALLBACKS (Tidak pernah undefined)
+  // ---------------------------------------------
+  const rows: FinancingList =
+    result.success && result.data ? result.data.rows : [];
+
+  const currentPage = result.success && result.data ? result.data.meta.page : 1;
+
+  const totalPages =
+    result.success && result.data ? result.data.meta.totalPages : 0;
+  // ---------------------------------------------
 
   return (
     <div className="space-y-4">
@@ -66,9 +74,9 @@ export default async function FinancingPage({
       </ContentCard>
       <ContentCard>
         <FinancingTableComp
-          expanseDataTable={result.success ? result.data.rows : []}
-          currentPage={result.success ? result.data.meta.page : 1}
-          totalPages={result.success ? result.data.meta.totalPages : 0}
+          expanseDataTable={rows}
+          currentPage={currentPage}
+          totalPages={totalPages}
         />
       </ContentCard>
     </div>

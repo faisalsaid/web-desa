@@ -3,6 +3,7 @@
 import { formatCurrency } from '@/lib/utils/helper';
 import { ColumnDef } from '@tanstack/react-table';
 import { FinancingResult } from '../../_lib/financing.type';
+import FinancingFormDialog from '../FinancingFormDialog';
 
 export const financingColumns: ColumnDef<FinancingResult>[] = [
   {
@@ -11,6 +12,13 @@ export const financingColumns: ColumnDef<FinancingResult>[] = [
     cell: ({ row }) => <p>{row.original.year.year}</p>,
   },
   { accessorKey: 'description', header: 'Deskripsi' },
+  {
+    accessorKey: 'type',
+    header: 'Tipe',
+    cell: ({ row }) => (
+      <p>{row.original.type === 'RECEIPT' ? 'Penerimaan' : 'Pengerluaran'}</p>
+    ),
+  },
 
   {
     accessorKey: 'amount',
@@ -25,6 +33,14 @@ export const financingColumns: ColumnDef<FinancingResult>[] = [
   {
     id: 'action',
     header: 'Aksi',
-    cell: ({ row }) => <div className="flex gap-1 items-center">ACtion</div>,
+    cell: ({ row }) => (
+      <div className="flex gap-1 items-center">
+        <FinancingFormDialog
+          financingId={row.original.id}
+          buttonVariant={'outline'}
+          defaultValues={row.original}
+        />
+      </div>
+    ),
   },
 ];

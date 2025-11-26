@@ -53,10 +53,10 @@ export default async function FinancingPage({
     result.success && result.data ? result.data.meta.totalPages : 0;
   // ---------------------------------------------
 
-  if (result.success) {
-    const summary = summarizeFinancingWithPercent(result.data.rows);
-    console.log(summary);
-  }
+  // if (result.success) {
+  //   const summary = summarizeFinancingWithPercent(result.data.rows);
+  //   console.log(summary);
+  // }
 
   return (
     <div className="space-y-4">

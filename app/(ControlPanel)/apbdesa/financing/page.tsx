@@ -11,6 +11,7 @@ import FinancingTableComp from './_components/financing-table/FinancingTableComp
 import { FinancingList } from './_lib/financing.type';
 import FinancingSummaryCard from './_components/FinancingSummary';
 import FinancingBarChart from './_components/FinancingBarChart';
+import EmptyBudgetYearComp from '../_components/EmptyBudgetYearCom';
 
 interface Props {
   q?: string;
@@ -54,9 +55,14 @@ export default async function FinancingPage({
     result.success && result.data ? result.data.meta.totalPages : 0;
   // ---------------------------------------------
 
-  // if (result.success) {
-  //   console.log(result.data.rows);
-  // }
+  if (yearListOptions.length === 0) {
+    return (
+      <EmptyBudgetYearComp
+        title="Tidak Ada Pembiayaan"
+        descriptions="Pastikan tahun aggaran sudah tersedia"
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">

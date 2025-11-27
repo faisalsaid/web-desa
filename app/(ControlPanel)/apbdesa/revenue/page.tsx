@@ -7,6 +7,7 @@ import { RevenueCategory } from '@prisma/client';
 import { YearFilterSelector } from '../_components/YearFilterSelector';
 import RevenueSummary from './_components/RevenueSummary';
 import RevenueCategoryCard from './_components/RevenueCategoryCard';
+import EmptyBudgetYearComp from '../_components/EmptyBudgetYearCom';
 
 export type RevenueCategoryType = {
   category: string;
@@ -43,6 +44,15 @@ export default async function RevenuePage({
   const yearId = params.yearId ? Number(params.yearId) : undefined;
 
   const yearListOptions = await getBudgetYearsOptions();
+
+  if (yearListOptions.length === 0) {
+    return (
+      <EmptyBudgetYearComp
+        title="Tidak Ada Penerimaan"
+        descriptions="Pastikan tahun aggaran sudah tersedia"
+      />
+    );
+  }
 
   const {
     data: allRevenue,

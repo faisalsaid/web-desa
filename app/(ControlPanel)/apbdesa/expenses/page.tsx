@@ -8,6 +8,7 @@ import ExpesnseTable from './_components/expensetable/ExpesnseTable';
 import ExpenseSumaryComp from './_components/ExpenseSumary';
 import { ExpemseSectorOptions } from '@/lib/enum';
 import { ExpenseSectorChart } from './_components/ExpenseSectorChart';
+import EmptyBudgetYearComp from '../_components/EmptyBudgetYearCom';
 
 interface Props {
   q?: string;
@@ -40,6 +41,15 @@ export default async function ExpensesPage({
   });
 
   const summary = generateExpenseSummaryArray(allExpense);
+
+  if (yearListOptions.length === 0) {
+    return (
+      <EmptyBudgetYearComp
+        title="Tidak Ada Belanja"
+        descriptions="Pastikan tahun aggaran sudah tersedia"
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">

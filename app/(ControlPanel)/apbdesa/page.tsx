@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
 import { Cloud, Folder } from 'lucide-react';
+import EmptyBudgetYearComp from './_components/EmptyBudgetYearCom';
 
 interface Props {
   yearId?: number;
@@ -29,10 +30,19 @@ export default async function ApbdesaPage({
 }: {
   searchParams: Promise<Props>;
 }) {
+  const yearListOptions = await getBudgetYearsOptions();
+
+  if (yearListOptions.length === 0) {
+    return (
+      <EmptyBudgetYearComp
+        title="Tidak Ada APBDES"
+        descriptions="Pastikan tahun aggaran sudah tersedia"
+      />
+    );
+  }
+
   const params = await searchParams;
   const yearId = params.yearId ? Number(params.yearId) : undefined;
-
-  const yearListOptions = await getBudgetYearsOptions();
 
   const recentYear = yearListOptions.sort((a, b) => b.year - a.year)[0];
   const data = await getBugetYearReport(yearId ? yearId : 0);
@@ -60,40 +70,17 @@ export default async function ApbdesaPage({
           <AddBudgetYearComp />
         </div>
       </ContentCard>
-      {yearListOptions.length === 0 ? (
-        <EmptyBugteYearComponent />
-      ) : (
+      <div className="grid gap-4">
+        <ContentCard>
+          <APBDesaSummary apbdesaSummary={resumeData} />
+        </ContentCard>
         <div className="grid gap-4">
-          <ContentCard>
-            <APBDesaSummary apbdesaSummary={resumeData} />
-          </ContentCard>
-          <div className="grid gap-4">
-            <ContentCard>Grafik 1</ContentCard>
-            <ContentCard>Grafik 2</ContentCard>
-          </div>
-          <ContentCard>Quick Navigation</ContentCard>
-          <ContentCard>5 Last transactions</ContentCard>
+          <ContentCard>Grafik 1</ContentCard>
+          <ContentCard>Grafik 2</ContentCard>
         </div>
-      )}
+        <ContentCard>Quick Navigation</ContentCard>
+        <ContentCard>5 Last transactions</ContentCard>
+      </div>
     </div>
   );
 }
-
-const EmptyBugteYearComponent = () => {
-  return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Folder />
-        </EmptyMedia>
-        <EmptyTitle>Data APBDesa Kosong</EmptyTitle>
-        <EmptyDescription>Tahun anggaran belum dibuat</EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <p className="text-lime-500">
-          Pilih tombol tambah kanan atas untuk membuat tahun anggaran baru
-        </p>
-      </EmptyContent>
-    </Empty>
-  );
-};

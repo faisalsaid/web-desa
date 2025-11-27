@@ -5,22 +5,30 @@ import {
   getBugetYearReport,
 } from './_lib/apbdesa.action';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { YearFilterSelector } from './_components/YearFilterSelector';
 import APBDesaSummary from './_components/APBDesaSummary';
+import { refactorToSummary } from './_lib/helper/budgetYearRefactorResume';
 
-export default async function ApbdesaPage() {
+interface Props {
+  yearId?: number;
+}
+
+export default async function ApbdesaPage({
+  searchParams,
+}: {
+  searchParams: Promise<Props>;
+}) {
+  const params = await searchParams;
+  const yearId = params.yearId ? Number(params.yearId) : undefined;
+
   const yearListOptions = await getBudgetYearsOptions();
 
   const recentYear = yearListOptions.sort((a, b) => b.year - a.year)[0];
-  const data = await getBugetYearReport(recentYear.id);
-  console.log(data);
+  const data = await getBugetYearReport(yearId ? yearId : 0);
+  // console.log(data);
+
+  const resumeData = refactorToSummary(data);
+
   return (
     <div className="space-y-4">
       <ContentCard className="flex items-center justify-between">
@@ -35,6 +43,7 @@ export default async function ApbdesaPage() {
               yearListOptions={yearListOptions}
               defaultYearId={recentYear.id}
               basePath="apbdesa"
+              allTimeLabel="Semua"
             />
           )}
           <AddBudgetYearComp />
@@ -43,7 +52,7 @@ export default async function ApbdesaPage() {
 
       <div className="grid gap-4">
         <ContentCard>
-          <APBDesaSummary apbdesaSummary={data} />
+          <APBDesaSummary apbdesaSummary={resumeData} />
         </ContentCard>
         <div className="grid gap-4">
           <ContentCard>Grafik 1</ContentCard>

@@ -1,4 +1,4 @@
-import { BudgetYear, Revenue, Expense, Financing } from '@prisma/client';
+import { Revenue, Expense, Financing } from '@prisma/client';
 import { GetBugetYearReport } from '../apbdesa.type';
 
 export type SanitizedDecimal = string;

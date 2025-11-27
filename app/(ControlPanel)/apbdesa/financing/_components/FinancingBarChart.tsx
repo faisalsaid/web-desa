@@ -9,7 +9,7 @@ interface Props {
 }
 
 const FinancingBarChart = ({ rows }: Props) => {
-  //   console.log(rows);
+  console.log(rows);
 
   return <div></div>;
 };

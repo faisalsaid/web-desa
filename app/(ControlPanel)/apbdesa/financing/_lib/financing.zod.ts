@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { FinancingType as PrismaFinancingType } from '@prisma/client';
 
 // Prisma enum → Zod enum
 export const FinancingTypeEnum = z.enum(['RECEIPT', 'EXPENDITURE']);

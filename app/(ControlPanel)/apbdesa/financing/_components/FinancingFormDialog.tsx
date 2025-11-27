@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
@@ -113,11 +113,15 @@ export default function FinancingFormDialog({
   }, [yearListOptions, open]);
 
   // FIX — Update form ketika initialData berubah saat dialog dibuka
-  useEffect(() => {
-    if (open && defaultValues && isUpdate) {
+  const resetForm = useCallback(() => {
+    if (defaultValues && isUpdate) {
       form.reset(defaultValues);
     }
-  }, [open, defaultValues, isUpdate, form]);
+  }, [defaultValues, isUpdate, form]);
+
+  useEffect(() => {
+    if (open) resetForm();
+  }, [open, resetForm]);
 
   const descriptionValue = form.watch('description');
 
@@ -300,7 +304,7 @@ export default function FinancingFormDialog({
               </Button>
               <Button type="submit" disabled={isPending}>
                 <Send />
-                {isUpdate ? 'Simpan' : 'Update'}
+                {!isUpdate ? 'Simpan' : 'Update'}
               </Button>
             </DialogFooter>
           </form>

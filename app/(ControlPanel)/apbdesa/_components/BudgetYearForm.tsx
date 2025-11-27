@@ -21,13 +21,16 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Send } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type FormData = z.infer<typeof BudgetYearCreateSchema>;
 
 interface BudgetYearFormProps {
   closeModal?: () => void;
 }
+
 export function BudgetYearForm({ closeModal }: BudgetYearFormProps) {
+  const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(BudgetYearCreateSchema),
     defaultValues: {
@@ -64,6 +67,7 @@ export function BudgetYearForm({ closeModal }: BudgetYearFormProps) {
         });
       } finally {
         setLoading(false);
+        router.refresh();
       }
     });
   };

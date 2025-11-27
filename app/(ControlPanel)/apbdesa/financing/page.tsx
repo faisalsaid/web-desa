@@ -2,7 +2,7 @@ import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
 import { FinancingType } from '@prisma/client';
 import { getBudgetYearsOptions } from '../_lib/apbdesa.action';
 import {
-  FinancingTableResult,
+  // FinancingTableResult,
   getFinanceDataTable,
 } from './_lib/financing.actions';
 import { YearFilterSelector } from '../_components/YearFilterSelector';

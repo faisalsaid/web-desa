@@ -126,6 +126,9 @@ export const getBugetYearReport = async (
 
   const data = await prisma.budgetYear.findMany({
     where,
+    orderBy: {
+      year: 'desc', // 🔥 urut dari tahun terbaru → terlama
+    },
     ...GetBugetYearReportQuery,
   });
 

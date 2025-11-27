@@ -70,7 +70,7 @@ export default async function ApbdesaPage({
               yearListOptions={yearListOptions}
               defaultYearId={recentYear.id}
               basePath="apbdesa"
-              allTimeLabel="Semua"
+              allTimeLabel="Pilih Tahun"
             />
           )}
           <AddBudgetYearComp />
@@ -80,7 +80,7 @@ export default async function ApbdesaPage({
       {apbdesaEmpty ? (
         <EmptyStateComp
           title="Belum ada laporan APBDesa"
-          description="Silahkan masukan data penerimaan, belanja atau pendaanan"
+          description="Pastikan tahun anggaran yang dipilih sudah ada datanya atau silahkan masukan data penerimaan, belanja atau pendaanan"
         >
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Button asChild>

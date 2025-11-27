@@ -10,6 +10,7 @@ import FinancingFormDialog from './_components/FinancingFormDialog';
 import FinancingTableComp from './_components/financing-table/FinancingTableComp';
 import { FinancingList } from './_lib/financing.type';
 import FinancingSummaryCard from './_components/FinancingSummary';
+import FinancingBarChart from './_components/FinancingBarChart';
 
 interface Props {
   q?: string;
@@ -54,8 +55,7 @@ export default async function FinancingPage({
   // ---------------------------------------------
 
   // if (result.success) {
-  //   const summary = summarizeFinancingWithPercent(result.data.rows);
-  //   console.log(summary);
+  //   console.log(result.data.rows);
   // }
 
   return (
@@ -84,6 +84,9 @@ export default async function FinancingPage({
           <FinancingSummaryCard
             summary={summarizeFinancingWithPercent(result.data.rows)}
           />
+        )}
+        {result.success && result.data && (
+          <FinancingBarChart rows={mapFinancingToChartData(result.data.rows)} />
         )}
       </div>
       <ContentCard>
@@ -143,4 +146,47 @@ function summarizeFinancingWithPercent(
       ? (expenditureCount / transactionCount) * 100
       : 0,
   };
+}
+
+// ============================
+
+export interface FinancingChartData {
+  type: 'RECEIPT' | 'EXPENDITURE';
+  totalAmount: number;
+  transactionCount: number;
+}
+
+interface FinancingRow {
+  type: 'RECEIPT' | 'EXPENDITURE';
+  amount: string; // string dari DB
+}
+
+/**
+ * Summarize financing rows menjadi data chart
+ */
+function mapFinancingToChartData(rows: FinancingRow[]): FinancingChartData[] {
+  const receiptRows = rows.filter((r) => r.type === 'RECEIPT');
+  const expenditureRows = rows.filter((r) => r.type === 'EXPENDITURE');
+
+  const totalReceipt = receiptRows.reduce(
+    (sum, r) => sum + Number(r.amount),
+    0,
+  );
+  const totalExpenditure = expenditureRows.reduce(
+    (sum, r) => sum + Number(r.amount),
+    0,
+  );
+
+  return [
+    {
+      type: 'RECEIPT',
+      totalAmount: totalReceipt,
+      transactionCount: receiptRows.length,
+    },
+    {
+      type: 'EXPENDITURE',
+      totalAmount: totalExpenditure,
+      transactionCount: expenditureRows.length,
+    },
+  ];
 }

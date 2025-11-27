@@ -9,9 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { YearFilterSelector } from './_components/YearFilterSelector';
 
 export default async function ApbdesaPage() {
   const yearListOptions = await getBudgetYearsOptions();
+
+  const recentYear = yearListOptions.sort((a, b) => b.year - a.year)[0];
+  console.log(recentYear);
 
   return (
     <div className="space-y-4">
@@ -23,22 +27,24 @@ export default async function ApbdesaPage() {
               Tahun Anggaran Kosong{' '}
             </div>
           ) : (
-            <Select>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Tahun" />
-              </SelectTrigger>
-              <SelectContent>
-                {yearListOptions.map((budget) => (
-                  <SelectItem key={budget.id} value={budget.id.toString()}>
-                    {budget.year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <YearFilterSelector
+              yearListOptions={yearListOptions}
+              defaultYearId={recentYear.id}
+            />
           )}
           <AddBudgetYearComp />
         </div>
       </ContentCard>
+
+      <div className="grid gap-4">
+        <ContentCard>Summary Card</ContentCard>
+        <div className="grid gap-4">
+          <ContentCard>Grafik 1</ContentCard>
+          <ContentCard>Grafik 2</ContentCard>
+        </div>
+        <ContentCard>Quick Navigation</ContentCard>
+        <ContentCard>5 Last transactions</ContentCard>
+      </div>
     </div>
   );
 }

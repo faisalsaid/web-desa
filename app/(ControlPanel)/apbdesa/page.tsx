@@ -9,6 +9,10 @@ import { YearFilterSelector } from './_components/YearFilterSelector';
 import APBDesaSummary from './_components/APBDesaSummary';
 import { refactorToSummary } from './_lib/helper/budgetYearRefactorResume';
 import EmptyBudgetYearComp from './_components/EmptyBudgetYearCom';
+import EmptyStateComp from '@/components/EmptyStateComp';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 interface Props {
   yearId?: number;
@@ -35,7 +39,7 @@ export default async function ApbdesaPage({
 
   const recentYear = yearListOptions.sort((a, b) => b.year - a.year)[0];
   const data = await getBugetYearReport(yearId ? yearId : 0);
-  // console.log(data);
+  console.log(data);
 
   const resumeData = refactorToSummary(data);
 
@@ -59,17 +63,46 @@ export default async function ApbdesaPage({
           <AddBudgetYearComp />
         </div>
       </ContentCard>
-      <div className="grid gap-4">
-        <ContentCard>
-          <APBDesaSummary apbdesaSummary={resumeData} />
-        </ContentCard>
+
+      {!!resumeData[0].summary ? (
+        <EmptyStateComp
+          title="Belum ada laporan APBDesa"
+          description="Silahkan masukan data penerimaan, belanja atau pendaanan"
+        >
+          <div className="flex items-center gap-4">
+            <Button asChild>
+              <Link href={'/apbdesa/revenue'}>
+                <Plus />
+                Pendapatan
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link href={'/apbdesa/expenses'}>
+                <Plus />
+                Belanja
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link href={'/apbdesa/financing'}>
+                <Plus />
+                Pembiayaan
+              </Link>
+            </Button>
+          </div>
+        </EmptyStateComp>
+      ) : (
         <div className="grid gap-4">
-          <ContentCard>Grafik 1</ContentCard>
-          <ContentCard>Grafik 2</ContentCard>
+          <ContentCard>
+            <APBDesaSummary apbdesaSummary={resumeData} />
+          </ContentCard>
+          <div className="grid gap-4">
+            <ContentCard>Grafik 1</ContentCard>
+            <ContentCard>Grafik 2</ContentCard>
+          </div>
+          <ContentCard>Quick Navigation</ContentCard>
+          <ContentCard>5 Last transactions</ContentCard>
         </div>
-        <ContentCard>Quick Navigation</ContentCard>
-        <ContentCard>5 Last transactions</ContentCard>
-      </div>
+      )}
     </div>
   );
 }

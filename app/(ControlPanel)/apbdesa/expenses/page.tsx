@@ -9,6 +9,8 @@ import ExpenseSumaryComp from './_components/ExpenseSumary';
 import { ExpemseSectorOptions } from '@/lib/enum';
 import { ExpenseSectorChart } from './_components/ExpenseSectorChart';
 import EmptyBudgetYearComp from '../_components/EmptyBudgetYearCom';
+import EmptyStateComp from '@/components/EmptyStateComp';
+import { Folder } from 'lucide-react';
 
 interface Props {
   q?: string;
@@ -72,18 +74,28 @@ export default async function ExpensesPage({
         </div>
       </ContentCard>
 
-      <div className="sm:grid sm:grid-cols-2 sm:gap-4">
-        <ExpenseSumaryComp summary={summary} />
-        <ExpenseSectorChart sector={summary.sectors} />
-      </div>
-
-      <ContentCard>
-        <ExpesnseTable
-          expanseDataTable={allExpense}
-          currentPage={meta.page}
-          totalPages={meta.totalPages}
+      {allExpense.length === 0 ? (
+        <EmptyStateComp
+          icon={<Folder />}
+          title="Belum Ada Belanja"
+          description="Pastikan data belanja sudah dibuat, silahkan pilih tombol 'Tambah' di kanan atas"
         />
-      </ContentCard>
+      ) : (
+        <>
+          <div className="sm:grid sm:grid-cols-2 sm:gap-4">
+            <ExpenseSumaryComp summary={summary} />
+            <ExpenseSectorChart sector={summary.sectors} />
+          </div>
+
+          <ContentCard>
+            <ExpesnseTable
+              expanseDataTable={allExpense}
+              currentPage={meta.page}
+              totalPages={meta.totalPages}
+            />
+          </ContentCard>
+        </>
+      )}
     </div>
   );
 }

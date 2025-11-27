@@ -8,6 +8,8 @@ import { YearFilterSelector } from '../_components/YearFilterSelector';
 import RevenueSummary from './_components/RevenueSummary';
 import RevenueCategoryCard from './_components/RevenueCategoryCard';
 import EmptyBudgetYearComp from '../_components/EmptyBudgetYearCom';
+import EmptyStateComp from '@/components/EmptyStateComp';
+import { Folder } from 'lucide-react';
 
 export type RevenueCategoryType = {
   category: string;
@@ -143,18 +145,29 @@ export default async function RevenuePage({
           {yearListOptions ? <RevenueFormDialog mode="create" /> : null}
         </div>
       </ContentCard>
-      <div className="grid sm:grid-cols-2 gap-4">
-        <RevenueSummary summary={summary} />
-        <RevenueCategoryCard category={categorySummary} />
-      </div>
 
-      <ContentCard>
-        <RevenueTable
-          allRevenues={allRevenue}
-          totalPages={totalPages}
-          currentPage={thePage}
+      {allRevenue.length === 0 ? (
+        <EmptyStateComp
+          icon={<Folder />}
+          title="Belum Ada Pendapatan"
+          description="Pastikan data pendapatan sudah dibuat, silahkan pilih tombol 'Tambah' di kanan atas"
         />
-      </ContentCard>
+      ) : (
+        <>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <RevenueSummary summary={summary} />
+            <RevenueCategoryCard category={categorySummary} />
+          </div>
+
+          <ContentCard>
+            <RevenueTable
+              allRevenues={allRevenue}
+              totalPages={totalPages}
+              currentPage={thePage}
+            />
+          </ContentCard>
+        </>
+      )}
     </div>
   );
 }

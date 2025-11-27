@@ -13,6 +13,7 @@ import EmptyStateComp from '@/components/EmptyStateComp';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { APBDesaChartComp } from './_components/APBDesaChartComp';
 
 interface Props {
   yearId?: number;
@@ -102,12 +103,35 @@ export default async function ApbdesaPage({
         <div className="grid gap-4">
           <APBDesaSummary apbdesa={resumeData[0]} />
 
-          <div className="grid gap-4">
-            <ContentCard>Grafik 1</ContentCard>
-            <ContentCard>Grafik 2</ContentCard>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <ContentCard className="sm:col-span-2">
+              <APBDesaChartComp data={resumeData} />
+            </ContentCard>
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-2">
+                <Button asChild>
+                  <Link href={'/apbdesa/revenue'}>
+                    <Plus />
+                    Pendapatan
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link href={'/apbdesa/expenses'}>
+                    <Plus />
+                    Belanja
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link href={'/apbdesa/financing'}>
+                    <Plus />
+                    Pembiayaan
+                  </Link>
+                </Button>
+              </div>
+
+              <ContentCard>5 Last transactions</ContentCard>
+            </div>
           </div>
-          <ContentCard>Quick Navigation</ContentCard>
-          <ContentCard>5 Last transactions</ContentCard>
         </div>
       )}
     </div>

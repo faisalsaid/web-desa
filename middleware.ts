@@ -48,7 +48,7 @@ export async function middleware(req: NextRequest) {
     '/residents': ['ADMIN', 'OPERATOR'],
     '/families': ['ADMIN', 'OPERATOR'],
     '/organitations': ['ADMIN', 'OPERATOR'],
-    '/accounting': ['ADMIN', 'OPERATOR'],
+    '/apbdesa': ['ADMIN', 'OPERATOR'],
   };
 
   for (const [prefix, roles] of Object.entries(protectedRoutes)) {

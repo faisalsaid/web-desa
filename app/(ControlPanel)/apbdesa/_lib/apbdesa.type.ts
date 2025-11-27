@@ -48,3 +48,13 @@ export const GetBugetYearReportQuery =
 export type GetBugetYearReport = Prisma.BudgetYearGetPayload<
   typeof GetBugetYearReportQuery
 >;
+
+export interface APBTransactionItem {
+  id: number;
+  urlId: string;
+  type: 'Pendapatan' | 'Belanja' | 'Pembiayaan';
+  categoryOrSector: string;
+  description: string;
+  amount: number;
+  createdAt: Date;
+}

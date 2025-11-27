@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import {
+  APBTransactionItem,
   getBudgetYearQuery,
   GetBudgetYearResult,
   GetBugetYearReport,
@@ -130,3 +131,62 @@ export const getBugetYearReport = async (
 
   return data.map(sanitizeBudgetYearReport);
 };
+
+export async function getLastFiveTransactions(): Promise<APBTransactionItem[]> {
+  const [revenues, expenses, financing] = await Promise.all([
+    prisma.revenue.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+    }),
+
+    prisma.expense.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+    }),
+
+    prisma.financing.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+    }),
+  ]);
+
+  const mapped: APBTransactionItem[] = [
+    ...revenues.map((r) => ({
+      id: r.id,
+      urlId: r.urlId,
+      type: 'Pendapatan' as const,
+      categoryOrSector: r.category,
+      description: r.description,
+      amount: Number(r.realized),
+      createdAt: r.createdAt,
+    })),
+
+    ...expenses.map((e) => ({
+      id: e.id,
+      urlId: e.urlId,
+      type: 'Belanja' as const,
+      categoryOrSector: e.sector,
+      description: e.description,
+      amount: Number(e.realized),
+      createdAt: e.createdAt,
+    })),
+
+    ...financing.map((f) => ({
+      id: f.id,
+      urlId: f.urlId,
+      type: 'Pembiayaan' as const,
+      categoryOrSector: f.type,
+      description: f.description,
+      amount: Number(f.amount),
+      createdAt: f.createdAt,
+    })),
+  ];
+
+  // gabungkan & ambil 5 terbaru
+  return mapped
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, 3);
+}

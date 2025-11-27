@@ -3,6 +3,7 @@ import AddBudgetYearComp from './_components/AddBudgetYearComp';
 import {
   getBudgetYearsOptions,
   getBugetYearReport,
+  getLastFiveTransactions,
 } from './_lib/apbdesa.action';
 
 import { YearFilterSelector } from './_components/YearFilterSelector';
@@ -14,6 +15,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { APBDesaChartComp } from './_components/APBDesaChartComp';
+import LastFiveTransactionComp from './_components/LastFiveTransactionComp';
 
 interface Props {
   yearId?: number;
@@ -51,6 +53,8 @@ export default async function ApbdesaPage({
   const apbdesaEmpty = revenueEmpty && expensesEmpty && financingEmpty;
 
   const resumeData = refactorToSummary(data);
+
+  const lastFiveTransaction = await getLastFiveTransactions();
 
   return (
     <div className="space-y-4">
@@ -129,7 +133,9 @@ export default async function ApbdesaPage({
                 </Button>
               </div>
 
-              <ContentCard>5 Last transactions</ContentCard>
+              <ContentCard>
+                <LastFiveTransactionComp data={lastFiveTransaction} />
+              </ContentCard>
             </div>
           </div>
         </div>

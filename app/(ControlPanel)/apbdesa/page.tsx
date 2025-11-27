@@ -41,6 +41,14 @@ export default async function ApbdesaPage({
   const data = await getBugetYearReport(yearId ? yearId : 0);
   console.log(data);
 
+  const apbdesa = data[0];
+
+  const revenueEmpty = apbdesa.revenues.length === 0;
+  const expensesEmpty = apbdesa.expenses.length === 0;
+  const financingEmpty = apbdesa.financing.length === 0;
+
+  const apbdesaEmpty = revenueEmpty && expensesEmpty && financingEmpty;
+
   const resumeData = refactorToSummary(data);
 
   return (
@@ -64,12 +72,12 @@ export default async function ApbdesaPage({
         </div>
       </ContentCard>
 
-      {!!resumeData[0].summary ? (
+      {apbdesaEmpty ? (
         <EmptyStateComp
           title="Belum ada laporan APBDesa"
           description="Silahkan masukan data penerimaan, belanja atau pendaanan"
         >
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
             <Button asChild>
               <Link href={'/apbdesa/revenue'}>
                 <Plus />

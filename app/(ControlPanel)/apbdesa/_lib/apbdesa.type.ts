@@ -31,7 +31,23 @@ export type GetBudgetYearResult = Prisma.BudgetYearGetPayload<
 
 export const GetBugetYearReportQuery =
   Prisma.validator<Prisma.BudgetYearDefaultArgs>()({
-    include: { expenses: true, revenues: true, financing: true },
+    include: {
+      expenses: {
+        where: {
+          deletedAt: null,
+        },
+      },
+      revenues: {
+        where: {
+          deletedAt: null,
+        },
+      },
+      financing: {
+        where: {
+          deletedAt: null,
+        },
+      },
+    },
   });
 
 // export const GetBugetYearReportQuery =

@@ -1,4 +1,9 @@
-import { Prisma } from '@prisma/client';
+import {
+  ExpenseSector,
+  FinancingType,
+  Prisma,
+  RevenueCategory,
+} from '@prisma/client';
 
 export const getBudgetYearQuery =
   Prisma.validator<Prisma.BudgetYearDefaultArgs>()({
@@ -21,3 +26,89 @@ export const getBudgetYearQuery =
 export type GetBudgetYearResult = Prisma.BudgetYearGetPayload<
   typeof getBudgetYearQuery
 >;
+
+// APBDESA SUMMARY
+
+export const GetBugetYearReportQuery =
+  Prisma.validator<Prisma.BudgetYearDefaultArgs>()({
+    include: { expenses: true, revenues: true, financing: true },
+  });
+
+// export const GetBugetYearReportQuery =
+//   Prisma.validator<Prisma.BudgetYearDefaultArgs>()({
+//     include: {
+//       expenses: {
+//         select: {
+//           id: true,
+//           urlId: true,
+//           description: true,
+//           sector: true,
+//           budget: true,
+//           realized: true,
+//           yearId: true,
+//         },
+//       },
+//       revenues: {
+//         select: {
+//           id: true,
+//           urlId: true,
+//           description: true,
+//           budget: true,
+//           realized: true,
+//           category: true,
+//           yearId: true,
+//         },
+//       },
+//       financing: {
+//         select: {
+//           id: true,
+//           urlId: true,
+//           description: true,
+//           type: true,
+//           amount: true,
+//           yearId: true,
+//         },
+//       },
+//     },
+//   });
+
+export type GetBugetYearReport = Prisma.BudgetYearGetPayload<
+  typeof GetBugetYearReportQuery
+>;
+
+// export type GetBugetYearReport = {
+//   id: number;
+//   year: number;
+//   isActive: boolean;
+//   isLocked: boolean;
+//   isFinalized: boolean;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   deletedAt: Date;
+//   expenses: {
+//     id: number;
+//     urlId: string;
+//     yearId: number;
+//     sector: ExpenseSector;
+//     description: string;
+//     budget: string; // sudah string
+//     realized: string; // sudah string
+//   };
+//   revenues: {
+//     id: number;
+//     urlId: string;
+//     yearId: number;
+//     category: RevenueCategory;
+//     description: string;
+//     budget: string; // sudah string
+//     realized: string; // sudah string
+//   };
+//   financing: {
+//     id: number;
+//     urlId: string;
+//     yearId: number;
+//     type: FinancingType;
+//     description: string;
+//     amount: string;
+//   };
+// };

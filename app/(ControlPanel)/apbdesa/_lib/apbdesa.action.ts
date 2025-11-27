@@ -1,13 +1,23 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { getBudgetYearQuery, GetBudgetYearResult } from './apbdesa.type';
-import z from 'zod';
+import {
+  getBudgetYearQuery,
+  GetBudgetYearResult,
+  GetBugetYearReport,
+  GetBugetYearReportQuery,
+} from './apbdesa.type';
+import z, { number } from 'zod';
 import {
   BudgetYearCreateSchema,
   BudgetYearDeleteSchema,
   BudgetYearUpdateSchema,
 } from './apbdesa.zod';
+import { Prisma } from '@prisma/client';
+import {
+  sanitizeBudgetYearReport,
+  SanitizedBudgetYearReport,
+} from './helper/sanitizeBudgetYearReport';
 
 // CREATE
 export async function createBudgetYear(
@@ -80,3 +90,43 @@ export async function deleteBudgetYear(
     ...getBudgetYearQuery,
   });
 }
+
+// interface GetBugetYearReportProps {
+//   year?: number
+// }
+
+// export const getBugetYearReport = async (
+//   id?: number,
+// ): Promise<GetBugetYearReport[]> => {
+//   const where: Prisma.BudgetYearWhereInput = {
+//     deletedAt: null,
+//   };
+
+//   if (id) {
+//     where.id = id;
+//   }
+//   const data = await prisma.budgetYear.findMany({
+//     where,
+//     ...GetBugetYearReportQuery,
+//   });
+//   return data;
+// };
+
+export const getBugetYearReport = async (
+  id?: number,
+): Promise<SanitizedBudgetYearReport[]> => {
+  const where: Prisma.BudgetYearWhereInput = {
+    deletedAt: null,
+  };
+
+  if (id) {
+    where.id = id;
+  }
+
+  const data = await prisma.budgetYear.findMany({
+    where,
+    ...GetBugetYearReportQuery,
+  });
+
+  return data.map(sanitizeBudgetYearReport);
+};

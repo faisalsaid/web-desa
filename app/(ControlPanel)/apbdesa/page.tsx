@@ -9,6 +9,17 @@ import { YearFilterSelector } from './_components/YearFilterSelector';
 import APBDesaSummary from './_components/APBDesaSummary';
 import { refactorToSummary } from './_lib/helper/budgetYearRefactorResume';
 
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import { Button } from '@/components/ui/button';
+import { Cloud, Folder } from 'lucide-react';
+
 interface Props {
   yearId?: number;
 }
@@ -49,18 +60,40 @@ export default async function ApbdesaPage({
           <AddBudgetYearComp />
         </div>
       </ContentCard>
-
-      <div className="grid gap-4">
-        <ContentCard>
-          <APBDesaSummary apbdesaSummary={resumeData} />
-        </ContentCard>
+      {yearListOptions.length === 0 ? (
+        <EmptyBugteYearComponent />
+      ) : (
         <div className="grid gap-4">
-          <ContentCard>Grafik 1</ContentCard>
-          <ContentCard>Grafik 2</ContentCard>
+          <ContentCard>
+            <APBDesaSummary apbdesaSummary={resumeData} />
+          </ContentCard>
+          <div className="grid gap-4">
+            <ContentCard>Grafik 1</ContentCard>
+            <ContentCard>Grafik 2</ContentCard>
+          </div>
+          <ContentCard>Quick Navigation</ContentCard>
+          <ContentCard>5 Last transactions</ContentCard>
         </div>
-        <ContentCard>Quick Navigation</ContentCard>
-        <ContentCard>5 Last transactions</ContentCard>
-      </div>
+      )}
     </div>
   );
 }
+
+const EmptyBugteYearComponent = () => {
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Folder />
+        </EmptyMedia>
+        <EmptyTitle>Data APBDesa Kosong</EmptyTitle>
+        <EmptyDescription>Tahun anggaran belum dibuat</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <p className="text-lime-500">
+          Pilih tombol tambah kanan atas untuk membuat tahun anggaran baru
+        </p>
+      </EmptyContent>
+    </Empty>
+  );
+};

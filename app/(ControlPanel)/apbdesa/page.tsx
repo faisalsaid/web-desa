@@ -100,9 +100,8 @@ export default async function ApbdesaPage({
         </EmptyStateComp>
       ) : (
         <div className="grid gap-4">
-          <ContentCard>
-            <APBDesaSummary apbdesaSummary={resumeData} />
-          </ContentCard>
+          <APBDesaSummary apbdesa={resumeData[0]} />
+
           <div className="grid gap-4">
             <ContentCard>Grafik 1</ContentCard>
             <ContentCard>Grafik 2</ContentCard>

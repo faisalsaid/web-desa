@@ -14,10 +14,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
 }) => {
   return (
     <div
-      className={twMerge(
-        'bg-background py-2 px-4 rounded-xl shadow-xs',
-        className,
-      )}
+      className={twMerge('bg-background p-4 rounded-xl shadow-xs', className)}
       {...props}
     >
       {children}

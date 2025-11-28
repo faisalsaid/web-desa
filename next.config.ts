@@ -3,6 +3,20 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   images: {
     domains: ['images.unsplash.com', 'source.unsplash.com', 'unsplash.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 's3.ca-east-006.backblazeb2.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'webdesa.s3.ca-east-006.backblazeb2.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'https://s3.ca-east-006.backblazeb2.com/',
+      },
+    ],
   },
   /* config options here */
 

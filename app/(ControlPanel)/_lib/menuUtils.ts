@@ -11,6 +11,7 @@ import {
   Route,
   CircleDollarSign,
   Wallet2,
+  Images,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -110,6 +111,12 @@ const allMenuList: MenuItem[] = [
     url: '/article',
     icon: Newspaper,
     roles: ['ADMIN', 'OPERATOR', 'EDITOR'], // hanya admin & operator
+  },
+  {
+    title: 'Galeri',
+    url: '/assets',
+    icon: Images,
+    roles: ['ADMIN', 'OPERATOR', 'EDITOR'],
   },
   {
     title: 'Users',

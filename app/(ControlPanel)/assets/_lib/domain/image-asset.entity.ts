@@ -1,3 +1,5 @@
+import { ImageVariants } from '../types/image-asset.dto';
+
 export class ImageAssetEntity {
   constructor(
     public id: string,
@@ -10,7 +12,7 @@ export class ImageAssetEntity {
     public height?: number | null,
     public alt?: string | null,
     public description?: string | null,
-    public variants?: any | null,
+    public variants?: ImageVariants | null,
     public createdAt?: Date,
     public updatedAt?: Date,
   ) {}

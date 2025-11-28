@@ -1,7 +1,6 @@
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
-
 import AddImageDialog from './_components/AddImageDialog';
-import { getImageUrlAction, uploadFileAction } from './_lib/storage.action';
+import { uploadFileAction } from './_lib/storage.action';
 import { getAllAssetsAction } from './_lib/actions/get-all-assets.action';
 import { getSignedUrlAction } from './_lib/actions/get-signed-url.action';
 import ImageListComp from './_components/ImageListComp';

@@ -110,6 +110,7 @@ export default function FinancingFormDialog({
       const current = form.getValues('yearId');
       if (current) form.setValue('yearId', current);
     }
+    // eslint-disable-next-line
   }, [yearListOptions, open]);
 
   // FIX — Update form ketika initialData berubah saat dialog dibuka

@@ -46,7 +46,7 @@ const TabsVillageConfig = ({ data }: { data: VillageConfigType | null }) => {
             <div className="p-4 bg-muted rounded-lg flex items-center justify-center relative">
               <Image
                 // className="bg-white rounded-full"
-                src={data?.logoUrl ? data.logoUrl : '/img/logo-desa-dummy.png'}
+                src={data?.logoUrl ? data.logoUrl : '/img/logo-desa.png'}
                 alt="Logo Desa Torino"
                 width={200}
                 height={200}

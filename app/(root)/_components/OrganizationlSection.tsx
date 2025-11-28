@@ -50,7 +50,7 @@ const OrganizationlSection = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
-        <div className=" text-2xl font-semibold text-amber-600 md:text-5xl">
+        <div className=" text-2xl font-semibold text-green-600 md:text-5xl">
           SOTK
         </div>
         <p>Struktur Organisasi dan Tata Kerja Desa Torino</p>
@@ -99,9 +99,9 @@ const ProfileCard = () => {
   const source =
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
   return (
-    <div className="bg-amber-500/20 rounded-xl">
+    <div className="bg-green-500/20 rounded-xl">
       <div className="p-2 rounded-lg overflow-hidden w-full">
-        <div className="w-full min-h-48 bg-amber-700/20 rounded-lg relative overflow-hidden">
+        <div className="w-full min-h-48 bg-green-700/20 rounded-lg relative overflow-hidden">
           {source ? (
             <Image
               src={source}

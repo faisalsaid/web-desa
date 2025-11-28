@@ -42,7 +42,7 @@ const AbstractionSection = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
-        <h5 className="text-xl font-semibold text-amber-600 md:text-5xl">
+        <h5 className="text-xl font-semibold text-green-600 md:text-5xl">
           Abstraksi Penduduk
         </h5>
         <p className="text-muted-foreground">
@@ -77,9 +77,9 @@ const InfoCard = ({ title, icon, value }: FeatureCardProps) => {
   const Icon = icon;
 
   return (
-    <div className=" text-center p-4 bg-amber-400/30 rounded-xl space-y-4">
+    <div className=" text-center p-4 bg-green-400/30 rounded-xl space-y-4">
       <div className="flex items-center flex-col">
-        <Icon className="text-amber-900" size={50} />
+        <Icon className="dark:text-yellow-300 text-yellow-700" size={50} />
         <p className="text-xs text-muted-foreground">{title}</p>
       </div>
       <div className="text-2xl font-semibold">{value}</div>

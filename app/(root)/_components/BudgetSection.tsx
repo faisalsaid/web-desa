@@ -19,7 +19,7 @@ const BudgetSection = () => {
     <div className="space-y-4 md:flex gap-4">
       <div className="text-center md:w-1/2 md:flex items-center justify-center ">
         <div>
-          <h5 className="text-2xl font-semibold text-amber-800 md:text-6xl">
+          <h5 className="text-2xl font-semibold text-green-800 md:text-6xl">
             APB DESA 2024
           </h5>
           <p className="text-muted-foreground md:text-xl">

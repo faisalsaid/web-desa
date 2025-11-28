@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Facebook,
   Instagram,
@@ -9,23 +11,29 @@ import {
   Youtube,
 } from 'lucide-react';
 import Image from 'next/image';
+import { useVillage } from '../_lib/VillageContext';
 
 const Footer = () => {
+  const data = useVillage();
   return (
-    <header className="bg-amber-800 sticky z-50 top-0">
+    <header className="bg-green-800 sticky z-50 top-0">
       <div className="container mx-auto flex items-center justify-between p-4  text-white">
         <div>
           <div className="flex items-center gap-2 ">
             <Image
-              className="bg-white rounded-full"
+              className=""
               src={'/img/logo-desa.png'}
               alt="Logo Desa Torino"
               width={35}
               height={35}
             />
             <div>
-              <h1 className="font-semibold text-base">Desa Torino</h1>
-              <p className="text-slate-300 ">Kabupaten Italia Timur</p>
+              <h1 className="font-semibold text-base">
+                {data?.villageName ? data.villageName : 'Desa Torino'}
+              </h1>
+              <p className="text-slate-300 ">
+                {data?.regencyName ? data.regencyName : 'Kabutapen Torino'}
+              </p>
             </div>
           </div>
         </div>
@@ -34,17 +42,17 @@ const Footer = () => {
             <div>Kontak</div>
             <div className="space-y-1">
               <div className="flex items-center gap-1">
-                <Phone size={16} /> 0812345678
+                <Phone size={16} /> {data?.phone}
               </div>
               <div className="flex items-center gap-1">
-                <Mail size={16} /> desatorino@email.com
+                <Mail size={16} /> {data?.email}
               </div>
               <div className="flex items-center gap-1">
                 <Timer size={16} /> Senin-Kamis (08.00 - 15 00), Jumat (08.00 -
                 11.00)
               </div>
               <div className="flex items-center gap-1">
-                <Pin size={16} /> Jalan Torino Italia Timur
+                <Pin size={16} /> {data?.officeAddress}
               </div>
             </div>
           </div>

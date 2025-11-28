@@ -27,7 +27,7 @@ const TourSection = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2 text-center">
-        <div className=" text-2xl font-semibold text-amber-600  md:text-5xl">
+        <div className=" text-2xl font-semibold text-green-600  md:text-5xl">
           Pariwisata
         </div>
         <p>

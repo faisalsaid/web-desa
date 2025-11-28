@@ -11,8 +11,11 @@ import ShopSection from './_components/ShopSection';
 import TourSection from './_components/TourSection';
 
 import WelcomeSentenceSection from './_components/WelcomeSentenceSection';
+import { getVillageConfig } from './_lib/home.actions';
 
-export default function Home() {
+export default async function Home() {
+  const villageInfo = await getVillageConfig();
+
   return (
     <div className="space-y-12">
       <HeroSection />

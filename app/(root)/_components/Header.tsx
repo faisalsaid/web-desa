@@ -1,17 +1,21 @@
+'use client';
+
 import ThemeSwitcher from '../../../components/ThemeSwitcher';
 import Image from 'next/image';
 import Link from 'next/link';
 import MenuSheet from './MenuSheet';
 import { listMenu } from '../_lib/statics';
+import { useVillage } from '../_lib/VillageContext';
 
 const Header = () => {
+  const village = useVillage();
   return (
-    <header className="bg-amber-800 sticky z-50 top-0">
+    <header className="bg-green-600 sticky z-50 top-0">
       <div className="container mx-auto flex items-center justify-between p-4  text-white">
         <div className="flex gap-4 items-center justify-center">
           <div>
             <Image
-              className="bg-white rounded-full"
+              className=""
               src={'/img/logo-desa.png'}
               alt="Logo Desa Torino"
               width={50}
@@ -19,8 +23,12 @@ const Header = () => {
             />
           </div>
           <div>
-            <h1 className="text-xl font-semibold">Desa Torino</h1>
-            <p className="text-slate-300">Kabupaten Italia Timur</p>
+            <h1 className="text-xl font-semibold">
+              {village?.villageName ? village.villageName : 'Desa Torino'}
+            </h1>
+            <p className="text-slate-300">
+              {village?.regencyName ? village.regencyName : 'Kabupaten Torino'}
+            </p>
           </div>
         </div>
         <div className="flex items-center justify-center gap-6">

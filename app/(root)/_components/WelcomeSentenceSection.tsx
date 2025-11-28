@@ -8,7 +8,7 @@ const WelcomeSentenceSection = () => {
     <div className="space-y-4 md:flex gap-4">
       <div className="flex items-center justify-center md:w-1/3">
         <Image
-          className="bg-white rounded-full"
+          className=""
           src={'/img/logo-desa.png'}
           alt="Logo Desa Torino"
           width={200}
@@ -16,7 +16,7 @@ const WelcomeSentenceSection = () => {
         />
       </div>
       <div className="space-y-4 md:w-2/3">
-        <p className="text-center text-lg font-semibold text-amber-600 sm:text-3xl">
+        <p className="text-center text-lg font-semibold text-green-600 sm:text-3xl">
           Sambutan Kepala Desa Torino
         </p>
         <div className="text-center">

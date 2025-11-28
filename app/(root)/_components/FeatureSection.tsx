@@ -41,7 +41,7 @@ const FetureCard = ({ title, icon }: FeatureCardProps) => {
   const Icon = icon;
   return (
     <div className="flex items-center flex-col space-y-2 ">
-      <div className="h-16 md:h-32 aspect-square bg-amber-500 rounded-xl flex items-center justify-center text-white">
+      <div className="h-16 md:h-32 aspect-square bg-green-600 rounded-xl flex items-center justify-center text-white">
         <Icon className="h-[30px] w-[30px] md:w-[60px] md:h-[60px]" />
       </div>
       <p className="text-xs md:text-lg">

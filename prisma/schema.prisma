@@ -482,3 +482,23 @@ enum FinancingType {
   RECEIPT // PENERIMAAN
   EXPENDITURE // PENGELUARAN
 }
+
+
+// IMAGE ASSET
+
+model ImageAsset {
+  id          String    @id @default(cuid())
+  bucketKey   String    // lokasi file di Backblaze
+  url         String    // CDN publik
+  filename    String
+  mimeType    String
+  size        Int
+  width       Int?
+  height      Int?
+  alt         String?
+  description String?
+  variants    Json?     // thumbnail, webp, dll (opsional nanti)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

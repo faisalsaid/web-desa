@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'OPERATOR', 'EDITOR', 'USER');
+
+-- CreateEnum
 CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE');
 
 -- CreateEnum
@@ -26,7 +29,16 @@ CREATE TYPE "DisabilityType" AS ENUM ('NONE', 'PHYSICAL', 'VISUAL', 'HEARING', '
 CREATE TYPE "Citizenship" AS ENUM ('WNI', 'WNA');
 
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'OPERATOR', 'EDITOR', 'USER');
+CREATE TYPE "FamilyRelationship" AS ENUM ('HEAD', 'SPOUSE', 'CHILD', 'PARENT', 'SIBLING', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "RevenueCategory" AS ENUM ('OWN_SOURCE', 'TRANSFER', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "ExpenseSector" AS ENUM ('GOVERNMENT_ADMIN', 'DEVELOPMENT', 'COMMUNITY_GUIDANCE', 'EMPOWERMENT', 'EMERGENCY');
+
+-- CreateEnum
+CREATE TYPE "FinancingType" AS ENUM ('RECEIPT', 'EXPENDITURE');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -152,11 +164,12 @@ CREATE TABLE "VillageConfig" (
 -- CreateTable
 CREATE TABLE "Family" (
     "id" SERIAL NOT NULL,
+    "urlId" TEXT NOT NULL,
     "familyCardNumber" VARCHAR(20) NOT NULL,
-    "address" TEXT,
-    "dusun" VARCHAR(100),
-    "rw" VARCHAR(10),
-    "rt" VARCHAR(10),
+    "address" TEXT NOT NULL,
+    "dusun" VARCHAR(100) NOT NULL,
+    "rw" VARCHAR(10) NOT NULL,
+    "rt" VARCHAR(10) NOT NULL,
     "headOfFamilyId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -167,6 +180,7 @@ CREATE TABLE "Family" (
 -- CreateTable
 CREATE TABLE "Resident" (
     "id" SERIAL NOT NULL,
+    "urlId" TEXT NOT NULL,
     "nik" VARCHAR(16) NOT NULL,
     "fullName" VARCHAR(100) NOT NULL,
     "gender" "Gender" NOT NULL,
@@ -189,8 +203,10 @@ CREATE TABLE "Resident" (
     "phone" TEXT,
     "email" TEXT,
     "populationStatus" "PopulationStatus" NOT NULL DEFAULT 'PERMANENT',
+    "familyRelationship" "FamilyRelationship",
     "familyId" INTEGER,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "deletedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -200,6 +216,7 @@ CREATE TABLE "Resident" (
 -- CreateTable
 CREATE TABLE "Visitor" (
     "id" SERIAL NOT NULL,
+    "urlId" TEXT NOT NULL,
     "residentId" INTEGER NOT NULL,
     "originAddress" TEXT,
     "originVillage" TEXT,
@@ -218,6 +235,139 @@ CREATE TABLE "Visitor" (
     CONSTRAINT "Visitor_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "StaffPosition" (
+    "id" SERIAL NOT NULL,
+    "name" VARCHAR(100) NOT NULL,
+    "slug" TEXT NOT NULL,
+    "isUnique" BOOLEAN NOT NULL DEFAULT false,
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "StaffPosition_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Staff" (
+    "id" SERIAL NOT NULL,
+    "residentId" INTEGER NOT NULL,
+    "positionTypeId" INTEGER NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "startDate" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Staff_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "StaffHistory" (
+    "id" SERIAL NOT NULL,
+    "staffId" INTEGER NOT NULL,
+    "positionTypeId" INTEGER NOT NULL,
+    "startDate" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3),
+    "note" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "StaffHistory_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "OrganizationUnit" (
+    "id" SERIAL NOT NULL,
+    "positionTypeId" INTEGER NOT NULL,
+    "parentId" INTEGER,
+    "staffId" INTEGER,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "OrganizationUnit_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BudgetYear" (
+    "id" SERIAL NOT NULL,
+    "year" INTEGER NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
+    "isLocked" BOOLEAN NOT NULL DEFAULT false,
+    "isFinalized" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "BudgetYear_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Revenue" (
+    "id" SERIAL NOT NULL,
+    "urlId" TEXT NOT NULL,
+    "yearId" INTEGER NOT NULL,
+    "category" "RevenueCategory" NOT NULL,
+    "description" TEXT NOT NULL,
+    "budget" DECIMAL(65,30) NOT NULL,
+    "realized" DECIMAL(65,30) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Revenue_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Expense" (
+    "id" SERIAL NOT NULL,
+    "urlId" TEXT NOT NULL,
+    "yearId" INTEGER NOT NULL,
+    "sector" "ExpenseSector" NOT NULL,
+    "description" TEXT NOT NULL,
+    "budget" DECIMAL(65,30) NOT NULL,
+    "realized" DECIMAL(65,30) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Expense_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Financing" (
+    "id" SERIAL NOT NULL,
+    "urlId" TEXT NOT NULL,
+    "yearId" INTEGER NOT NULL,
+    "type" "FinancingType" NOT NULL,
+    "description" TEXT NOT NULL,
+    "amount" DECIMAL(65,30) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Financing_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ImageAsset" (
+    "id" TEXT NOT NULL,
+    "bucketKey" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
+    "mimeType" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
+    "width" INTEGER,
+    "height" INTEGER,
+    "alt" TEXT,
+    "description" TEXT,
+    "variants" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ImageAsset_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -234,16 +384,64 @@ CREATE INDEX "PasswordResetToken_userId_idx" ON "PasswordResetToken"("userId");
 CREATE UNIQUE INDEX "VillageConfig_villageCode_key" ON "VillageConfig"("villageCode");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Family_urlId_key" ON "Family"("urlId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Family_familyCardNumber_key" ON "Family"("familyCardNumber");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Family_headOfFamilyId_key" ON "Family"("headOfFamilyId");
 
 -- CreateIndex
+CREATE INDEX "Family_dusun_rw_rt_idx" ON "Family"("dusun", "rw", "rt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Resident_urlId_key" ON "Resident"("urlId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Resident_nik_key" ON "Resident"("nik");
 
 -- CreateIndex
+CREATE INDEX "Resident_familyId_idx" ON "Resident"("familyId");
+
+-- CreateIndex
+CREATE INDEX "Resident_dusun_rw_rt_idx" ON "Resident"("dusun", "rw", "rt");
+
+-- CreateIndex
+CREATE INDEX "Resident_populationStatus_idx" ON "Resident"("populationStatus");
+
+-- CreateIndex
+CREATE INDEX "Resident_isActive_idx" ON "Resident"("isActive");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Visitor_urlId_key" ON "Visitor"("urlId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Visitor_residentId_key" ON "Visitor"("residentId");
+
+-- CreateIndex
+CREATE INDEX "Visitor_arrivalDate_idx" ON "Visitor"("arrivalDate");
+
+-- CreateIndex
+CREATE INDEX "Visitor_departureDate_idx" ON "Visitor"("departureDate");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "StaffPosition_slug_key" ON "StaffPosition"("slug");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OrganizationUnit_staffId_key" ON "OrganizationUnit"("staffId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BudgetYear_year_key" ON "BudgetYear"("year");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Revenue_urlId_key" ON "Revenue"("urlId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Expense_urlId_key" ON "Expense"("urlId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Financing_urlId_key" ON "Financing"("urlId");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -265,3 +463,33 @@ ALTER TABLE "Resident" ADD CONSTRAINT "Resident_familyId_fkey" FOREIGN KEY ("fam
 
 -- AddForeignKey
 ALTER TABLE "Visitor" ADD CONSTRAINT "Visitor_residentId_fkey" FOREIGN KEY ("residentId") REFERENCES "Resident"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Staff" ADD CONSTRAINT "Staff_residentId_fkey" FOREIGN KEY ("residentId") REFERENCES "Resident"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Staff" ADD CONSTRAINT "Staff_positionTypeId_fkey" FOREIGN KEY ("positionTypeId") REFERENCES "StaffPosition"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StaffHistory" ADD CONSTRAINT "StaffHistory_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES "Staff"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StaffHistory" ADD CONSTRAINT "StaffHistory_positionTypeId_fkey" FOREIGN KEY ("positionTypeId") REFERENCES "StaffPosition"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationUnit" ADD CONSTRAINT "OrganizationUnit_positionTypeId_fkey" FOREIGN KEY ("positionTypeId") REFERENCES "StaffPosition"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationUnit" ADD CONSTRAINT "OrganizationUnit_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "OrganizationUnit"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationUnit" ADD CONSTRAINT "OrganizationUnit_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES "Staff"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Revenue" ADD CONSTRAINT "Revenue_yearId_fkey" FOREIGN KEY ("yearId") REFERENCES "BudgetYear"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Expense" ADD CONSTRAINT "Expense_yearId_fkey" FOREIGN KEY ("yearId") REFERENCES "BudgetYear"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Financing" ADD CONSTRAINT "Financing_yearId_fkey" FOREIGN KEY ("yearId") REFERENCES "BudgetYear"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UploadResult } from '../app/(ControlPanel)/_lib/storage.action';
+import { UploadResult } from '../app/(ControlPanel)/assets/_lib/storage.action';
 
 interface FileUploaderProps {
   action: (formData: FormData) => Promise<UploadResult>;

@@ -5,75 +5,77 @@ import { UploadResult } from '../app/(ControlPanel)/assets/_lib/storage.action';
 import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface FileUploaderProps {
   action: (formData: FormData) => Promise<UploadResult>;
   label?: string;
+  onSuccess?: () => void;
 }
 
 export default function UploadFileComp({
   action,
   label = 'Upload File',
+  onSuccess,
 }: FileUploaderProps) {
+  const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [result, setResult] = useState<UploadResult | null>(null);
 
-  async function handleAction(formData: FormData) {
-    setUploading(true);
-    const response = await action(formData);
-    setResult(response);
-    setUploading(false);
+  async function handleAction(formData: FormData): Promise<void> {
+    const uploadPromise = new Promise<UploadResult>(async (resolve, reject) => {
+      try {
+        const result = await action(formData);
+        if (result.success) resolve(result);
+        else reject(result.error || 'Gagal upload');
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+    toast.promise(uploadPromise, {
+      loading: 'Mengunggah...',
+      success: 'Upload berhasil!',
+      error: 'Gagal mengunggah file.',
+    });
+
+    uploadPromise
+      .then(() => {
+        setTimeout(() => router.refresh(), 300);
+        if (onSuccess) {
+          onSuccess(); // <-- dialog akan tertutup
+        }
+      })
+      .catch(() => {});
+
+    return; // ⬅️ penting: jangan return UploadResult!
   }
 
   return (
     <div className="space-y-4 p-4 border rounded-xl bg-muted">
-      {/* Result Success */}
-      {result?.success && result.url && (
-        <div className="p-3 border rounded-lg bg-green-50 text-green-700">
-          <p className="text-center">Berhasil mengunggah!</p>
-          {/* <a
-            href={result.url}
-            target="_blank"
-            className="underline text-blue-600"
-          >
-            Lihat file
-          </a> */}
-        </div>
-      )}
-
-      {/* Result Error */}
-      {result?.success === false && (
-        <p className="text-red-600 text-sm">{'Gagal Unggah'}</p>
-      )}
       <form action={handleAction} className="space-y-4">
-        {/* Input File (Hidden) */}
         <input
           id="imageInput"
           type="file"
           name="file"
           accept="image/*"
           className="hidden"
+          required
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
-              const url = URL.createObjectURL(file);
-              setPreview(url);
+              setPreview(URL.createObjectURL(file));
             }
           }}
-          required
         />
 
-        {/* Custom Upload Box */}
         {!preview ? (
           <label
             htmlFor="imageInput"
-            className="
-              h-48 w-full border border-dashed border-muted-foreground
+            className="h-48 w-full border border-dashed border-muted-foreground
               flex flex-col items-center justify-center
               rounded-xl cursor-pointer bg-background
-              hover:bg-accent transition
-            "
+              hover:bg-accent transition"
           >
             <ImageIcon className="size-10 text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">
@@ -81,19 +83,14 @@ export default function UploadFileComp({
             </p>
           </label>
         ) : (
-          <div className="overflow-hidden rounded-lg">
-            <label
-              htmlFor="imageInput"
-              className="relative h-48 w-full cursor-pointer rounded-xl overflow-hidden"
-            >
-              <div className=" w-full aspect-square max-h-80 relative">
-                <Image
-                  src={preview}
-                  alt="preview"
-                  className="object-cover w-full h-full"
-                  fill
-                />
-              </div>
+          <div className="relative h-48 w-full cursor-pointer rounded-xl overflow-hidden">
+            <label htmlFor="imageInput">
+              <Image
+                src={preview}
+                alt="preview"
+                fill
+                className="object-cover"
+              />
               <div className="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs py-1 text-center">
                 Klik untuk ganti gambar
               </div>
@@ -101,9 +98,8 @@ export default function UploadFileComp({
           </div>
         )}
 
-        {/* Submit Button */}
-        <Button type="submit" disabled={uploading} className="w-full">
-          {uploading ? 'Uploading...' : label}
+        <Button type="submit" className="w-full">
+          {label}
         </Button>
       </form>
     </div>

@@ -17,13 +17,13 @@ export default function ImageListComp({ assets }: ImageListCompProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
       {assets.map((asset) => (
-        <div>
-          <div className="relative w-full h-40 lg:h-56 rounded-lg overflow-hidden">
+        <div key={asset.id}>
+          <div className="relative w-full h-36  rounded-lg overflow-hidden">
             <ImageWrapper
               src={asset.signedUrl}
-              alt={asset.alt as string}
+              alt={'Asset Image'}
               objectFit="cover"
             />
           </div>

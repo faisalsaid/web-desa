@@ -10,16 +10,18 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
-import UploadImageForm from './UploadImageForm';
 import UploadFileComp from '@/components/UploadFileComp';
 import { UploadResult } from '../_lib/storage.action';
+import { useState } from 'react';
 
 interface Props {
   action: (formData: FormData) => Promise<UploadResult>;
 }
+
 const AddImageDialog = ({ action }: Props) => {
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button className="rounded-full" size={'icon'}>
           <Plus />
@@ -35,7 +37,11 @@ const AddImageDialog = ({ action }: Props) => {
             </span>
           </DialogDescription>
         </DialogHeader>
-        <UploadFileComp action={action} label="Unggah Gambar" />
+        <UploadFileComp
+          action={action}
+          label="Unggah Gambar"
+          onSuccess={() => setDialogOpen(false)}
+        />
         {/* <UploadImageForm /> */}
       </DialogContent>
     </Dialog>

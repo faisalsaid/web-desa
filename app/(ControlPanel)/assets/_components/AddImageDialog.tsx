@@ -11,7 +11,13 @@ import {
 } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import UploadImageForm from './UploadImageForm';
-const AddImageDialog = () => {
+import UploadFileComp from '@/components/UploadFileComp';
+import { UploadResult } from '../_lib/storage.action';
+
+interface Props {
+  action: (formData: FormData) => Promise<UploadResult>;
+}
+const AddImageDialog = ({ action }: Props) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -23,11 +29,14 @@ const AddImageDialog = () => {
         <DialogHeader>
           <DialogTitle>Tambah Koleksi Galeri</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            <span className="text-xs">
+              Pilih gambar yang ingin diunggah. Rekomendasi format gambar .jpg
+              .jpeg .png ukuran dibawah 1MB.
+            </span>
           </DialogDescription>
         </DialogHeader>
-        <UploadImageForm />
+        <UploadFileComp action={action} label="Unggah Gambar" />
+        {/* <UploadImageForm /> */}
       </DialogContent>
     </Dialog>
   );

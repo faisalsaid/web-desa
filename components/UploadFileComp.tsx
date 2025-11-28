@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { UploadResult } from '../app/(ControlPanel)/assets/_lib/storage.action';
+import { Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
+import { Button } from './ui/button';
 
 interface FileUploaderProps {
   action: (formData: FormData) => Promise<UploadResult>;
@@ -25,11 +28,27 @@ export default function UploadFileComp({
 
   return (
     <div className="space-y-4 p-4 border rounded-xl bg-muted">
-      <form action={handleAction} className="space-y-2">
+      {/* Result Success */}
+      {result?.success && result.url && (
+        <div className="p-3 border rounded-lg bg-green-50 text-green-700">
+          <p className="text-center">Berhasil mengunggah!</p>
+          {/* <a
+            href={result.url}
+            target="_blank"
+            className="underline text-blue-600"
+          >
+            Lihat file
+          </a> */}
+        </div>
+      )}
+      <form action={handleAction} className="space-y-4">
+        {/* Input File (Hidden) */}
         <input
+          id="imageInput"
           type="file"
           name="file"
-          required
+          accept="image/*"
+          className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
@@ -37,37 +56,53 @@ export default function UploadFileComp({
               setPreview(url);
             }
           }}
+          required
         />
 
-        {preview && (
-          <div className="mt-2">
-            <p className="text-sm text-gray-500">Preview:</p>
-            <img src={preview} alt="preview" className="max-h-40 rounded-md" />
+        {/* Custom Upload Box */}
+        {!preview ? (
+          <label
+            htmlFor="imageInput"
+            className="
+              h-48 w-full border border-dashed border-muted-foreground
+              flex flex-col items-center justify-center
+              rounded-xl cursor-pointer bg-background
+              hover:bg-accent transition
+            "
+          >
+            <ImageIcon className="size-10 text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground">
+              Silahkan pilih gambar
+            </p>
+          </label>
+        ) : (
+          <div className="overflow-hidden rounded-lg">
+            <label
+              htmlFor="imageInput"
+              className="relative h-48 w-full cursor-pointer rounded-xl overflow-hidden"
+            >
+              <div className=" w-full aspect-square max-h-80 relative">
+                <Image
+                  src={preview}
+                  alt="preview"
+                  className="object-cover w-full h-full"
+                  fill
+                />
+              </div>
+              <div className="absolute bottom-0 inset-x-0 bg-black/40 text-white text-xs py-1 text-center">
+                Klik untuk ganti gambar
+              </div>
+            </label>
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={uploading}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
-        >
+        {/* Submit Button */}
+        <Button type="submit" disabled={uploading} className="w-full">
           {uploading ? 'Uploading...' : label}
-        </button>
+        </Button>
       </form>
 
-      {result?.success && result.url && (
-        <div className="p-3 border rounded bg-green-50 text-green-700">
-          <p>Upload berhasil!</p>
-          <a
-            href={result.url}
-            target="_blank"
-            className="underline text-blue-600"
-          >
-            Lihat file
-          </a>
-        </div>
-      )}
-
+      {/* Result Error */}
       {result?.error && <p className="text-red-600 text-sm">{result.error}</p>}
     </div>
   );

@@ -41,6 +41,11 @@ export default function UploadFileComp({
           </a> */}
         </div>
       )}
+
+      {/* Result Error */}
+      {result?.success === false && (
+        <p className="text-red-600 text-sm">{'Gagal Unggah'}</p>
+      )}
       <form action={handleAction} className="space-y-4">
         {/* Input File (Hidden) */}
         <input
@@ -101,9 +106,6 @@ export default function UploadFileComp({
           {uploading ? 'Uploading...' : label}
         </Button>
       </form>
-
-      {/* Result Error */}
-      {result?.error && <p className="text-red-600 text-sm">{result.error}</p>}
     </div>
   );
 }

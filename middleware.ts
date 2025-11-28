@@ -49,6 +49,7 @@ export async function middleware(req: NextRequest) {
     '/families': ['ADMIN', 'OPERATOR'],
     '/organitations': ['ADMIN', 'OPERATOR'],
     '/apbdesa': ['ADMIN', 'OPERATOR'],
+    '/assets': ['ADMIN', 'OPERATOR', 'EDITOR'],
   };
 
   for (const [prefix, roles] of Object.entries(protectedRoutes)) {
@@ -69,7 +70,8 @@ export const config = {
     '/users/:path*',
     '/settings/:path*',
     '/organitations/:path*',
-    '/accounting/:path*',
+    '/apbdesa/:path*',
+    '/assets/:path*',
     '/auth/:path*',
     // jangan include /auth/:path* untuk mencegah loop
   ],

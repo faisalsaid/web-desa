@@ -1,5 +1,5 @@
 import ContentCard from '../_component/ContentCard';
-import UploadFileComp from '../../../components/UploadFileComp';
+// import UploadFileComp from '../../../components/UploadFileComp';
 // import { getImageUrlAction, uploadFileAction } from '../_lib/storage.action';
 
 // const url = await getImageUrlAction('image 1food.png');

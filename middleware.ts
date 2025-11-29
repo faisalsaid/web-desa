@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { ensureAdminUser } from './lib/ensureAdminUser';
 
 export async function middleware(req: NextRequest) {
+  ensureAdminUser();
   const { pathname } = req.nextUrl;
 
   // Halaman login/register tidak termasuk protected

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description: `Website resmi Desa ${
     villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
   } — informasi desa, layanan publik, dan berita terbaru.`,
-  metadataBase: new URL('https://web-desa-contoh.vercel.app/'),
+  metadataBase: new URL('https://web-desa-contoh.vercel.app'),
 
   openGraph: {
     title: `Desa ${

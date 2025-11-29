@@ -17,7 +17,7 @@ const Footer = () => {
   const data = useVillage();
   return (
     <header className="bg-green-800 sticky z-50 top-0">
-      <div className="container mx-auto flex items-center justify-between p-4  text-white">
+      <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between p-4  text-white">
         <div>
           <div className="flex items-center gap-2 ">
             <Image

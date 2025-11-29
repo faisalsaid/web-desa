@@ -80,6 +80,8 @@ export async function createStaffPositionType(
         name: parsedData.name,
         slug,
         description: parsedData.description ?? null,
+        isUnique: parsedData.isUnique,
+        positionType: parsedData.positionType,
       },
     });
 

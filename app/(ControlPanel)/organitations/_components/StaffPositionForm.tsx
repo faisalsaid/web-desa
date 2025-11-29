@@ -29,6 +29,16 @@ import {
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@/components/ui/switch';
+import { StaffPositionType } from '@prisma/client';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { positionTypeLabels } from '@/lib/enum';
 
 type StaffPositionTypeFormProps = {
   initialData?: Partial<{
@@ -36,6 +46,7 @@ type StaffPositionTypeFormProps = {
     slug: string;
     name: string;
     description: string | null;
+    positionType: StaffPositionType;
   }>;
   // onClick : () => void;
   closeModal: () => void;
@@ -56,6 +67,7 @@ StaffPositionTypeFormProps) {
     defaultValues: {
       name: initialData?.name ?? '',
       description: initialData?.description ?? '',
+      positionType: initialData?.positionType ?? StaffPositionType.OTHER,
       isUnique: false,
     },
   });
@@ -78,6 +90,7 @@ StaffPositionTypeFormProps) {
           name: payload.name as string,
           description: payload.description,
           isUnique: payload.isUnique as boolean,
+          positionType: payload.positionType as StaffPositionType,
         });
 
         if (!res.success) {
@@ -136,6 +149,35 @@ StaffPositionTypeFormProps) {
               <FormLabel>Nama Posisi</FormLabel>
               <FormControl className="bg-background">
                 <Input {...field} placeholder="e.g : Kepala Desa" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="positionType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nama Posisi</FormLabel>
+              <FormControl className="bg-background">
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Pilih tipe posisi" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(positionTypeLabels).map(
+                      ([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ),
+                    )}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

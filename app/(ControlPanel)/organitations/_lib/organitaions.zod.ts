@@ -1,3 +1,4 @@
+import { StaffPositionType } from '@prisma/client';
 import { z } from 'zod';
 
 // Helper untuk string kosong menjadi null
@@ -24,6 +25,7 @@ export const StaffPositionTypeSchema = z.object({
     ),
   description: emptyToNull,
   isUnique: z.boolean(),
+  positionType: z.enum(StaffPositionType).default(StaffPositionType.OTHER),
 
   // Relasi, optional karena bisa kosong
   staffAssignments: z.array(z.any()).optional(),

@@ -1,6 +1,6 @@
 import { RevenueCategoryEnum } from '@/app/(ControlPanel)/apbdesa/revenue/_lib/revenue.zod';
 import { FamilyRelationshipEnum } from '@/app/(ControlPanel)/families/_lib/families.zod';
-import { ExpenseSector } from '@prisma/client';
+import { ExpenseSector, StaffPositionType } from '@prisma/client';
 
 type FamilyRelationship = keyof typeof FamilyRelationshipEnum.enum;
 
@@ -108,4 +108,12 @@ export const ExpemseSectorOptions: Record<ExpenseSector, string> = {
   COMMUNITY_GUIDANCE: 'Pembinaan',
   EMERGENCY: 'Pemberdayaan',
   EMPOWERMENT: 'Bencana / Mendesak',
+};
+
+export const positionTypeLabels: Record<StaffPositionType, string> = {
+  TOP: 'Kepala Desa',
+  MIDDLE: 'Sekdes / Kaur / Kasi',
+  LOWER: 'Kadus / Pengawas',
+  STAFF: 'Pelaksana',
+  OTHER: 'Lainnya',
 };

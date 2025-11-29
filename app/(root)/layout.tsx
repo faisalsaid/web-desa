@@ -13,7 +13,7 @@ export default async function RootLayout({
   return (
     <VillageProvider village={villageInfo}>
       <div className="relative min-h-screen ">
-        <Header />
+        <Header initialVillage={villageInfo ? villageInfo : null} />
         <div className="container mx-auto">{children}</div>
         <Footer />
         <div className="sticky bottom-0 w-full p-2 z-50 md:hidden">

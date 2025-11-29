@@ -275,6 +275,7 @@ export async function createStaff(input: CreateStaffInput) {
       endDate: data.endDate ? new Date(data.endDate) : null,
       isActive: data.isActive ?? true,
       name: data.name,
+      imageUrl: data.imageUrl,
     },
   });
 
@@ -395,6 +396,8 @@ export async function updateStaffAction(input: Partial<UpdateStaffInput>) {
       data: {
         residentId: data.residentId,
         positionTypeId: data.positionTypeId,
+        name: data.name,
+        imageUrl: data.imageUrl,
         startDate: new Date(data.startDate),
         endDate: data.endDate ? new Date(data.endDate) : null,
         isActive: data.isActive ?? true,

@@ -60,14 +60,16 @@ export type StaffPositionTypeUpdateInput = z.infer<
 /// STAFF SCHEMA ==========================================================================================
 
 export const baseStaffSchema = z.object({
-  residentId: z.number().int().positive(),
   positionTypeId: z.number().int().positive(),
-
+  residentId: z.number().int().positive().optional().nullable(),
+  name: z
+    .string()
+    .min(2, 'Nama tidak boleh kosong')
+    .max(100)
+    .refine((val) => val.trim().length > 0, 'Nama tidak boleh hanya spasi'),
+  imageUrl: z.string().nullable().optional(),
   startDate: z.date(),
   endDate: z.date().nullable().optional(),
-  // startDate: z.string().pipe(z.coerce.date()),
-  // endDate: z.string().pipe(z.coerce.date()).nullable().optional(),
-
   isActive: z.boolean().optional(),
 
   // organizationUnitId: z.number().int().positive().nullable().optional(),

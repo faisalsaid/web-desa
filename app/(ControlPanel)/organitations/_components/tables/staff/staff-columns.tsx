@@ -18,10 +18,10 @@ export const staffColumns: ColumnDef<StaffType>[] = [
     },
   },
   {
-    accessorKey: 'resident',
+    accessorKey: 'name',
     header: 'Nama',
     cell: ({ row }) => {
-      return row.original.resident.fullName;
+      return row.original.name;
     },
   },
   {
@@ -82,7 +82,8 @@ export const staffColumns: ColumnDef<StaffType>[] = [
       const formData = {
         id: data.id,
         residentId: data.residentId,
-        residentName: data.resident.fullName,
+        name: data.name,
+        residentName: data?.resident?.fullName,
         positionTypeId: data.positionTypeId,
         positionName: data.positionType.name,
         startDate: data.startDate,

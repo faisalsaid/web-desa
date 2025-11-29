@@ -45,6 +45,7 @@ import { useState } from 'react';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/input';
 
 type PositionOption = {
   id: number;
@@ -58,8 +59,8 @@ type ResidentItem = { id: number; fullName: string; nik: string };
 
 export type StaffFormUpdate = {
   id: number;
-  residentId: number;
-  residentName: string;
+  residentId: number | null;
+  residentName: string | null | undefined;
   positionTypeId: number;
   positionName: string;
   startDate: Date;
@@ -92,6 +93,8 @@ export function StaffForm({
       isActive: true,
       startDate: new Date(),
       endDate: null,
+      name: '',
+      imageUrl: null,
       //   organizationUnitId: null,
     },
   });
@@ -100,6 +103,7 @@ export function StaffForm({
     ? positions?.filter((t) => !(t.isUnique && t.isFilled))
     : null;
   const watchResidentId = form.watch('residentId');
+  const watchName = form.watch('name');
   const watchPositionTypeId = form.watch('positionTypeId');
 
   const [selectedResident, setSelectedResident] = useState<ResidentItem | null>(
@@ -114,7 +118,7 @@ export function StaffForm({
   };
 
   const onSubmit = async (formData: CreateStaffInput | UpdateStaffInput) => {
-    // console.log('FORM DATA', formData);
+    console.log('FORM DATA', formData);
     const isEdit = mode === 'update';
 
     // 1️⃣ Tetapkan pesan
@@ -161,31 +165,6 @@ export function StaffForm({
         handleReset();
       }
     }
-
-    // try {
-    //   // 3️⃣ Panggil API sesuai mode
-    //   if (isEdit) {
-    //     // await updateStaff(formData as UpdateStaffInput);
-    //   } else {
-    //     const res = await createStaff(formData as CreateStaffInput);
-    //     console.log(res);
-    //   }
-
-    //   // 4️⃣ Update toast menjadi sukses
-    //   toast.success(successMessage, { id: toastId });
-
-    //   handleReset();
-    //   router.refresh();
-
-    //   // // optional redirect atau close dialog
-    //   // if (onSuccess) onSuccess();
-    // } catch (err: any) {
-    //   console.error(err);
-
-    //   toast.error(errorMessage, {
-    //     id: toastId, // replace loading toast with error
-    //   });
-    // }
   };
 
   const isValid = form.formState.isValid;
@@ -233,10 +212,30 @@ export function StaffForm({
           />
         ) : (
           <div className="p-2 border rounded-lg">
-            <p className="text-muted-foreground">Jabantan </p>
+            <p className="text-muted-foreground">Jabatan </p>
             <p className="text-lg">{defaultValues?.positionName}</p>
           </div>
         )}
+
+        {/* Nama pejabat */}
+
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nama Pejabat</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g : John Doe, S.Sos"
+                  {...field}
+                  disabled={!watchPositionTypeId}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {availableTypes ? (
           <FormField
@@ -264,14 +263,6 @@ export function StaffForm({
                   item ? `${item.fullName} – ${item.nik}` : ''
                 }
                 getKey={(item) => item.id}
-                // renderItem={(item) => (
-                //   <div className="flex flex-col">
-                //     <span className="font-medium">{item.fullName}</span>
-                //     <span className="text-xs text-muted-foreground">
-                //       NIK: {item.nik}
-                //     </span>
-                //   </div>
-                // )}
               />
             )}
           />
@@ -325,7 +316,7 @@ export function StaffForm({
                       <Button
                         variant="outline"
                         className="w-full  justify-start text-left"
-                        disabled={!watchResidentId}
+                        disabled={!watchName}
                       >
                         {field.value
                           ? field.value.toLocaleDateString('id-ID')
@@ -363,7 +354,7 @@ export function StaffForm({
                       <Button
                         variant="outline"
                         className="w-full justify-start text-left"
-                        disabled={!watchResidentId}
+                        disabled={!watchName}
                       >
                         {field.value
                           ? field.value.toLocaleDateString()

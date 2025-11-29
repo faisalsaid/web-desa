@@ -370,11 +370,11 @@ model StaffPosition {
 
 model Staff {
   id               Int               @id @default(autoincrement())
-  resident         Resident          @relation(fields: [residentId], references: [id])
-  residentId       Int
-  positionType     StaffPosition     @relation(fields: [positionTypeId], references: [id])
   name             String            @db.VarChar(100)
   imageUrl         String?           @db.VarChar(255)
+  positionType     StaffPosition     @relation(fields: [positionTypeId], references: [id])
+  residentId       Int?
+  resident         Resident?          @relation(fields: [residentId], references: [id])
   positionTypeId   Int
   isActive         Boolean           @default(true)
   startDate        DateTime

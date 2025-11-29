@@ -39,6 +39,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { positionTypeLabels } from '@/lib/enum';
+import { StaffPositionType as StaffPositionTypeOptions } from '../_lib/organitations.type';
+import { useEffect } from 'react';
 
 type StaffPositionTypeFormProps = {
   initialData?: Partial<{
@@ -47,16 +49,36 @@ type StaffPositionTypeFormProps = {
     name: string;
     description: string | null;
     positionType: StaffPositionType;
+    isUnique?: boolean;
   }>;
+  staffPositions: StaffPositionTypeOptions[];
   // onClick : () => void;
   closeModal: () => void;
 };
 
 export default function StaffPositionTypeForm({
   initialData,
+  staffPositions,
   closeModal,
 }: //   onSubmit,
 StaffPositionTypeFormProps) {
+  const usedTop = (staffPositions ?? []).some(
+    (pos) => pos.positionType === 'TOP',
+  );
+  const availablePositionTypes = Object.entries(positionTypeLabels).filter(
+    ([value]) => {
+      const v = value as StaffPositionType;
+
+      // Saat UPDATE, jangan menghilangkan posisi asal
+      if (initialData?.positionType === v) return true;
+
+      // Hilangkan TOP jika sudah ada jabatan TOP
+      if (v === 'TOP' && usedTop) return false;
+
+      return true;
+    },
+  );
+
   const router = useRouter();
   const isUpdate = !!initialData;
 
@@ -68,9 +90,20 @@ StaffPositionTypeFormProps) {
       name: initialData?.name ?? '',
       description: initialData?.description ?? '',
       positionType: initialData?.positionType ?? StaffPositionType.OTHER,
-      isUnique: false,
+      isUnique: initialData?.isUnique ?? false,
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        name: initialData.name,
+        description: initialData.description,
+        positionType: initialData.positionType,
+        isUnique: initialData.isUnique ?? false,
+      });
+    }
+  }, [initialData, form]);
 
   const onSubmit = async (
     payload: StaffPositionTypeCreateInput | StaffPositionTypeUpdateInput,
@@ -159,7 +192,7 @@ StaffPositionTypeFormProps) {
           name="positionType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama Posisi</FormLabel>
+              <FormLabel>Tipe Posisi</FormLabel>
               <FormControl className="bg-background">
                 <Select
                   onValueChange={field.onChange}
@@ -169,13 +202,11 @@ StaffPositionTypeFormProps) {
                     <SelectValue placeholder="Pilih tipe posisi" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(positionTypeLabels).map(
-                      ([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ),
-                    )}
+                    {availablePositionTypes.map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormControl>

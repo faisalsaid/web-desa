@@ -13,8 +13,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import StaffPositionTypeForm from './StaffPositionForm';
+import { StaffPositionType } from '../_lib/organitations.type';
 
-const AddStaffPositionButton = () => {
+interface Props {
+  staffPositions: StaffPositionType[];
+}
+
+const AddStaffPositionButton = ({ staffPositions }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -37,7 +42,10 @@ const AddStaffPositionButton = () => {
           </DialogDescription>
         </DialogHeader>
         <Separator />
-        <StaffPositionTypeForm closeModal={() => setIsOpen(false)} />
+        <StaffPositionTypeForm
+          staffPositions={staffPositions}
+          closeModal={() => setIsOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

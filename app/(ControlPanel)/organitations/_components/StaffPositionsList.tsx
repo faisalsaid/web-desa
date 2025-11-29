@@ -28,7 +28,7 @@ const StaffPositionsList = ({ staffPositions }: StaffPositionsProps) => {
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-4">
         <p className="font-medium">Nama Jabatan Desa </p>
-        <AddStaffPositionButton />
+        <AddStaffPositionButton staffPositions={staffPositions} />
       </div>
       {/* <Separator /> */}
 
@@ -39,7 +39,7 @@ const StaffPositionsList = ({ staffPositions }: StaffPositionsProps) => {
       ) : (
         <div className="space-y-1">
           {staffPositions.map((p) => (
-            <ListCard key={p.id} position={p} />
+            <ListCard key={p.id} position={p} staffPositions={staffPositions} />
           ))}
         </div>
       )}
@@ -49,7 +49,13 @@ const StaffPositionsList = ({ staffPositions }: StaffPositionsProps) => {
 
 export default StaffPositionsList;
 
-const ListCard = ({ position }: { position: StaffPositionType }) => {
+const ListCard = ({
+  position,
+  staffPositions,
+}: {
+  position: StaffPositionType;
+  staffPositions: StaffPositionType[];
+}) => {
   return (
     <div className="flex items-center justify-between gap-2 p-2 border  bg-background rounded-md">
       <div className=" flex items-center gap-1 flex-1">
@@ -108,7 +114,10 @@ const ListCard = ({ position }: { position: StaffPositionType }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-24" align="center">
               <DropdownMenuItem asChild>
-                <UpdateStaffPosisitionButton staffPossition={position} />
+                <UpdateStaffPosisitionButton
+                  staffPossition={position}
+                  staffPositionsList={staffPositions}
+                />
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <DeleteStaffPositionButton id={position.id} />

@@ -15,13 +15,16 @@ import { Button } from '@/components/ui/button';
 import StaffPositionTypeForm from './StaffPositionForm';
 import { StaffPositionTypeUpdateInput } from '../_lib/organitaions.zod';
 import { Separator } from '@/components/ui/separator';
+import { StaffPositionType } from '../_lib/organitations.type';
 
 interface UpdateStaffPosisitionButtonProps {
   staffPossition: StaffPositionTypeUpdateInput;
+  staffPositionsList?: StaffPositionType[];
 }
 
 const UpdateStaffPosisitionButton = ({
   staffPossition,
+  staffPositionsList = [],
 }: UpdateStaffPosisitionButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -44,6 +47,7 @@ const UpdateStaffPosisitionButton = ({
         </DialogHeader>
         <Separator />
         <StaffPositionTypeForm
+          staffPositions={staffPositionsList}
           initialData={staffPossition}
           closeModal={() => setIsOpen(false)}
         />

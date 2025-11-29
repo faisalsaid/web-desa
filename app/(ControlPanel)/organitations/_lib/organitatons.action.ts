@@ -257,6 +257,7 @@ export async function createStaff(input: CreateStaffInput) {
       startDate: new Date(data.startDate),
       endDate: data.endDate ? new Date(data.endDate) : null,
       isActive: data.isActive ?? true,
+      name: data.name,
     },
   });
 

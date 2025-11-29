@@ -9,19 +9,39 @@ import { GetVillageConfigType } from '../_lib/home.type';
 import { useVillageStore } from '@/store/villageStore';
 import { useEffect } from 'react';
 
+export type HeadOfVillage = {
+  name: string;
+  id: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  imageUrl: string | null;
+  residentId: number | null;
+  positionTypeId: number;
+  startDate: Date;
+  endDate: Date | null;
+  parentStaffId: number | null;
+} | null;
+
 const Header = ({
   initialVillage,
+  initialHeadOfVillage,
 }: {
   initialVillage: GetVillageConfigType | null;
+  initialHeadOfVillage: HeadOfVillage;
 }) => {
   // const village = useVillage();
   const { setVillage, village } = useVillageStore();
+  const { setHeadOfVillage, headOfVillage } = useVillageStore();
 
   useEffect(() => {
     if (initialVillage) {
       setVillage(initialVillage);
     }
-  }, [initialVillage, setVillage]);
+    if (initialHeadOfVillage) {
+      setHeadOfVillage(headOfVillage);
+    }
+  }, [initialVillage, initialHeadOfVillage, setVillage, setHeadOfVillage]);
 
   return (
     <header className="bg-green-600 sticky z-50 top-0">

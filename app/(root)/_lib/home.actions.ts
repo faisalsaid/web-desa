@@ -11,3 +11,15 @@ export async function getVillageConfig(): Promise<GetVillageConfigType | null> {
     return null;
   }
 }
+
+export async function getHeadOfVIllage() {
+  try {
+    const headOfVillage = await prisma.staff.findFirst({
+      where: { isActive: true, positionType: { positionType: 'TOP' } },
+    });
+    return headOfVillage;
+  } catch (error) {
+    console.error('Failed to fetch head of village:', error);
+    return null;
+  }
+}

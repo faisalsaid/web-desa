@@ -3,9 +3,13 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
 import { useVillage } from '../_lib/VillageContext';
+import { useVillageStore } from '@/store/villageStore';
 
 const WelcomeSentenceSection = () => {
   const village = useVillage();
+
+  const { headOfVillage } = useVillageStore();
+
   return (
     <div className="space-y-4 md:flex gap-4">
       <div className="flex items-center justify-center md:w-1/3">
@@ -23,7 +27,9 @@ const WelcomeSentenceSection = () => {
           {village?.villageName ? village.villageName : 'Torino'}
         </p>
         <div className="text-center">
-          <p className="text-2xl font-semibold">Antonio Conte</p>
+          <p className="text-2xl font-semibold">
+            {headOfVillage?.name ? headOfVillage.name : 'Antonio Conte'}
+          </p>
           <p className="text-muted-foreground">
             Kepala Desa {village?.villageName ? village.villageName : 'Torino'}
           </p>

@@ -11,8 +11,10 @@ import {
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { listMenu } from '../_lib/statics';
+import { useVillage } from '../_lib/VillageContext';
 
 const MenuSheet = () => {
+  const data = useVillage();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -23,7 +25,11 @@ const MenuSheet = () => {
         className="w-[250px] sm:w-[540px] bg-green-800 text-white"
       >
         <SheetHeader>
-          <SheetTitle>Desa Torino</SheetTitle>
+          <SheetTitle>
+            <span className="text-slate-50">
+              Desa {data?.villageName ? data.villageName : 'Torino'}
+            </span>
+          </SheetTitle>
         </SheetHeader>
         <Separator />
 

@@ -30,17 +30,16 @@ const Header = ({
   initialVillage: GetVillageConfigType | null;
   initialHeadOfVillage: HeadOfVillage;
 }) => {
-  // const village = useVillage();
-  const { setVillage, village } = useVillageStore();
-  const { setHeadOfVillage, headOfVillage } = useVillageStore();
+  console.log(initialHeadOfVillage);
+
+  const setVillage = useVillageStore((state) => state.setVillage);
+  const setHeadOfVillage = useVillageStore((state) => state.setHeadOfVillage);
+
+  const village = useVillageStore((state) => state.village);
 
   useEffect(() => {
-    if (initialVillage) {
-      setVillage(initialVillage);
-    }
-    if (initialHeadOfVillage) {
-      setHeadOfVillage(headOfVillage);
-    }
+    if (initialVillage) setVillage(initialVillage);
+    if (initialHeadOfVillage) setHeadOfVillage(initialHeadOfVillage);
   }, [initialVillage, initialHeadOfVillage, setVillage, setHeadOfVillage]);
 
   return (

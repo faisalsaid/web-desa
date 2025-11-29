@@ -8,7 +8,9 @@ import { useVillageStore } from '@/store/villageStore';
 const WelcomeSentenceSection = () => {
   const village = useVillage();
 
-  const { headOfVillage } = useVillageStore();
+  const headOfVillage = useVillageStore((state) => state.headOfVillage);
+
+  console.log(headOfVillage);
 
   return (
     <div className="space-y-4 md:flex gap-4">
@@ -54,7 +56,9 @@ const WelcomeSentenceSection = () => {
               et, aut consequuntur nihil perspiciatis!
             </div>
             <div>
-              <p className="text-lg font-semibold">Antonio Conte</p>
+              <p className="text-lg font-semibold">
+                {headOfVillage?.name ? headOfVillage.name : 'Antonio Conte'}
+              </p>
               <p className="text-sm">
                 Kepala Desa{' '}
                 {village?.villageName ? village.villageName : 'Torino'}

@@ -26,6 +26,7 @@ const Header = () => {
             <h1 className="text-xl font-semibold">
               {village?.villageName ? village.villageName : 'Desa Torino'}
             </h1>
+            <p>{village?.villageName}</p>
             <p className="text-slate-300">
               {village?.regencyName ? village.regencyName : 'Kabupaten Torino'}
             </p>

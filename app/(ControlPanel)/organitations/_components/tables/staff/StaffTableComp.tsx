@@ -21,7 +21,7 @@ const StaffTableComp = ({ data }: StaffTableCompProsp) => {
   const router = useRouter();
   const [query, setQuery] = useState<string>('');
 
-  console.log(query);
+  // console.log(query);
 
   if (!data) {
     return (

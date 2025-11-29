@@ -13,7 +13,7 @@ import {
 } from './organitaions.zod';
 import { getCurrentUser } from '@/app/_lib/root.action';
 import slugify from 'slugify';
-import { Prisma } from '@prisma/client';
+import { Prisma, StaffPositionType } from '@prisma/client';
 import {
   getStaffDetailsQuery,
   getStaffPositionTypeDetailQuery,
@@ -134,7 +134,21 @@ export async function getAllStaffPositionsTypes() {
     ...getStaffPositionTypeDetailQuery,
   });
 
-  return staffPositions;
+  // Custom priority mapping
+  const priority: Record<StaffPositionType, number> = {
+    TOP: 1,
+    MIDDLE: 2,
+    LOWER: 3,
+    STAFF: 4,
+    OTHER: 5,
+  };
+
+  // Sort result based on custom priority
+  const sortedPositions = staffPositions.sort(
+    (a, b) => priority[a.positionType] - priority[b.positionType],
+  );
+
+  return sortedPositions;
 }
 
 /**
@@ -201,6 +215,7 @@ export async function updateStaffPosition(
         description: parsedData.description ?? null,
         slug,
         isUnique: parsedData.isUnique,
+        positionType: parsedData.positionType,
       },
     });
 

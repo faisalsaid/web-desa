@@ -20,7 +20,7 @@ const MenuSheet = () => {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-[250px] sm:w-[540px] bg-amber-800 text-white"
+        className="w-[250px] sm:w-[540px] bg-green-800 text-white"
       >
         <SheetHeader>
           <SheetTitle>Desa Torino</SheetTitle>

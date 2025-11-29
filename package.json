@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "generate": "node tools/generate-route.js"
+    "generate": "node tools/generate-route.js",
+    "seed:prod": "node prisma/seed.js"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

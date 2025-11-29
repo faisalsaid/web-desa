@@ -8,6 +8,9 @@ export const getStaffPositionTypeDetailQuery =
       slug: true,
       description: true,
       isUnique: true,
+      positionType: true,
+      createdAt: true,
+      updatedAt: true,
       staffAssignments: {
         select: {
           id: true,

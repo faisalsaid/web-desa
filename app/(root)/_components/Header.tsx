@@ -30,8 +30,6 @@ const Header = ({
   initialVillage: GetVillageConfigType | null;
   initialHeadOfVillage: HeadOfVillage;
 }) => {
-  console.log(initialHeadOfVillage);
-
   const setVillage = useVillageStore((state) => state.setVillage);
   const setHeadOfVillage = useVillageStore((state) => state.setHeadOfVillage);
 

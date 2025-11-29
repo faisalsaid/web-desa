@@ -7,10 +7,7 @@ import { useVillageStore } from '@/store/villageStore';
 
 const WelcomeSentenceSection = () => {
   const village = useVillage();
-
   const headOfVillage = useVillageStore((state) => state.headOfVillage);
-
-  console.log(headOfVillage);
 
   return (
     <div className="space-y-4 md:flex gap-4">

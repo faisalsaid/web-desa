@@ -444,6 +444,7 @@ export async function getStaffs({
         OR: [
           { resident: { fullName: { contains: search, mode: 'insensitive' } } },
           { positionType: { name: { contains: search, mode: 'insensitive' } } },
+          { name: { contains: search, mode: 'insensitive' } },
         ],
       }
     : {};

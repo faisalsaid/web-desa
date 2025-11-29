@@ -1,5 +1,6 @@
 'use client';
 
+import { useVillageStore } from '@/store/villageStore';
 import {
   Facebook,
   Instagram,
@@ -11,10 +12,9 @@ import {
   Youtube,
 } from 'lucide-react';
 import Image from 'next/image';
-import { useVillage } from '../_lib/VillageContext';
 
 const Footer = () => {
-  const data = useVillage();
+  const data = useVillageStore((state) => state.village);
   return (
     <header className="bg-green-800 sticky z-50 top-0">
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between p-4  text-white">

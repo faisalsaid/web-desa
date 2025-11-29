@@ -11,10 +11,11 @@ import {
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { listMenu } from '../_lib/statics';
-import { useVillage } from '../_lib/VillageContext';
+import { useVillageStore } from '@/store/villageStore';
 
 const MenuSheet = () => {
-  const data = useVillage();
+  const data = useVillageStore((state) => state.village);
+
   return (
     <Sheet>
       <SheetTrigger asChild>

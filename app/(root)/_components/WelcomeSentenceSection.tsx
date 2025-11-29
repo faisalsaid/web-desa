@@ -2,11 +2,10 @@
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
-import { useVillage } from '../_lib/VillageContext';
 import { useVillageStore } from '@/store/villageStore';
 
 const WelcomeSentenceSection = () => {
-  const village = useVillage();
+  const village = useVillageStore((state) => state.village);
   const headOfVillage = useVillageStore((state) => state.headOfVillage);
 
   return (

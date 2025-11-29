@@ -17,7 +17,7 @@ const WelcomeSentenceSection = () => {
       <div className="flex items-center justify-center md:w-1/3">
         <Image
           className=""
-          src={'/img/logo-desa.png'}
+          src={'/img/kepala-desa.png'}
           alt="Logo Desa Torino"
           width={200}
           height={200}
@@ -39,21 +39,14 @@ const WelcomeSentenceSection = () => {
         <ScrollArea className="h-56 ">
           <div className="space-y-2">
             <div className="">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus,
-              debitis fugiat. Perspiciatis deserunt minima reprehenderit
-              nesciunt delectus porro deleniti consequuntur aut nobis ducimus
-              iste quibusdam consectetur vitae exercitationem possimus autem
-              quam, dolore illo minus temporibus blanditiis magni incidunt
-              provident. Perferendis eaque libero minima alias nisi nemo, ab
-              sequi sit dolore repellat obcaecati placeat maxime natus minus
-              ratione delectus. Ratione praesentium similique corrupti maiores
-              vero commodi ex molestiae nulla obcaecati repellat magnam alias
-              voluptate eos, ut natus minus qui sit. Totam cumque ipsa, quae,
-              dignissimos error voluptatem nobis eaque neque suscipit minus ex
-              ullam consequuntur, voluptate quis corrupti praesentium veniam
-              ipsam adipisci quas. Neque officiis ipsam alias aspernatur
-              consequatur explicabo sequi nisi a cupiditate doloremque accusamus
-              et, aut consequuntur nihil perspiciatis!
+              Selamat datang di Website Resmi Desa Tamher Barat. Sebagai desa
+              pesisir yang kaya akan potensi laut dan budaya, kami berkomitmen
+              menghadirkan layanan informasi yang transparan, cepat, dan mudah
+              diakses oleh seluruh masyarakat. Melalui website ini, kami
+              berharap setiap program pembangunan, kegiatan desa, dan potensi
+              wilayah dapat tersampaikan dengan baik serta mendorong partisipasi
+              aktif warga dalam mewujudkan Desa Tamher Barat yang maju,
+              sejahtera, dan berdaya saing.
             </div>
             <div>
               <p className="text-lg font-semibold">

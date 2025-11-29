@@ -345,6 +345,14 @@ model Visitor {
 
 // GOVERMENT SCHEMA
 
+enum StaffPositionType {
+  TOP // Kepala Desa
+  MIDDLE // Sekdes / Kaur / Kasi
+  LOWER // Kadus / pengawas
+  STAFF // Staf pelaksana
+  OTHER
+}
+
 model StaffPosition {
   id                Int                @id @default(autoincrement())
   name              String             @db.VarChar(100)
@@ -354,6 +362,7 @@ model StaffPosition {
   staffAssignments  Staff[]
   organizationUnits OrganizationUnit[]
   staffHistories    StaffHistory[]
+  positionType      StaffPositionType  @default(OTHER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -364,12 +373,17 @@ model Staff {
   resident         Resident          @relation(fields: [residentId], references: [id])
   residentId       Int
   positionType     StaffPosition     @relation(fields: [positionTypeId], references: [id])
+  name             String            @db.VarChar(100)
+  imageUrl         String?           @db.VarChar(255)
   positionTypeId   Int
   isActive         Boolean           @default(true)
   startDate        DateTime
   endDate          DateTime?
   staffHistories   StaffHistory[]
   organizationUnit OrganizationUnit?
+  parentStaffId    Int?
+  parentStaff      Staff?            @relation("StaffHierarchy", fields: [parentStaffId], references: [id])
+  subordinates     Staff[]           @relation("StaffHierarchy")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -483,13 +497,12 @@ enum FinancingType {
   EXPENDITURE // PENGELUARAN
 }
 
-
 // IMAGE ASSET
 
 model ImageAsset {
-  id          String    @id @default(cuid())
-  bucketKey   String    // lokasi file di Backblaze
-  url         String    // CDN publik
+  id          String  @id @default(cuid())
+  bucketKey   String // lokasi file di Backblaze
+  url         String // CDN publik
   filename    String
   mimeType    String
   size        Int
@@ -497,8 +510,8 @@ model ImageAsset {
   height      Int?
   alt         String?
   description String?
-  variants    Json?     // thumbnail, webp, dll (opsional nanti)
-  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  variants    Json? // thumbnail, webp, dll (opsional nanti)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -347,7 +347,8 @@ model Visitor {
 
 enum StaffPositionType {
   TOP // Kepala Desa
-  MIDDLE // Sekdes / Kaur / Kasi
+  MIDDLEUP // Sekretaris Desa
+  MIDDLE // Kaur / Kasi
   LOWER // Kadus / pengawas
   STAFF // Staf pelaksana
   OTHER
@@ -370,6 +371,7 @@ model StaffPosition {
 
 model Staff {
   id               Int               @id @default(autoincrement())
+  urlId            String            @unique @default(cuid()) // ID untuk URL
   name             String            @db.VarChar(100)
   imageUrl         String?           @db.VarChar(255)
   positionType     StaffPosition     @relation(fields: [positionTypeId], references: [id])

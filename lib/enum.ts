@@ -112,7 +112,8 @@ export const ExpemseSectorOptions: Record<ExpenseSector, string> = {
 
 export const positionTypeLabels: Record<StaffPositionType, string> = {
   TOP: 'Kepala Desa',
-  MIDDLE: 'Sekdes / Kaur / Kasi',
+  MIDDLEUP: 'Sekretaris Desa',
+  MIDDLE: 'Kaur / Kasi',
   LOWER: 'Kadus / Pengawas',
   STAFF: 'Pelaksana',
   OTHER: 'Lainnya',

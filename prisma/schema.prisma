@@ -273,6 +273,8 @@ model Resident {
   urlId            String           @unique @default(cuid()) // ID untuk URL
   nik              String           @unique @db.VarChar(16)
   fullName         String           @db.VarChar(100)
+  imageUrl         String?          @db.VarChar(255) // URL foto profil
+  imageKey         String?          @db.VarChar(255) // storage key foto profil
   gender           Gender
   birthPlace       String?
   birthDate        DateTime?
@@ -376,7 +378,7 @@ model Staff {
   imageUrl         String?           @db.VarChar(255)
   positionType     StaffPosition     @relation(fields: [positionTypeId], references: [id])
   residentId       Int?
-  resident         Resident?          @relation(fields: [residentId], references: [id])
+  resident         Resident?         @relation(fields: [residentId], references: [id])
   positionTypeId   Int
   isActive         Boolean           @default(true)
   startDate        DateTime

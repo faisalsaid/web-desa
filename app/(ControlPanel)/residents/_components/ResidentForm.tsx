@@ -60,6 +60,8 @@ import {
   populationStatusLabels,
   religionLabels,
 } from '@/lib/enum';
+import { ImageInput } from '@/components/ImageInput';
+import { register } from 'module';
 
 type ResidentDetailType = ResidentType;
 
@@ -105,9 +107,27 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
           populationStatus: 'PERMANENT',
           // familyId: undefined,
           isActive: true,
+          image: undefined,
         },
   });
-  const onSubmit = async (formData: ResidentUpdateInput) => {
+  const onSubmit = async (input: ResidentUpdateInput) => {
+    console.log(input);
+
+    const formData = new FormData();
+
+    const { image, ...restData } = input;
+
+    const jsonPayload = {
+      ...restData,
+      imageUrl: typeof image === 'string' ? image : undefined,
+    };
+
+    if (image instanceof File) {
+      formData.append('file', image);
+    }
+
+    // await createResident(jsonPayload, formData);
+
     const toastId = toast.loading(
       isEdit ? 'Menyimpan perubahan...' : 'Menyimpan data penduduk...',
     );
@@ -117,7 +137,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
 
       if (isEdit) {
         // 🔄 VALIDASI UPDATE
-        const parsed = ResidentUpdateSchema.safeParse(formData);
+        const parsed = ResidentUpdateSchema.safeParse(input);
 
         if (!parsed.success) {
           toast.error('Validasi gagal', { id: toastId });
@@ -128,7 +148,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
         result = await updateResident(resident!.id, parsed.data);
       } else {
         // 🆕 VALIDASI CREATE (INILAH FIX UTAMANYA)
-        const parsed = ResidentCreateSchema.safeParse(formData);
+        const parsed = ResidentCreateSchema.safeParse(input);
 
         if (!parsed.success) {
           toast.error('Validasi gagal', { id: toastId });
@@ -136,7 +156,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
           return;
         }
 
-        result = await createResident(parsed.data);
+        result = await createResident(input, formData);
       }
 
       if (result.success) {
@@ -272,6 +292,28 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
                     </SelectContent>
                   </Select>
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem>
+                <FormLabel>Gambar Produk</FormLabel>
+                <FormControl>
+                  {/* Kita passing onChange dan value secara manual agar sesuai tipe */}
+                  <ImageInput
+                    {...fieldProps}
+                    value={value}
+                    onChange={(file) => onChange(file)} // Menerima File | null
+                  />
+                </FormControl>
+                <FormDescription>
+                  Upload gambar untuk produk Anda.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

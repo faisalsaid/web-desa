@@ -74,6 +74,15 @@ export const DisabilityType = z.enum([
 
 export const Citizenship = z.enum(['WNI', 'WNA']);
 
+// Helper untuk validasi file image
+const MAX_FILE_SIZE = 5000000; // 5MB
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];
+
 // Helper untuk string optional yang jika kosong menjadi null
 const emptyToNull = z
   .union([z.string(), z.null(), z.undefined()])
@@ -124,6 +133,23 @@ export const ResidentSchema = z.object({
 
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+
+  image: z
+    .custom<File | string>((val) => {
+      return val instanceof File || typeof val === 'string';
+    }, 'Gambar wajib diupload')
+    .refine((val) => {
+      // Jika string, berarti URL lama (valid)
+      if (typeof val === 'string') return true;
+      // Jika File, cek ukuran
+      return val instanceof File ? val.size <= MAX_FILE_SIZE : false;
+    }, 'Ukuran file maksimal 5MB')
+    .refine((val) => {
+      if (typeof val === 'string') return true;
+      return val instanceof File
+        ? ACCEPTED_IMAGE_TYPES.includes(val.type)
+        : false;
+    }, 'Format file harus .jpg, .jpeg, .png atau .webp'),
 });
 
 // Jika kamu ingin bikin versi untuk create/update (tanpa id & createdAt/updatedAt)

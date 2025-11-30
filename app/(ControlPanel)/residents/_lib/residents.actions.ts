@@ -10,10 +10,20 @@ import {
 import { getCurrentUser } from '@/app/_lib/root.action';
 import { getResidentDetailQuery, ResidentType } from './residents.type';
 import { Prisma } from '@prisma/client';
-import { ZodError } from 'zod';
+import z, { ZodError } from 'zod';
 
 // -- HANDLE CREATE RESIDENT -- //
-export async function createResident(data: ResidentCreateInput) {
+
+type ResidentJsonInput = Omit<z.infer<typeof ResidentUpdateSchema>, 'image'> & {
+  imageUrl?: string | null; // Kita ganti 'image' jadi 'imageUrl' string opsional
+};
+export async function createResident(
+  jsonData: ResidentJsonInput,
+  data: FormData,
+) {
+  console.log(jsonData);
+  console.log(data);
+
   const user = await getCurrentUser();
 
   if (!user) {
@@ -24,7 +34,7 @@ export async function createResident(data: ResidentCreateInput) {
 
   try {
     // 1️⃣ Validasi data pakai Zod
-    const validatedData = ResidentCreateSchema.parse(data);
+    const validatedData = ResidentCreateSchema.parse(jsonData);
 
     // 2️⃣ Simpan ke database
     const newResident = await prisma.resident.create({

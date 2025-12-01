@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ur } from 'zod/v4/locales';
 
 // ENUMS sesuai Prisma model
 export const Gender = z.enum(['MALE', 'FEMALE']);
@@ -97,7 +98,7 @@ const emptyToNull = z
 // Zod Schema untuk Resident
 export const ResidentSchema = z.object({
   id: z.number().int().optional(),
-
+  urlId: z.string().optional(),
   nik: z.string().length(16, 'Harus 16 digit'),
   fullName: z.string().min(3, 'Minimal 3 karakter').max(100),
   gender: Gender,

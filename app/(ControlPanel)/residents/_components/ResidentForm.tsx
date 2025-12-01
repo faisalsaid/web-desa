@@ -148,7 +148,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
           return;
         }
 
-        result = await updateResident(resident!.id, parsed.data);
+        result = await updateResident(resident!.id, parsed.data, formData);
       } else {
         // 🆕 VALIDASI CREATE (INILAH FIX UTAMANYA)
         const parsed = ResidentCreateSchema.safeParse(input);

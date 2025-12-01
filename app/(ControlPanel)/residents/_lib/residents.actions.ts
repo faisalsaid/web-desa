@@ -103,7 +103,8 @@ export async function getResidentDetails(
 // -- HANDLE UPDATE RESIDENT -- //
 export async function updateResident(
   id: number,
-  formData: ResidentUpdateInput,
+  input: ResidentUpdateInput,
+  formData: FormData,
 ) {
   const user = await getCurrentUser();
 
@@ -111,9 +112,23 @@ export async function updateResident(
     throw new Error('Unauthorized');
   }
 
+  const { image, ...rest } = input;
+  const file = formData.get('file') as File | null;
+
+  console.log(input);
+  console.log('IMAGE FILE:', file);
+
   try {
     // 1. Validasi Zod (AMAN, pakai schema .partial())
-    const parsed = ResidentUpdateSchema.safeParse(formData);
+    const parsed = ResidentUpdateSchema.safeParse(rest);
+
+    if (file && file.size > 0) {
+      await b2UploadImage({
+        file: file,
+        folder: `residents/${parsed?.data?.urlId}`,
+        customFileName: 'profile.jpg',
+      });
+    }
 
     if (!parsed.success) {
       return {

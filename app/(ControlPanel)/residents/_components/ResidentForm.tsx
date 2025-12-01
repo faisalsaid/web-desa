@@ -110,7 +110,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
           image: undefined,
         },
   });
-  const onSubmit = async (input: ResidentUpdateInput) => {
+  const onSubmit = async (input: ResidentUpdateInput | ResidentCreateInput) => {
     console.log(input);
 
     const formData = new FormData();
@@ -156,7 +156,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
           return;
         }
 
-        result = await createResident(input, formData);
+        result = await createResident(parsed.data, formData);
       }
 
       if (result.success) {
@@ -302,7 +302,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
             name="image"
             render={({ field: { value, onChange, ...fieldProps } }) => (
               <FormItem>
-                <FormLabel>Gambar Produk</FormLabel>
+                <FormLabel>Foto Penduduk</FormLabel>
                 <FormControl>
                   {/* Kita passing onChange dan value secara manual agar sesuai tipe */}
                   <ImageInput
@@ -312,7 +312,7 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
                   />
                 </FormControl>
                 <FormDescription>
-                  Upload gambar untuk produk Anda.
+                  Upload gambar untuk foto profil penduduk.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

@@ -11,18 +11,22 @@ import { getCurrentUser } from '@/app/_lib/root.action';
 import { getResidentDetailQuery, ResidentType } from './residents.type';
 import { Prisma } from '@prisma/client';
 import z, { ZodError } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
+import { b2UploadImage } from '@/lib/b2storage.action';
 
 // -- HANDLE CREATE RESIDENT -- //
 
-type ResidentJsonInput = Omit<z.infer<typeof ResidentUpdateSchema>, 'image'> & {
-  imageUrl?: string | null; // Kita ganti 'image' jadi 'imageUrl' string opsional
-};
+// type ResidentJsonInput = Omit<z.infer<typeof ResidentCreateSchema>, 'image'> & {
+//   imageUrl?: string | null; // Kita ganti 'image' jadi 'imageUrl' string opsional
+// };
 export async function createResident(
-  jsonData: ResidentJsonInput,
-  data: FormData,
+  input: ResidentCreateInput,
+  formData: FormData,
 ) {
-  console.log(jsonData);
-  console.log(data);
+  console.log(input);
+  console.log(formData);
+
+  const { image, ...rest } = input;
 
   const user = await getCurrentUser();
 
@@ -30,15 +34,35 @@ export async function createResident(
     throw new Error('Unauthorized');
   }
 
-  //   console.log('PAYLOAD CREATE RESIDENT =>', data);
+  const residentUrlId = uuidv4();
+  const file = formData.get('file') as File | null;
 
   try {
     // 1️⃣ Validasi data pakai Zod
-    const validatedData = ResidentCreateSchema.parse(jsonData);
+    const validatedData = ResidentCreateSchema.parse(rest);
 
     // 2️⃣ Simpan ke database
+    let imageKey: string | null = null;
+    if (file && file.size > 0) {
+      // Upload dan dapatkan KEY (contoh: 'residents/abc-123/profile.jpg')
+      imageKey = await b2UploadImage({
+        file: file,
+        folder: `residents/${residentUrlId}`,
+        customFileName: 'profile.jpg',
+      });
+    }
+
+    console.log(validatedData);
+    console.log(imageKey);
+
     const newResident = await prisma.resident.create({
-      data: validatedData,
+      data: {
+        urlId: residentUrlId,
+        ...validatedData,
+        // Simpan KEY nya, bukan URL panjang
+        // Pastikan kolom di DB namanya representatif, misal 'imageKey' atau tetap 'imageUrl' tidak masalah asalkan isinya string
+        imageKey: imageKey,
+      },
     });
 
     return { success: true, resident: newResident };

@@ -135,21 +135,30 @@ export const ResidentSchema = z.object({
   updatedAt: z.coerce.date().optional(),
 
   image: z
-    .custom<File | string>((val) => {
+    .custom<File | string | null | undefined>((val) => {
+      // 1. Izinkan null atau undefined (kosong)
+      if (val === null || val === undefined) return true;
+      // 2. Jika ada isinya, harus File atau String
       return val instanceof File || typeof val === 'string';
-    }, 'Gambar wajib diupload')
+    }, 'Gambar wajib diupload') // Pesan ini sebenarnya jarang muncul karena null diizinkan
     .refine((val) => {
-      // Jika string, berarti URL lama (valid)
-      if (typeof val === 'string') return true;
-      // Jika File, cek ukuran
+      // 1. SKIP validasi jika kosong (optional) atau string (URL lama)
+      if (!val || typeof val === 'string') return true;
+
+      // 2. Cek ukuran HANYA jika itu File
       return val instanceof File ? val.size <= MAX_FILE_SIZE : false;
     }, 'Ukuran file maksimal 5MB')
     .refine((val) => {
-      if (typeof val === 'string') return true;
+      // 1. SKIP validasi jika kosong (optional) atau string (URL lama)
+      if (!val || typeof val === 'string') return true;
+
+      // 2. Cek tipe HANYA jika itu File
       return val instanceof File
         ? ACCEPTED_IMAGE_TYPES.includes(val.type)
         : false;
-    }, 'Format file harus .jpg, .jpeg, .png atau .webp'),
+    }, 'Format file harus .jpg, .jpeg, .png atau .webp')
+    .optional() // Tambahkan ini agar TypeScript menganggapnya optional (?)
+    .nullable(), // Tambahkan ini agar bisa menerima null
 });
 
 // Jika kamu ingin bikin versi untuk create/update (tanpa id & createdAt/updatedAt)

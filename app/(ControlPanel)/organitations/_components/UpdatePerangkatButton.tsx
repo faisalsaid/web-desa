@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { StaffForm, StaffFormUpdate } from './StaffForm';
 import { toast } from 'sonner';
 import { getStaffForEdit } from '../staff/_lib/staff.actions';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const UpdatePerangkatButton = ({ staffId }: { staffId: number }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,11 +73,13 @@ const UpdatePerangkatButton = ({ staffId }: { staffId: number }) => {
           </div>
         ) : staffData ? (
           // RENDER FORM HANYA JIKA DATA SUDAH ADA
-          <StaffForm
-            mode="update"
-            defaultValues={staffData as StaffFormUpdate}
-            closeModal={() => setIsOpen(false)}
-          />
+          <ScrollArea className="max-h-[calc(100vh-160px)] p-4">
+            <StaffForm
+              mode="update"
+              defaultValues={staffData as StaffFormUpdate}
+              closeModal={() => setIsOpen(false)}
+            />
+          </ScrollArea>
         ) : (
           <div className="text-center text-red-500 py-10">
             Gagal memuat data. Silakan coba lagi.

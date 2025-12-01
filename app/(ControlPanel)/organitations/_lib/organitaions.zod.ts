@@ -1,5 +1,6 @@
 import { StaffPositionType } from '@prisma/client';
 import { id } from 'date-fns/locale';
+import { url } from 'inspector';
 import { z } from 'zod';
 
 // Helper untuk string kosong menjadi null
@@ -71,6 +72,7 @@ const ACCEPTED_IMAGE_TYPES = [
 
 export const baseStaffSchema = z.object({
   id: z.number().int().optional(),
+  urlId: z.string().optional().nullable(),
   positionTypeId: z.number().int().positive(),
   residentId: z.number().int().positive().optional().nullable(),
   name: z

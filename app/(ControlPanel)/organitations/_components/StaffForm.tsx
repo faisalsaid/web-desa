@@ -48,6 +48,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import ImageWrapper from '@/components/ImageWraper';
 import { ImageInput } from '@/components/ImageInput';
+import { updateStaff } from '../staff/_lib/staff.actions';
 
 type PositionOption = {
   id: number;
@@ -143,7 +144,7 @@ export function StaffForm({
     const toastId = toast.loading(loadingMessage);
 
     if (isEdit) {
-      const res = await updateStaffAction(input);
+      const res = await updateStaff(input);
 
       if (res.success) {
         toast.success(res.message, { id: toastId });

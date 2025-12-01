@@ -23,9 +23,6 @@ export async function createResident(
   input: ResidentCreateInput,
   formData: FormData,
 ) {
-  console.log(input);
-  console.log(formData);
-
   const { image, ...rest } = input;
 
   const user = await getCurrentUser();
@@ -51,9 +48,6 @@ export async function createResident(
         customFileName: 'profile.jpg',
       });
     }
-
-    console.log(validatedData);
-    console.log(imageKey);
 
     const newResident = await prisma.resident.create({
       data: {
@@ -114,9 +108,6 @@ export async function updateResident(
 
   const { image, ...rest } = input;
   const file = formData.get('file') as File | null;
-
-  console.log(input);
-  console.log('IMAGE FILE:', file);
 
   try {
     // 1. Validasi Zod (AMAN, pakai schema .partial())

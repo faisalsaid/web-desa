@@ -114,16 +114,9 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
         },
   });
   const onSubmit = async (input: ResidentUpdateInput | ResidentCreateInput) => {
-    console.log(input);
-
     const formData = new FormData();
 
-    const { image, ...restData } = input;
-
-    const jsonPayload = {
-      ...restData,
-      imageUrl: typeof image === 'string' ? image : undefined,
-    };
+    const { image } = input;
 
     if (image instanceof File) {
       formData.append('file', image);

@@ -62,6 +62,8 @@ import {
 } from '@/lib/enum';
 import { ImageInput } from '@/components/ImageInput';
 import { register } from 'module';
+import { init } from 'next/dist/compiled/webpack/webpack';
+import ImageWrapper from '@/components/ImageWraper';
 
 type ResidentDetailType = ResidentType;
 
@@ -219,29 +221,36 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
           /> */}
 
           {/* NIK iD Field */}
-          <FormField
-            control={form.control}
-            name="nik"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  NIK : <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl className="bg-background">
-                  <Input
-                    className="text-sm appearance-none no-spin"
-                    placeholder="e.g. 3273056010900009"
-                    {...field}
-                    type="number"
-                  />
-                </FormControl>
-                <FormDescription className="text-xs italic">
-                  Pastikan NIK terdiri dari 16 angka
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {isEdit ? (
+            <div className=" border-dashed border-2 p-2 rounded-lg text-muted-foreground">
+              <p className="text-sm">NIK:</p>
+              <p className="text-xl font-semibold">{resident?.nik}</p>
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name="nik"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    NIK : <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl className="bg-background">
+                    <Input
+                      className="text-sm appearance-none no-spin"
+                      placeholder="e.g. 3273056010900009"
+                      {...field}
+                      type="number"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs italic">
+                    Pastikan NIK terdiri dari 16 angka
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {/* Full Name Field */}
 
@@ -297,27 +306,37 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem>
-                <FormLabel>Foto Penduduk</FormLabel>
-                <FormControl>
-                  {/* Kita passing onChange dan value secara manual agar sesuai tipe */}
-                  <ImageInput
-                    {...fieldProps}
-                    value={value}
-                    onChange={(file) => onChange(file)} // Menerima File | null
-                  />
-                </FormControl>
-                <FormDescription>
-                  Upload gambar untuk foto profil penduduk.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {isEdit && resident.imageKey ? (
+            <div className="w-full relative h-48 overflow-hidden rounded-lg">
+              <ImageWrapper
+                src={resident.imageUrl as string}
+                alt={`${resident.fullName}'s photo`}
+                objectFit="cover"
+              />
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { value, onChange, ...fieldProps } }) => (
+                <FormItem>
+                  <FormLabel>Foto Penduduk</FormLabel>
+                  <FormControl>
+                    {/* Kita passing onChange dan value secara manual agar sesuai tipe */}
+                    <ImageInput
+                      {...fieldProps}
+                      value={value}
+                      onChange={(file) => onChange(file)} // Menerima File | null
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Upload gambar untuk foto profil penduduk.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {/* Birth Place Field */}
 

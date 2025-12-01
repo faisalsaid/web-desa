@@ -1,7 +1,8 @@
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getResidentDetails } from '../../_lib/residents.actions';
 import ContentCard from '@/app/(ControlPanel)/_component/ContentCard';
 import ResidentForm from '../../_components/ResidentForm';
+import { getImageUrl } from '@/lib/b2storage.action';
 
 interface Params {
   residentid: string;
@@ -15,9 +16,16 @@ const UpdateResidentPage = async ({ params }: ResidentUpdateProps) => {
   const { residentid } = await params;
   const residentDetails = await getResidentDetails(residentid);
 
-  if (!residentDetails) {
-    redirect('/404');
-  }
+  if (!residentDetails) notFound();
+
+  const signedUrl = await getImageUrl(residentDetails?.imageKey);
+
+  // 3. Siapkan data untuk Form
+  const initialData = {
+    ...residentDetails,
+    imageUrl: signedUrl, // Kirim URL yang bisa diakses browser
+    // Simpan key asli jika perlu logic khusus, tapi biasanya URL saja cukup untuk preview
+  };
   return (
     <div className="space-y-4">
       <ContentCard className=" ">
@@ -26,7 +34,7 @@ const UpdateResidentPage = async ({ params }: ResidentUpdateProps) => {
         </div>
       </ContentCard>
       <ContentCard>
-        <ResidentForm resident={residentDetails} />
+        <ResidentForm resident={initialData} />
       </ContentCard>
     </div>
   );

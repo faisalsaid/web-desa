@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { StaffType } from '../../../_lib/organitations.type';
-import { UserLock, UserStar } from 'lucide-react';
+import { Eye, UserLock, UserStar } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -8,7 +8,9 @@ import {
 } from '@/components/ui/tooltip';
 import DeleteStaffButton from '../../DeleteStaffButton';
 import UpdatePerangkatButton from '../../UpdatePerangkatButton';
-import { url } from 'inspector';
+
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export const staffColumns: ColumnDef<StaffType>[] = [
   {
@@ -80,6 +82,13 @@ export const staffColumns: ColumnDef<StaffType>[] = [
     cell: ({ row }) => (
       <div className="flex gap-2">
         <UpdatePerangkatButton staffId={row.original.id} />
+
+        <Button variant="outline" size="icon" asChild className="rounded-full">
+          <Link href={`/organitations/staff/${row.original.urlId}`}>
+            <Eye className="text-sky-500" size={16} />
+          </Link>
+        </Button>
+
         <DeleteStaffButton id={row.original.id} />
       </div>
     ),

@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { scheduler } from 'timers/promises';
 
 export const getResidentDetailQuery =
   Prisma.validator<Prisma.ResidentFindUniqueArgs>()({});

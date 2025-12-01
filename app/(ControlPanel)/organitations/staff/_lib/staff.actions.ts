@@ -8,6 +8,7 @@ import {
   UpdateStaffInput,
   updateStaffSchema,
 } from '../../_lib/organitaions.zod';
+import { GetStaffQuery, TStaff } from './staff.type';
 
 export async function getStaffForEdit(
   id: number,
@@ -102,3 +103,33 @@ export async function updateStaff(input: Partial<UpdateStaffInput>) {
 }
 
 // HANDLE UPDATE STAFF END =================================================================
+
+// GET SINGLE STAFF DETAIL START ============================================================
+
+interface StaffDetailResult {
+  success: boolean;
+  data?: TStaff;
+  message?: string;
+}
+
+export async function getStaffDetails(
+  urlId: string,
+): Promise<StaffDetailResult> {
+  const staff = await prisma.staff.findUnique({
+    where: { urlId },
+    ...GetStaffQuery,
+  });
+  if (staff) {
+    return {
+      success: true,
+      data: staff as TStaff,
+    };
+  } else {
+    return {
+      success: false,
+      message: 'Data staff tidak ditemukan',
+    };
+  }
+}
+
+// GET SINGLE STAFF DETAIL END ==============================================================

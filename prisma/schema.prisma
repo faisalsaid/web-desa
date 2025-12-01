@@ -376,6 +376,7 @@ model Staff {
   urlId            String            @unique @default(cuid()) // ID untuk URL
   name             String            @db.VarChar(100)
   imageUrl         String?           @db.VarChar(255)
+  imageKey         String?           @db.VarChar(255)
   positionType     StaffPosition     @relation(fields: [positionTypeId], references: [id])
   residentId       Int?
   resident         Resident?         @relation(fields: [residentId], references: [id])

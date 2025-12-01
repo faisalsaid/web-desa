@@ -20,6 +20,9 @@ import {
   StaffType,
 } from './organitations.type';
 
+import { v4 as uuidv4 } from 'uuid';
+import { b2UploadImage } from '@/lib/b2storage.action';
+
 // HANDLE CREAT STAFF POSITIONS =================================================================
 
 // get staffpositon to parentPositionId option field
@@ -247,6 +250,40 @@ export async function updateStaffPosition(
 export async function createStaff(input: CreateStaffInput) {
   console.log(input);
 
+  // 1. Validasi Zod
+  const data = createStaffSchema.parse(input);
+
+  // 2. Ambil info jabatan
+  const position = await prisma.staffPosition.findUnique({
+    where: { id: data.positionTypeId },
+    select: { isUnique: true },
+  });
+
+  if (!position) {
+    throw new Error('Jabatan tidak ditemukan.');
+  }
+
+  // 3. Jika jabatan tunggal → cek apakah sudah ada staff aktif
+  if (position.isUnique) {
+    const existingActive = await prisma.staff.findFirst({
+      where: {
+        positionTypeId: data.positionTypeId,
+        isActive: true,
+      },
+      select: { id: true, residentId: true },
+    });
+
+    if (existingActive) {
+      return {
+        success: false,
+        message:
+          'Jabatan ini hanya boleh diisi oleh satu orang dan sudah terisi.',
+      };
+    }
+  }
+
+  // prepare form data for image upload
+
   const formData = new FormData();
 
   const { image, ...rest } = input;
@@ -254,61 +291,39 @@ export async function createStaff(input: CreateStaffInput) {
   if (image instanceof File) {
     formData.append('file', image);
   }
-
+  const staffUrlId = uuidv4();
   const file = formData.get('file') as File | null;
 
-  console.log(rest);
-  console.log(file);
+  // 2️⃣ Simpan ke database
+  let imageKey: string | null = null;
+  if (file && file.size > 0) {
+    // Upload dan dapatkan KEY (contoh: 'staff/abc-123/profile.jpg')
+    imageKey = await b2UploadImage({
+      file: file,
+      folder: `staff/${staffUrlId}`,
+      customFileName: 'profile.jpg',
+    });
+  }
 
-  // // 1. Validasi Zod
-  // const data = createStaffSchema.parse(input);
+  // 4. Jika lulus, create staff
+  const created = await prisma.staff.create({
+    data: {
+      urlId: staffUrlId,
+      imageKey: imageKey,
+      residentId: rest.residentId,
+      positionTypeId: rest.positionTypeId,
+      startDate: new Date(rest.startDate),
+      endDate: rest.endDate ? new Date(rest.endDate) : null,
+      isActive: rest.isActive ?? true,
+      name: rest.name,
+    },
+  });
 
-  // // 2. Ambil info jabatan
-  // const position = await prisma.staffPosition.findUnique({
-  //   where: { id: data.positionTypeId },
-  //   select: { isUnique: true },
-  // });
-
-  // if (!position) {
-  //   throw new Error('Jabatan tidak ditemukan.');
-  // }
-
-  // // 3. Jika jabatan tunggal → cek apakah sudah ada staff aktif
-  // if (position.isUnique) {
-  //   const existingActive = await prisma.staff.findFirst({
-  //     where: {
-  //       positionTypeId: data.positionTypeId,
-  //       isActive: true,
-  //     },
-  //     select: { id: true, residentId: true },
-  //   });
-
-  //   if (existingActive) {
-  //     return {
-  //       success: false,
-  //       message:
-  //         'Jabatan ini hanya boleh diisi oleh satu orang dan sudah terisi.',
-  //     };
-  //   }
-  // }
-
-  // // 4. Jika lulus, create staff
-  // const created = await prisma.staff.create({
-  //   data: {
-  //     residentId: data.residentId,
-  //     positionTypeId: data.positionTypeId,
-  //     startDate: new Date(data.startDate),
-  //     endDate: data.endDate ? new Date(data.endDate) : null,
-  //     isActive: data.isActive ?? true,
-  //     name: data.name,
-  //   },
-  // });
-
-  // return {
-  //   success: true,
-  //   message: 'Perangkatt berhasil ditambahkan.',
-  //   data: created,
-  // };
+  return {
+    success: true,
+    message: 'Perangkatt berhasil ditambahkan.',
+    data: created,
+  };
 }
 
 // for options resident =============================================================================

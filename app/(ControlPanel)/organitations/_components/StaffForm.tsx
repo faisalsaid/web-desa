@@ -159,11 +159,11 @@ export function StaffForm({
       try {
         const parsed = createStaffSchema.safeParse(input);
         const res = await createStaff(parsed.data as CreateStaffInput);
-        // if (!res.success) {
-        //   toast.error(res.message, { id: toastId });
-        // } else {
-        //   toast.success(res.message, { id: toastId });
-        // }
+        if (!res.success) {
+          toast.error(res.message, { id: toastId });
+        } else {
+          toast.success(res.message, { id: toastId });
+        }
 
         router.refresh();
         // eslint-disable-next-line

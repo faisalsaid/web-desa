@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Calendar, Upload } from 'lucide-react';
+import { Calendar, Pencil, Undo2, Upload } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -64,6 +64,7 @@ import { ImageInput } from '@/components/ImageInput';
 import { register } from 'module';
 import { init } from 'next/dist/compiled/webpack/webpack';
 import ImageWrapper from '@/components/ImageWraper';
+import { useState } from 'react';
 
 type ResidentDetailType = ResidentType;
 
@@ -73,8 +74,8 @@ interface ResidentDetailsProps {
 
 const ResidentForm = ({ resident }: ResidentDetailsProps) => {
   const router = useRouter();
-
   const isEdit = !!resident;
+  const [isEditingImage, setIsEditingImage] = useState(false);
 
   const form = useForm<ResidentCreateInput>({
     resolver: zodResolver(ResidentCreateSchema),
@@ -183,6 +184,12 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
       toast.error('Terjadi kesalahan server', { id: toastId });
       console.error(error);
     }
+  };
+
+  const handleCancelEditImage = () => {
+    setIsEditingImage(false);
+    // Reset field image ke undefined agar form tidak mengirim file sampah/kosong
+    form.setValue('image', undefined);
   };
 
   const isValid = form.formState.isValid;
@@ -306,37 +313,93 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
             )}
           />
 
-          {isEdit && resident.imageKey ? (
-            <div className="w-full relative h-48 overflow-hidden rounded-lg">
-              <ImageWrapper
-                src={resident.imageUrl as string}
-                alt={`${resident.fullName}'s photo`}
-                objectFit="cover"
+          {/* --- BAGIAN IMAGE START --- */}
+
+          {/* LOGIC: Tampilkan Input JIKA: 
+            1. Bukan mode edit (Create baru)
+            2. Mode edit TAPI user tidak punya foto lama
+            3. User menekan tombol "Ganti Foto" (isEditingImage = true)
+        */}
+          {!isEdit || !resident?.imageKey || isEditingImage ? (
+            <div className="space-y-2 animate-in fade-in zoom-in duration-300">
+              {/* Header section untuk Input Mode */}
+              {isEdit && resident?.imageKey && (
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm text-muted-foreground flex items-center gap-2">
+                    <Upload className="w-4 h-4" /> Upload Foto Baru
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCancelEditImage}
+                    className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8"
+                  >
+                    <Undo2 className="w-4 h-4 mr-2" />
+                    Batal & Pakai Foto Lama
+                  </Button>
+                </div>
+              )}
+
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem>
+                    {!isEdit && <FormLabel>Foto Penduduk</FormLabel>}
+                    <FormControl>
+                      <ImageInput
+                        {...fieldProps}
+                        value={value}
+                        onChange={(file) => onChange(file)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {isEdit
+                        ? 'Pilih gambar baru untuk mengganti foto profil saat ini.'
+                        : 'Upload gambar untuk foto profil penduduk.'}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
           ) : (
-            <FormField
-              control={form.control}
-              name="image"
-              render={({ field: { value, onChange, ...fieldProps } }) => (
-                <FormItem>
-                  <FormLabel>Foto Penduduk</FormLabel>
-                  <FormControl>
-                    {/* Kita passing onChange dan value secara manual agar sesuai tipe */}
-                    <ImageInput
-                      {...fieldProps}
-                      value={value}
-                      onChange={(file) => onChange(file)} // Menerima File | null
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Upload gambar untuk foto profil penduduk.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            // --- VIEW MODE (Tampilkan Gambar Lama) ---
+            <div className="space-y-3">
+              <FormLabel>Foto Penduduk</FormLabel>
+
+              <div className="group relative w-full max-w-sm aspect-video overflow-hidden rounded-xl border border-border bg-muted shadow-sm transition-all hover:shadow-md">
+                {/* Komponen Gambar Existing */}
+                <ImageWrapper
+                  src={resident.imageUrl as string}
+                  alt={`${resident.fullName}'s photo`}
+                  objectFit="cover"
+                  className="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                />
+
+                {/* Overlay & Tombol "Eye-Catching" */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                  <Button
+                    type="button"
+                    onClick={() => setIsEditingImage(true)}
+                    className="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 font-semibold shadow-lg"
+                    variant="secondary" // Putih/Grey cerah agar kontras dengan foto
+                  >
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Ganti Foto
+                  </Button>
+                </div>
+
+                {/* Badge/Label Info (Optional - agar user tahu ini foto lama) */}
+                <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">
+                  Foto Saat Ini
+                </div>
+              </div>
+            </div>
           )}
+
+          {/* --- BAGIAN IMAGE END --- */}
 
           {/* Birth Place Field */}
 

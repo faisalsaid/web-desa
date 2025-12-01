@@ -126,7 +126,6 @@ export function StaffForm({
   };
 
   const onSubmit = async (input: CreateStaffInput | UpdateStaffInput) => {
-    console.log('FORM DATA', input);
     const isEdit = mode === 'update';
 
     // 1️⃣ Tetapkan pesan
@@ -186,11 +185,8 @@ export function StaffForm({
   const isSubmitting = form.formState.isSubmitting;
   const isSubmitted = form.formState.isSubmitted;
 
-  // console.log(form);
-  // // console.log(form.getValues());
-
   const onError = (errors: any) => {
-    console.log('❌ VALIDATION ERRORS:', errors);
+    // console.log('❌ VALIDATION ERRORS:', errors);
     toast.error('Form tidak valid, silakan cek inputan yang berwarna merah');
   };
 

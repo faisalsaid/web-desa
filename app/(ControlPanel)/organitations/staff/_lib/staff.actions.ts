@@ -59,8 +59,8 @@ export async function updateStaff(input: Partial<UpdateStaffInput>) {
   }
   const file = formData.get('file') as File | null;
 
-  console.log(file);
-  console.log(rest);
+  //   console.log(file);
+  //   console.log(rest);
 
   try {
     const parsed = updateStaffSchema.safeParse(rest);

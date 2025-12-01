@@ -345,41 +345,34 @@ export function StaffForm({
 
         {/* --- BAGIAN IMAGE END --- */}
 
-        {availableTypes ? (
-          <FormField
-            control={form.control}
-            name="residentId"
-            render={({ field }) => (
-              <Autocomplete<ResidentItem>
-                disabled={!watchPositionTypeId}
-                label="Resident"
-                placeholder={
-                  !watchPositionTypeId
-                    ? 'Pilih jabatan terlebih dahulu'
-                    : 'Cari resident...'
-                }
-                // bentuk data di form = id number
-                value={selectedResident} // tidak dipakai karena kita simpan id
-                onChange={(resident) => {
-                  setSelectedResident(resident || null);
-                  field.onChange(resident?.id ?? null);
-                }}
-                search={async (q) => {
-                  return await searchResidentToStaff(q);
-                }}
-                displayValue={(item) =>
-                  item ? `${item.fullName} – ${item.nik}` : ''
-                }
-                getKey={(item) => item.id}
-              />
-            )}
-          />
-        ) : (
-          <div className="p-2 border rounded-lg">
-            <p className="text-muted-foreground">Nama : </p>
-            <p className="text-lg">{defaultValues?.residentName}</p>
-          </div>
-        )}
+        <FormField
+          control={form.control}
+          name="residentId"
+          render={({ field }) => (
+            <Autocomplete<ResidentItem>
+              disabled={!watchPositionTypeId}
+              label="Resident"
+              placeholder={
+                !watchPositionTypeId
+                  ? 'Pilih jabatan terlebih dahulu'
+                  : 'Cari resident...'
+              }
+              // bentuk data di form = id number
+              value={selectedResident} // tidak dipakai karena kita simpan id
+              onChange={(resident) => {
+                setSelectedResident(resident || null);
+                field.onChange(resident?.id ?? null);
+              }}
+              search={async (q) => {
+                return await searchResidentToStaff(q);
+              }}
+              displayValue={(item) =>
+                item ? `${item.fullName} – ${item.nik}` : ''
+              }
+              getKey={(item) => item.id}
+            />
+          )}
+        />
 
         {/* Organization Unit */}
         {/* <FormField

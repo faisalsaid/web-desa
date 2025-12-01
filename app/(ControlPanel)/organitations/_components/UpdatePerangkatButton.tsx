@@ -13,13 +13,30 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { StaffForm, StaffFormUpdate } from './StaffForm';
+import { toast } from 'sonner';
+import { getStaffForEdit } from '../staff/_lib/staff.actions';
 
-const UpdatePerangkatButton = ({
-  staffData,
-}: {
-  staffData: StaffFormUpdate;
-}) => {
+const UpdatePerangkatButton = ({ staffId }: { staffId: number }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [staffData, setStaffData] = useState<StaffFormUpdate | null>(null);
+
+  const handleEditClick = async () => {
+    setLoading(true);
+    setIsOpen(true); // Buka modal segera agar user tau ada respon
+
+    // Fetch data fresh + Signed URL dari server
+    const result = await getStaffForEdit(staffId);
+
+    if (result.success && result.data) {
+      setStaffData(result.data);
+    } else {
+      toast.error(result.message);
+      setIsOpen(false); // Tutup jika gagal
+    }
+
+    setLoading(false);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -28,6 +45,11 @@ const UpdatePerangkatButton = ({
           size="icon"
           className="rounded-full text-green-400"
           variant={'outline'}
+          onClick={(e) => {
+            // Prevent row selection if any
+            e.stopPropagation();
+            handleEditClick();
+          }}
         >
           <Edit2 />
         </Button>
@@ -40,11 +62,27 @@ const UpdatePerangkatButton = ({
           </DialogDescription>
         </DialogHeader>
         <Separator />
-        <StaffForm
-          mode="update"
-          defaultValues={staffData}
-          closeModal={() => setIsOpen(false)}
-        />
+
+        {loading ? (
+          <div className="flex items-center justify-center h-40 space-y-4 flex-col">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            <p className="text-sm text-muted-foreground">
+              Mengambil data & validasi gambar...
+            </p>
+          </div>
+        ) : staffData ? (
+          // RENDER FORM HANYA JIKA DATA SUDAH ADA
+          <StaffForm
+            mode="update"
+            defaultValues={staffData as StaffFormUpdate}
+            closeModal={() => setIsOpen(false)}
+          />
+        ) : (
+          <div className="text-center text-red-500 py-10">
+            Gagal memuat data. Silakan coba lagi.
+          </div>
+        )}
+
         {/* <StaffPositionTypeForm closeModal={() => setIsOpen(false)} /> */}
       </DialogContent>
     </Dialog>

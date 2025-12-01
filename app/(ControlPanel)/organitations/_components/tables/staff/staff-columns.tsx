@@ -77,29 +77,11 @@ export const staffColumns: ColumnDef<StaffType>[] = [
   {
     id: 'action',
     header: 'aksi',
-    cell: ({ row }) => {
-      const data = row.original; // <--- ambil semua data row
-
-      const formData = {
-        id: data.id,
-        urlId: data.urlId,
-        imageUrl: data.imageUrl,
-        imageKey: data.imageKey,
-        residentId: data.residentId,
-        name: data.name,
-        residentName: data?.resident?.fullName,
-        positionTypeId: data.positionTypeId,
-        positionName: data.positionType.name,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        isActive: data.isActive,
-      };
-      return (
-        <div className="flex gap-2">
-          <UpdatePerangkatButton staffData={formData} />
-          <DeleteStaffButton id={row.original.id} />
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <UpdatePerangkatButton staffId={row.original.id} />
+        <DeleteStaffButton id={row.original.id} />
+      </div>
+    ),
   },
 ];

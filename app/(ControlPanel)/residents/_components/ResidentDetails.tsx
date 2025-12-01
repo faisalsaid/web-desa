@@ -22,6 +22,7 @@ import {
   populationStatusLabels,
   religionLabels,
 } from '@/lib/enum';
+import ImageWrapper from '@/components/ImageWraper';
 
 type ResidentDetailType = ResidentType;
 
@@ -73,7 +74,17 @@ const ResidentDetails = ({ resident }: ResidentDetailsProps) => {
       {/* === PROFILE CARD === */}
       <ContentCard className="space-y-4">
         <div className="flex items-center justify-center">
-          <LogoImage className="w-48 h-48 text-muted-foreground" />
+          {resident.imageKey ? (
+            <div className="w-full max-w-sm rounded-lg overflow-hidden h-48 relative">
+              <ImageWrapper
+                src={resident.imageUrl as string}
+                alt={resident.fullName}
+                objectFit="cover"
+              />
+            </div>
+          ) : (
+            <LogoImage className="w-48 h-48 text-muted-foreground" />
+          )}
         </div>
 
         {/* NAME + BIRTH INFO */}

@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getResidentDetails } from '../_lib/residents.actions';
 import ContentCard from '../../_component/ContentCard';
 import ResidentDetails from '../_components/ResidentDetails';
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import DeleteResidentButton from '../_components/DeleteResidentButton';
+import { getImageUrl } from '@/lib/b2storage.action';
 
 interface Params {
   residentid: string;
@@ -20,10 +21,10 @@ const ResidentDetailPage = async ({ params }: ResidentDetails) => {
 
   // console.log(residentid);
   const residentDetails = await getResidentDetails(residentid);
+  const imageUrl = await getImageUrl(residentDetails?.imageKey || null);
 
-  if (!residentDetails) {
-    redirect('/404');
-  }
+  if (!residentDetails) notFound();
+  residentDetails.imageUrl = imageUrl;
 
   return (
     <div className="space-y-4">

@@ -1,4 +1,5 @@
 import { StaffPositionType } from '@prisma/client';
+import { id } from 'date-fns/locale';
 import { z } from 'zod';
 
 // Helper untuk string kosong menjadi null
@@ -59,7 +60,17 @@ export type StaffPositionTypeUpdateInput = z.infer<
 
 /// STAFF SCHEMA ==========================================================================================
 
+// Helper untuk validasi file image
+const MAX_FILE_SIZE = 5000000; // 5MB
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];
+
 export const baseStaffSchema = z.object({
+  id: z.number().int().optional(),
   positionTypeId: z.number().int().positive(),
   residentId: z.number().int().positive().optional().nullable(),
   name: z
@@ -67,19 +78,44 @@ export const baseStaffSchema = z.object({
     .min(2, 'Nama tidak boleh kosong')
     .max(100)
     .refine((val) => val.trim().length > 0, 'Nama tidak boleh hanya spasi'),
-  imageUrl: z.string().nullable().optional(),
   startDate: z.date(),
   endDate: z.date().nullable().optional(),
   isActive: z.boolean().optional(),
 
+  image: z
+    .custom<File | string | null | undefined>((val) => {
+      // 1. Izinkan null atau undefined (kosong)
+      if (val === null || val === undefined) return true;
+      // 2. Jika ada isinya, harus File atau String
+      return val instanceof File || typeof val === 'string';
+    }, 'Gambar wajib diupload') // Pesan ini sebenarnya jarang muncul karena null diizinkan
+    .refine((val) => {
+      // 1. SKIP validasi jika kosong (optional) atau string (URL lama)
+      if (!val || typeof val === 'string') return true;
+
+      // 2. Cek ukuran HANYA jika itu File
+      return val instanceof File ? val.size <= MAX_FILE_SIZE : false;
+    }, 'Ukuran file maksimal 5MB')
+    .refine((val) => {
+      // 1. SKIP validasi jika kosong (optional) atau string (URL lama)
+      if (!val || typeof val === 'string') return true;
+
+      // 2. Cek tipe HANYA jika itu File
+      return val instanceof File
+        ? ACCEPTED_IMAGE_TYPES.includes(val.type)
+        : false;
+    }, 'Format file harus .jpg, .jpeg, .png atau .webp')
+    .optional() // Tambahkan ini agar TypeScript menganggapnya optional (?)
+    .nullable(), // Tambahkan ini agar bisa menerima null
+
   // organizationUnitId: z.number().int().positive().nullable().optional(),
 });
 
-export const createStaffSchema = baseStaffSchema;
-
-export const updateStaffSchema = baseStaffSchema.extend({
-  id: z.number().int().positive(),
+export const createStaffSchema = baseStaffSchema.omit({
+  id: true,
 });
+
+export const updateStaffSchema = baseStaffSchema.partial();
 
 export type CreateStaffInput = z.infer<typeof createStaffSchema>;
 export type UpdateStaffInput = z.infer<typeof updateStaffSchema>;

@@ -38,7 +38,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Calendar, RefreshCwIcon, Upload } from 'lucide-react';
+import { Calendar, Pencil, RefreshCwIcon, Undo2, Upload } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
@@ -46,6 +46,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
+import ImageWrapper from '@/components/ImageWraper';
+import { ImageInput } from '@/components/ImageInput';
 
 type PositionOption = {
   id: number;
@@ -59,6 +61,10 @@ type ResidentItem = { id: number; fullName: string; nik: string };
 
 export type StaffFormUpdate = {
   id: number;
+  urlId: string;
+  name: string;
+  imageUrl: string | null;
+  imageKey: string | null;
   residentId: number | null;
   residentName: string | null | undefined;
   positionTypeId: number;
@@ -84,17 +90,18 @@ export function StaffForm({
   closeModal,
 }: StaffFormProps) {
   const router = useRouter();
+  const isEdit = mode === 'update';
+  const [isEditingImage, setIsEditingImage] = useState(false);
 
   const form = useForm<CreateStaffInput | UpdateStaffInput>({
-    resolver: zodResolver(
-      mode === 'create' ? createStaffSchema : updateStaffSchema,
-    ),
+    resolver: zodResolver(isEdit ? updateStaffSchema : createStaffSchema),
     defaultValues: defaultValues ?? {
       isActive: true,
       startDate: new Date(),
       endDate: null,
       name: '',
-      imageUrl: null,
+      image: null,
+
       //   organizationUnitId: null,
     },
   });
@@ -117,8 +124,8 @@ export function StaffForm({
     setSelectedResident(null);
   };
 
-  const onSubmit = async (formData: CreateStaffInput | UpdateStaffInput) => {
-    console.log('FORM DATA', formData);
+  const onSubmit = async (input: CreateStaffInput | UpdateStaffInput) => {
+    console.log('FORM DATA', input);
     const isEdit = mode === 'update';
 
     // 1️⃣ Tetapkan pesan
@@ -136,7 +143,7 @@ export function StaffForm({
     const toastId = toast.loading(loadingMessage);
 
     if (isEdit) {
-      const res = await updateStaffAction(formData);
+      const res = await updateStaffAction(input);
 
       if (res.success) {
         toast.success(res.message, { id: toastId });
@@ -150,12 +157,13 @@ export function StaffForm({
       }
     } else {
       try {
-        const res = await createStaff(formData);
-        if (!res.success) {
-          toast.error(res.message, { id: toastId });
-        } else {
-          toast.success(res.message, { id: toastId });
-        }
+        const parsed = createStaffSchema.safeParse(input);
+        const res = await createStaff(parsed.data as CreateStaffInput);
+        // if (!res.success) {
+        //   toast.error(res.message, { id: toastId });
+        // } else {
+        //   toast.success(res.message, { id: toastId });
+        // }
 
         router.refresh();
         // eslint-disable-next-line
@@ -167,17 +175,29 @@ export function StaffForm({
     }
   };
 
+  const handleCancelEditImage = () => {
+    setIsEditingImage(false);
+    // Reset field image ke undefined agar form tidak mengirim file sampah/kosong
+    form.setValue('image', undefined);
+  };
+
   const isValid = form.formState.isValid;
   const isSubmitting = form.formState.isSubmitting;
   const isSubmitted = form.formState.isSubmitted;
 
-  console.log(form.getValues());
+  // console.log(form);
+  // // console.log(form.getValues());
+
+  const onError = (errors: any) => {
+    console.log('❌ VALIDATION ERRORS:', errors);
+    toast.error('Form tidak valid, silakan cek inputan yang berwarna merah');
+  };
 
   return (
     <Form {...form}>
       <form
         key={formKey}
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, onError)}
         className="space-y-6"
       >
         {/* Position Type */}
@@ -236,6 +256,94 @@ export function StaffForm({
             </FormItem>
           )}
         />
+
+        {/* --- BAGIAN IMAGE START --- */}
+
+        {/* LOGIC: Tampilkan Input JIKA: 
+                    1. Bukan mode edit (Create baru)
+                    2. Mode edit TAPI user tidak punya foto lama
+                    3. User menekan tombol "Ganti Foto" (isEditingImage = true)
+                */}
+        {!isEdit || !defaultValues?.imageKey || isEditingImage ? (
+          <div className="space-y-2 animate-in fade-in zoom-in duration-300">
+            {/* Header section untuk Input Mode */}
+            {isEdit && defaultValues?.imageKey && (
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Upload className="w-4 h-4" /> Upload Foto Baru
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCancelEditImage}
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8"
+                >
+                  <Undo2 className="w-4 h-4 mr-2" />
+                  Batal & Pakai Foto Lama
+                </Button>
+              </div>
+            )}
+
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { value, onChange, ...fieldProps } }) => (
+                <FormItem>
+                  {!isEdit && <FormLabel>Foto Pejabat</FormLabel>}
+                  <FormControl>
+                    <ImageInput
+                      {...fieldProps}
+                      value={value}
+                      onChange={(file) => onChange(file)}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {isEdit
+                      ? 'Pilih gambar baru untuk mengganti foto profil saat ini.'
+                      : 'Upload gambar untuk foto profil pejabat.'}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        ) : (
+          // --- VIEW MODE (Tampilkan Gambar Lama) ---
+          <div className="space-y-3">
+            <FormLabel>Foto Penduduk</FormLabel>
+
+            <div className="group relative w-full max-w-sm aspect-video overflow-hidden rounded-xl border border-border bg-muted shadow-sm transition-all hover:shadow-md">
+              {/* Komponen Gambar Existing */}
+              <ImageWrapper
+                src={defaultValues.imageUrl as string}
+                alt={`${defaultValues.name}'s photo`}
+                objectFit="cover"
+                className="w-full h-full transition-transform duration-500 group-hover:scale-105"
+              />
+
+              {/* Overlay & Tombol "Eye-Catching" */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                <Button
+                  type="button"
+                  onClick={() => setIsEditingImage(true)}
+                  className="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 font-semibold shadow-lg"
+                  variant="secondary" // Putih/Grey cerah agar kontras dengan foto
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Ganti Foto
+                </Button>
+              </div>
+
+              {/* Badge/Label Info (Optional - agar user tahu ini foto lama) */}
+              <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">
+                Foto Saat Ini
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* --- BAGIAN IMAGE END --- */}
 
         {availableTypes ? (
           <FormField

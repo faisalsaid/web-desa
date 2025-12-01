@@ -137,10 +137,11 @@ export async function getAllStaffPositionsTypes() {
   // Custom priority mapping
   const priority: Record<StaffPositionType, number> = {
     TOP: 1,
-    MIDDLE: 2,
-    LOWER: 3,
-    STAFF: 4,
-    OTHER: 5,
+    MIDDLEUP: 2,
+    MIDDLE: 3,
+    LOWER: 4,
+    STAFF: 5,
+    OTHER: 6,
   };
 
   // Sort result based on custom priority
@@ -233,60 +234,84 @@ export async function updateStaffPosition(
 
 // HANDLE CREATE STAFF =============================================================================
 
+// const parsed: ZodSafeParseResult<{
+//     positionTypeId: number;
+//     name: string;
+//     startDate: Date;
+//     residentId?: number | null | undefined;
+//     endDate?: Date | null | undefined;
+//     isActive?: boolean | undefined;
+//     image?: string | File | null | undefined;
+// }>
+
 export async function createStaff(input: CreateStaffInput) {
-  // 1. Validasi Zod
-  const data = createStaffSchema.parse(input);
+  console.log(input);
 
-  // 2. Ambil info jabatan
-  const position = await prisma.staffPosition.findUnique({
-    where: { id: data.positionTypeId },
-    select: { isUnique: true },
-  });
+  const formData = new FormData();
 
-  if (!position) {
-    throw new Error('Jabatan tidak ditemukan.');
+  const { image, ...rest } = input;
+
+  if (image instanceof File) {
+    formData.append('file', image);
   }
 
-  // 3. Jika jabatan tunggal → cek apakah sudah ada staff aktif
-  if (position.isUnique) {
-    const existingActive = await prisma.staff.findFirst({
-      where: {
-        positionTypeId: data.positionTypeId,
-        isActive: true,
-      },
-      select: { id: true, residentId: true },
-    });
+  const file = formData.get('file') as File | null;
 
-    if (existingActive) {
-      return {
-        success: false,
-        message:
-          'Jabatan ini hanya boleh diisi oleh satu orang dan sudah terisi.',
-      };
-    }
-  }
+  console.log(rest);
+  console.log(file);
 
-  // 4. Jika lulus, create staff
-  const created = await prisma.staff.create({
-    data: {
-      residentId: data.residentId,
-      positionTypeId: data.positionTypeId,
-      startDate: new Date(data.startDate),
-      endDate: data.endDate ? new Date(data.endDate) : null,
-      isActive: data.isActive ?? true,
-      name: data.name,
-      imageUrl: data.imageUrl,
-    },
-  });
+  // // 1. Validasi Zod
+  // const data = createStaffSchema.parse(input);
 
-  return {
-    success: true,
-    message: 'Perangkatt berhasil ditambahkan.',
-    data: created,
-  };
+  // // 2. Ambil info jabatan
+  // const position = await prisma.staffPosition.findUnique({
+  //   where: { id: data.positionTypeId },
+  //   select: { isUnique: true },
+  // });
+
+  // if (!position) {
+  //   throw new Error('Jabatan tidak ditemukan.');
+  // }
+
+  // // 3. Jika jabatan tunggal → cek apakah sudah ada staff aktif
+  // if (position.isUnique) {
+  //   const existingActive = await prisma.staff.findFirst({
+  //     where: {
+  //       positionTypeId: data.positionTypeId,
+  //       isActive: true,
+  //     },
+  //     select: { id: true, residentId: true },
+  //   });
+
+  //   if (existingActive) {
+  //     return {
+  //       success: false,
+  //       message:
+  //         'Jabatan ini hanya boleh diisi oleh satu orang dan sudah terisi.',
+  //     };
+  //   }
+  // }
+
+  // // 4. Jika lulus, create staff
+  // const created = await prisma.staff.create({
+  //   data: {
+  //     residentId: data.residentId,
+  //     positionTypeId: data.positionTypeId,
+  //     startDate: new Date(data.startDate),
+  //     endDate: data.endDate ? new Date(data.endDate) : null,
+  //     isActive: data.isActive ?? true,
+  //     name: data.name,
+  //   },
+  // });
+
+  // return {
+  //   success: true,
+  //   message: 'Perangkatt berhasil ditambahkan.',
+  //   data: created,
+  // };
 }
 
-// for options resident
+// for options resident =============================================================================
 export async function getResidentsToStaffFormOptions() {
   return prisma.resident.findMany({
     select: {
@@ -397,8 +422,7 @@ export async function updateStaffAction(input: Partial<UpdateStaffInput>) {
         residentId: data.residentId,
         positionTypeId: data.positionTypeId,
         name: data.name,
-        imageUrl: data.imageUrl,
-        startDate: new Date(data.startDate),
+        startDate: new Date(data.startDate as Date),
         endDate: data.endDate ? new Date(data.endDate) : null,
         isActive: data.isActive ?? true,
       },

@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/tooltip';
 import DeleteStaffButton from '../../DeleteStaffButton';
 import UpdatePerangkatButton from '../../UpdatePerangkatButton';
+import { url } from 'inspector';
 
 export const staffColumns: ColumnDef<StaffType>[] = [
   {
@@ -81,6 +82,9 @@ export const staffColumns: ColumnDef<StaffType>[] = [
 
       const formData = {
         id: data.id,
+        urlId: data.urlId,
+        imageUrl: data.imageUrl,
+        imageKey: data.imageKey,
         residentId: data.residentId,
         name: data.name,
         residentName: data?.resident?.fullName,

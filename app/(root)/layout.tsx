@@ -9,9 +9,6 @@ export default async function RootLayout({
 }>) {
   const villageInfo = await getVillageConfig();
   const headOfVIllage = await getHeadOfVillage();
-
-  console.log('LAYOUT', headOfVIllage);
-
   return (
     <div className="relative min-h-screen ">
       <Header

@@ -42,7 +42,7 @@ export default async function ApbdesaPage({
 
   const recentYear = yearListOptions.sort((a, b) => b.year - a.year)[0];
   const data = await getBugetYearReport(yearId ? yearId : 0);
-  console.log(data);
+  // console.log(data);
 
   const apbdesa = data[0];
 

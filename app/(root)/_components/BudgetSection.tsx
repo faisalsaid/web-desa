@@ -1,10 +1,15 @@
+'use client';
+
 import { IconType } from 'react-icons';
 
 import { GiReceiveMoney, GiPayMoney } from 'react-icons/gi';
 import { MdOutlinePayments } from 'react-icons/md';
 import { FaMoneyBills } from 'react-icons/fa6';
+import { BudgetYearReportResponse } from '../_lib/bugutYear.type';
 
-const BudgetSection = () => {
+const BudgetSection = ({ report }: { report: BudgetYearReportResponse }) => {
+  console.log(report);
+
   const data = [
     { title: 'Pendapatan', value: 'Rp. 4.802.205.800,-', icon: GiReceiveMoney },
     { title: 'Penerimaan', value: 'Rp. 86.205.800,-', icon: FaMoneyBills },

@@ -9,7 +9,6 @@ import { PercentageDonut } from '../revenue/_components/RevenueSummary';
 import { ArrowBigDownDash, ArrowBigUpDash } from 'lucide-react';
 
 const APBDesaSummary = ({ apbdesa }: { apbdesa: BudgetYearSummary }) => {
-  console.log(apbdesa);
   return (
     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
       <ContentCard>

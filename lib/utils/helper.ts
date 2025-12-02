@@ -48,3 +48,17 @@ export function formatCurrencyShort(value: string | number): string {
     return num.toString();
   }
 }
+
+export function toInternationalPhone(number: string) {
+  if (!number) return '';
+
+  // hapus spasi, tanda baca, dll
+  number = number.replace(/\D/g, '');
+
+  // jika sudah international (+62 atau 62)
+  if (number.startsWith('62')) return number;
+  if (number.startsWith('0')) return '62' + number.slice(1);
+
+  // fallback (misal nomor aneh)
+  return number;
+}

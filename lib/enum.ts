@@ -1,6 +1,13 @@
 import { RevenueCategoryEnum } from '@/app/(ControlPanel)/apbdesa/revenue/_lib/revenue.zod';
 import { FamilyRelationshipEnum } from '@/app/(ControlPanel)/families/_lib/families.zod';
-import { ExpenseSector, StaffPositionType } from '@prisma/client';
+import {
+  Education,
+  ExpenseSector,
+  MaritalStatus,
+  Occupation,
+  Religion,
+  StaffPositionType,
+} from '@prisma/client';
 
 type FamilyRelationship = keyof typeof FamilyRelationshipEnum.enum;
 
@@ -8,7 +15,7 @@ type RevenueCategory = keyof typeof RevenueCategoryEnum.enum;
 // type Ex = keyof typeof RevenueCategoryEnum.enum;
 
 // Mapping enum ke label bahasa Indonesia
-export const religionLabels: Record<string, string> = {
+export const religionLabels: Record<Religion, string> = {
   ISLAM: 'Islam',
   CHRISTIAN: 'Kristen',
   CATHOLIC: 'Katolik',
@@ -18,7 +25,7 @@ export const religionLabels: Record<string, string> = {
   OTHER: 'Kepercayaan',
 };
 
-export const educationLabels: Record<string, string> = {
+export const educationLabels: Record<Education, string> = {
   NONE: 'Tidak Sekolah',
   ELEMENTARY: 'SD',
   JUNIOR_HIGH: 'SMP',
@@ -33,7 +40,7 @@ export const educationLabels: Record<string, string> = {
   OTHER: 'Lainnya',
 };
 
-export const occupationLabels: Record<string, string> = {
+export const occupationLabels: Record<Occupation, string> = {
   FARMER: 'Petani',
   FISHERMAN: 'Nelayan',
   TRADER: 'Pedagang',
@@ -50,7 +57,7 @@ export const occupationLabels: Record<string, string> = {
   OTHER: 'Lainnya',
 };
 
-export const maritalStatusLabels: Record<string, string> = {
+export const maritalStatusLabels: Record<MaritalStatus, string> = {
   SINGLE: 'Belum Menikah',
   MARRIED: 'Menikah',
   DIVORCED: 'Cerai',

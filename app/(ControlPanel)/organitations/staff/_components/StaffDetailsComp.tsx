@@ -17,10 +17,10 @@ import ImageWrapper from '@/components/ImageWraper';
 import { FaWhatsapp, FaWhatsappSquare } from 'react-icons/fa';
 
 const StaffDetailsComp = ({ staff }: { staff: TStaff }) => {
-  console.log(staff);
+  console.log(staff.resident);
 
   return (
-    <Card className="group relative overflow-hidden border-0 bg-background shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-zinc-900">
+    <Card className="group max-h-fit relative overflow-hidden border-0 bg-background shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-zinc-900">
       {/* Decorative Gradient Background */}
       <div className="h-24 w-full bg-linear-to-r from-violet-500 to-fuchsia-500 opacity-80 transition-all duration-500 group-hover:opacity-100" />
 
@@ -79,10 +79,10 @@ const StaffDetailsComp = ({ staff }: { staff: TStaff }) => {
         >
           {staff.resident?.phone && (
             <Link
-              href={`https://wa.me${staff.resident?.phone}`}
+              href={`https://wa.me/${staff.resident?.phone}`}
               target="_blank"
             >
-              <FaWhatsapp className="h-5 w-5" /> <p>{staff.resident?.phone}</p>
+              <FaWhatsapp className="h-5 w-5" />
             </Link>
           )}
         </Button>

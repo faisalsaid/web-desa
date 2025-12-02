@@ -1,47 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import { ensureAdminUser } from './lib/ensureAdminUser';
 
 export async function middleware(req: NextRequest) {
-  // ensureAdminUser();
   const { pathname } = req.nextUrl;
 
-  // Halaman login/register tidak termasuk protected
-  const authRoutes = ['/auth/login', '/auth/register'];
-  if (authRoutes.includes(pathname)) {
-    return NextResponse.next();
-  }
+  // 1. Definisikan Route
+  // const authRoutes = ['/auth/login', '/auth/register'];
+  // const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isAuthRoute = pathname.startsWith('/auth');
 
-  // Ambil token
-  let token = null;
-  try {
-    token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === 'production',
-    });
-  } catch (err) {
-    console.error('Failed to get token:', err);
-  }
-
-  // ❌ Logout otomatis jika token tidak ada atau user dihapus
-  if (!token?.role || token.deleted) {
-    const res = NextResponse.redirect(
-      new URL('/auth/login?expired=1', req.url),
-    );
-
-    // Hapus semua cookie authjs
-    res.cookies.delete('__Secure-authjs.session-token');
-    res.cookies.delete('__Secure-authjs.callback-url');
-    res.cookies.delete('__Host-authjs.csrf-token');
-
-    return res;
-  }
-
-  const userRole = token.role;
-
-  // Role-based access
+  // Route yang dilindungi berdasarkan Role
   const protectedRoutes: Record<string, string[]> = {
     '/dashboard': ['ADMIN', 'OPERATOR', 'EDITOR'],
     '/users': ['ADMIN', 'OPERATOR'],
@@ -54,9 +23,67 @@ export async function middleware(req: NextRequest) {
     '/assets': ['ADMIN', 'OPERATOR', 'EDITOR'],
   };
 
-  for (const [prefix, roles] of Object.entries(protectedRoutes)) {
-    if (pathname.startsWith(prefix) && !roles.includes(userRole)) {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
+  // 2. Ambil Token
+  // Secret wajib ada, fallback ke string kosong untuk mencegah crash saat build tapi error runtime jika env missing
+  const secret = process.env.NEXTAUTH_SECRET;
+
+  let token = null;
+  try {
+    token = await getToken({
+      req,
+      secret,
+    });
+  } catch (err) {
+    console.error('Middleware Token Error:', err);
+  }
+
+  const isAuthenticated = !!token;
+
+  // 3. Logic untuk Halaman Auth (Login/Register)
+  if (isAuthRoute) {
+    // Jika user SUDAH login tapi akses halaman login, lempar ke dashboard
+    if (isAuthenticated) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+    // Jika belum login, biarkan akses halaman login
+    return NextResponse.next();
+  }
+
+  // 4. Logic Validasi Token (Jika user tidak login atau token invalid)
+  // Cek token.deleted (asumsi flag ini diset di session callback)
+  if (!isAuthenticated || token?.deleted) {
+    const loginUrl = new URL('/auth/login', req.url);
+    loginUrl.searchParams.set('expired', '1'); // Beri tahu user kenapa logout
+
+    // Redirect ke login
+    const res = NextResponse.redirect(loginUrl);
+
+    // HAPUS COOKIES (Dynamic Name Handling)
+    // NextAuth v4 menggunakan prefix __Secure- hanya di HTTPS
+    const isSecure = process.env.NODE_ENV === 'production';
+    const cookiePrefix = isSecure ? '__Secure-' : '';
+
+    // Nama cookie default NextAuth v4
+    res.cookies.delete(`${cookiePrefix}next-auth.session-token`);
+    res.cookies.delete(`${cookiePrefix}next-auth.callback-url`);
+    res.cookies.delete(`${cookiePrefix}next-auth.csrf-token`);
+
+    // Jaga-jaga jika pakai Auth.js v5 (beta) atau nama custom
+    res.cookies.delete('authjs.session-token');
+    res.cookies.delete('__Secure-authjs.session-token');
+
+    return res;
+  }
+
+  // 5. Role-Based Access Control (RBAC)
+  const userRole = token?.role as string;
+
+  for (const [prefix, allowedRoles] of Object.entries(protectedRoutes)) {
+    if (pathname.startsWith(prefix)) {
+      if (!allowedRoles.includes(userRole)) {
+        // User login tapi role tidak cukup
+        return NextResponse.redirect(new URL('/unauthorized', req.url));
+      }
     }
   }
 
@@ -65,17 +92,14 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/village/:path*',
-    '/residents/:path*',
-    '/families/:path*',
-    '/users/:path*',
-    '/settings/:path*',
-    '/organitations/:path*',
-    '/apbdesa/:path*',
-    '/assets/:path*',
-    '/auth/:path*',
-    // jangan include /auth/:path* untuk mencegah loop
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (images, etc)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',
   ],
-  // runtime: 'nodejs', // wajib agar secureCookie berjalan di Vercel
 };

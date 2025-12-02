@@ -1,6 +1,6 @@
 import AbstractionSection from './_components/AbstractionSection';
 import BudgetRealizationSection from './_components/BudgetRealizationSection';
-import BudgetSection from './_components/BudgetSection';
+// import BudgetSection from './_components/BudgetSection';
 import FeatureSection from './_components/FeatureSection';
 import GalerySection from './_components/GalerySection';
 import HeroSection from './_components/HeroSection';

@@ -1,4 +1,4 @@
-import { RevenueCategory, ExpenseSector, FinancingType } from '@prisma/client';
+import { RevenueCategory, ExpenseSector } from '@prisma/client';
 
 // 1. Base Type untuk pasangan Anggaran vs Realisasi (dipakai berulang)
 export interface BudgetProgress {

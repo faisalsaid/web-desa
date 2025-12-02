@@ -8,12 +8,7 @@ import {
 // import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getImageUrl } from '@/lib/b2storage.action';
 
-import {
-  PrismaClient,
-  RevenueCategory,
-  ExpenseSector,
-  FinancingType,
-} from '@prisma/client';
+import { RevenueCategory, ExpenseSector, FinancingType } from '@prisma/client';
 import { BudgetYearReportResponse } from './bugutYear.type';
 
 // ✅ Server Action
@@ -100,7 +95,7 @@ export async function getCurrentBudgetYearSummaryReport(): Promise<BudgetYearRep
       }),
     ]);
 
-    const toNum = (val: any) => Number(val || 0);
+    const toNum = (val: unknown) => Number(val || 0);
 
     // --- LOGIKA MAPPING (Sama seperti sebelumnya) ---
 

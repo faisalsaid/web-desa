@@ -22,7 +22,7 @@ export default async function RootLayout({
       /> */}
       <div className="container mx-auto">{children}</div>
       <Footer />
-      <div className="sticky bottom-0 w-full p-2 z-50 md:hidden">
+      <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
         <MobileNavigation />
       </div>
     </div>

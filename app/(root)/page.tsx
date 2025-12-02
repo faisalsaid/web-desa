@@ -23,10 +23,10 @@ export default async function Home() {
   const apbdesaReport = await getCurrentBudgetYearSummaryReport();
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* <HeroSection /> */}
       <HeroComp />
-      <div className="p-4 space-y-12">
+      <div className="p-4 space-y-8">
         <FeatureSection />
         <WelcomeSentenceSection />
         <MapLocationSection />

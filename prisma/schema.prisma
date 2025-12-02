@@ -373,7 +373,7 @@ model StaffPosition {
 
 model Staff {
   id               Int               @id @default(autoincrement())
-  urlId            String            @unique @default(cuid()) // ID untuk URL
+  urlId            String?            @unique @default(cuid()) // ID untuk URL
   name             String            @db.VarChar(100)
   imageUrl         String?           @db.VarChar(255)
   imageKey         String?           @db.VarChar(255)

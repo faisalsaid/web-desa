@@ -48,3 +48,22 @@ export const GetVillageConfigQuery =
 export type GetVillageConfigType = Prisma.VillageConfigGetPayload<
   typeof GetVillageConfigQuery
 >;
+
+export const QGetAllStaff = Prisma.validator<Prisma.StaffFindManyArgs>()({
+  where: {
+    isActive: { equals: true },
+    positionType: {
+      positionType: { not: 'TOP' },
+    },
+  },
+  include: {
+    positionType: true,
+  },
+  orderBy: {
+    positionType: {
+      positionType: 'asc',
+    },
+  },
+});
+
+export type TStaffForHome = Prisma.StaffGetPayload<typeof QGetAllStaff>;

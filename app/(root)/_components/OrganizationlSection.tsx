@@ -20,9 +20,11 @@ import { Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
+import { TStaffForHome } from '../_lib/home.type';
+import ImageWrapper from '@/components/ImageWraper';
 
-const OrganizationlSection = () => {
+const OrganizationlSection = ({ allStaff }: { allStaff: TStaffForHome[] }) => {
   const [nilai, setNilai] = useState<number>(2);
 
   useEffect(() => {
@@ -77,9 +79,9 @@ const OrganizationlSection = () => {
             momentum: false,
           }}
         >
-          {Array.from({ length: 7 }, (_, i) => (
-            <SwiperSlide key={i}>
-              <ProfileCard />
+          {allStaff.map((staff) => (
+            <SwiperSlide key={staff.id}>
+              <ProfileCard staff={staff} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -95,21 +97,16 @@ const OrganizationlSection = () => {
 
 export default OrganizationlSection;
 
-const ProfileCard = () => {
-  const source =
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+const ProfileCard = ({ staff }: { staff: TStaffForHome }) => {
   return (
     <div className="bg-green-500/20 rounded-xl">
       <div className="p-2 rounded-lg overflow-hidden w-full">
-        <div className="w-full min-h-48 bg-green-700/20 rounded-lg relative overflow-hidden">
-          {source ? (
-            <Image
-              src={source}
-              alt="Portrait"
-              // width={300}
-              // height={700}
-              className="object-cover w-full h-full"
-              fill
+        <div className="w-full h-48 bg-green-700/20 rounded-lg relative overflow-hidden">
+          {staff.imageUrl !== '' ? (
+            <ImageWrapper
+              src={staff.imageUrl as string}
+              alt={`foto profil ${staff.name}`}
+              objectFit="cover"
             />
           ) : (
             <ImageIcon size={50} className="text-amber-800" />
@@ -117,8 +114,8 @@ const ProfileCard = () => {
         </div>
       </div>
       <div className="text-center p-2 ">
-        <p className="text-lg">Jhon Doe</p>
-        <p className="text-sm">Sekretaris Desa</p>
+        <p className="line-clamp-1">{staff.name}</p>
+        <p className="text-xs">{staff.positionType.name}</p>
       </div>
     </div>
   );

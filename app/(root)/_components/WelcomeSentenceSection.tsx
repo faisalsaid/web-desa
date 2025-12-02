@@ -3,6 +3,7 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
 import { useVillageStore } from '@/store/villageStore';
+import ImageWrapper from '@/components/ImageWraper';
 
 const WelcomeSentenceSection = () => {
   const village = useVillageStore((state) => state.village);
@@ -11,13 +12,20 @@ const WelcomeSentenceSection = () => {
   return (
     <div className="space-y-4 md:flex gap-4">
       <div className="flex items-center justify-center md:w-1/3">
-        <Image
+        <div className="h-56 w-full overflow-hidden rounded-2xl">
+          <ImageWrapper
+            src={headOfVillage?.imageUrl as string}
+            alt="kepala desa "
+            objectFit="cover"
+          />
+        </div>
+        {/* <Image
           className=""
           src={'/img/kepala-desa.png'}
           alt="Logo Desa Torino"
           width={200}
           height={200}
-        />
+        /> */}
       </div>
       <div className="space-y-4 md:w-2/3">
         <p className="text-center text-lg font-semibold text-green-600 sm:text-3xl">

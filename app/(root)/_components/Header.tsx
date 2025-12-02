@@ -16,6 +16,7 @@ export type HeadOfVillage = {
   createdAt: Date;
   updatedAt: Date;
   imageUrl: string | null;
+  imageKey: string | null;
   residentId: number | null;
   positionTypeId: number;
   startDate: Date;

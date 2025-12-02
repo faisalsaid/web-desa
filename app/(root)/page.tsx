@@ -11,8 +11,11 @@ import ShopSection from './_components/ShopSection';
 import TourSection from './_components/TourSection';
 
 import WelcomeSentenceSection from './_components/WelcomeSentenceSection';
+import { getAllStaff } from './_lib/home.actions';
 
 export default async function Home() {
+  const allStaff = await getAllStaff();
+
   return (
     <div className="space-y-12">
       <HeroSection />
@@ -20,7 +23,7 @@ export default async function Home() {
         <FeatureSection />
         <WelcomeSentenceSection />
         <MapLocationSection />
-        <OrganizationlSection />
+        <OrganizationlSection allStaff={allStaff} />
         <AbstractionSection />
         <BudgetSection />
         <NewsSection />

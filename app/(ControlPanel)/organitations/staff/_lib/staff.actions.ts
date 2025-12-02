@@ -119,10 +119,14 @@ export async function getStaffDetails(
     where: { urlId },
     ...GetStaffQuery,
   });
+
   if (staff) {
+    const signedUrl = staff.imageKey ? await getImageUrl(staff.imageKey) : null;
+
+    const data = { ...staff, imageUrl: signedUrl };
     return {
       success: true,
-      data: staff as TStaff,
+      data: data as TStaff,
     };
   } else {
     return {

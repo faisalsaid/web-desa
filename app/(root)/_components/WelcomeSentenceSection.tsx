@@ -137,7 +137,7 @@ const WelcomeSentenceSection = () => {
             {/* Signature / Footer Kecil */}
             <div className="pt-2 flex items-center justify-between md:justify-start gap-4 border-t border-border mt-4">
               <div className="text-sm text-muted-foreground italic">
-                "Terus Melayani dengan Hati"
+                {`"Terus Melayani dengan Hati"`}
               </div>
               {/* Bisa tambah Tanda Tangan digital disini jika ada gambarnya */}
             </div>

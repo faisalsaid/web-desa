@@ -15,7 +15,7 @@ import {
 
 // Swiper Imports
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Autoplay } from 'swiper/modules';
 import { Swiper as SwiperType } from 'swiper'; // Type definition
 import 'swiper/css';
 import 'swiper/css/navigation';

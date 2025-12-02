@@ -14,12 +14,7 @@ import {
 
 // Swiper Imports
 import { Swiper, SwiperSlide } from 'swiper/react';
-import {
-  Navigation,
-  Pagination,
-  Autoplay,
-  EffectCoverflow,
-} from 'swiper/modules';
+import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -174,6 +169,7 @@ interface PotencyData {
   category: string;
   description: string;
   image: string;
+  // eslint-disable-next-line
   icon: any;
 }
 

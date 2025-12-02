@@ -247,6 +247,7 @@ const GallerySection = () => {
 export default GallerySection;
 
 // --- Gallery Card (Grid Logic) ---
+// eslint-disable-next-line
 const GalleryCard = ({ item, onClick }: { item: any; onClick: () => void }) => {
   // Menentukan Span (Ukuran Kotak)
   // row-span = tinggi, col-span = lebar

@@ -12,13 +12,12 @@ import {
   Clock,
   Twitter,
   Youtube,
-  Globe,
   ArrowRight,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button'; // Optional: Jika pakai Shadcn Button
+// import { Button } from '@/components/ui/button'; // Optional: Jika pakai Shadcn Button
 
 const Footer = () => {
-  const { village, headOfVillage } = useVillageStore((state) => state);
+  const { village } = useVillageStore((state) => state);
 
   // Fallback data jika store belum siap/kosong
   const data = {
@@ -204,6 +203,7 @@ const SocialButton = ({
   href,
   label,
 }: {
+  // eslint-disable-next-line
   icon: any;
   href: string;
   label: string;

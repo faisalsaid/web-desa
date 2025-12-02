@@ -7,7 +7,6 @@ import {
   ShoppingBag,
   Store,
   Star,
-  ArrowRight,
   ChevronLeft,
   ChevronRight,
   MessageCircle,

@@ -1,4 +1,4 @@
-import { HeadOfVillage } from '@/app/(root)/_components/Header';
+import { HeadOfVillage } from '@/app/(root)/_components/HeaderComp';
 import { GetVillageConfigType } from '@/app/(root)/_lib/home.type';
 import { create } from 'zustand';
 

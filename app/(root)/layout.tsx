@@ -1,8 +1,8 @@
-import Header, { HeadOfVillage } from '@/app/(root)/_components/Header';
+// import { HeadOfVillage } from '@/app/(root)/_components/Header';
 import MobileNavigation from './_components/MobileNavigation';
 import Footer from './_components/Footer';
 import { getHeadOfVillage, getVillageConfig } from './_lib/home.actions';
-import { HeaderComp } from './_components/HeaderComp';
+import { HeaderComp, HeadOfVillage } from './_components/HeaderComp';
 export default async function RootLayout({
   children,
 }: Readonly<{

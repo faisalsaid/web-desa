@@ -4,6 +4,7 @@ import { getStaffDetails } from '../_lib/staff.actions';
 import { redirect } from 'next/navigation';
 import StaffDetailsComp from '../_components/StaffDetailsComp';
 import ResidentDetailView from '../../../residents/_components/ResidentDetailView';
+import UpdatePerangkatButton from '../../_components/UpdatePerangkatButton';
 
 interface Params {
   staffId: string;
@@ -28,6 +29,7 @@ const StaffDetailPage = async ({ params }: Props) => {
     <div className="space-y-4">
       <ContentCard className="flex gap-4 items-center justify-between">
         <h1 className="text-xl font-semibold">Perangkat desa</h1>
+        <UpdatePerangkatButton staffId={staffDetail.data?.id as number} />
       </ContentCard>
       <div className="grid gap-4 lg:grid-cols-3">
         <StaffDetailsComp staff={staffDetail.data!} />

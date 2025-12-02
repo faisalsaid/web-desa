@@ -3,7 +3,8 @@ import BudgetRealizationSection from './_components/BudgetRealizationSection';
 // import BudgetSection from './_components/BudgetSection';
 import FeatureSection from './_components/FeatureSection';
 import GalerySection from './_components/GalerySection';
-import HeroSection from './_components/HeroSection';
+import { HeroComp } from './_components/HeroComp';
+// import HeroSection from './_components/HeroSection';
 import MapLocationSection from './_components/MapLocationSection';
 import NewsSection from './_components/NewsSection';
 import OrganizationlSection from './_components/OrganizationlSection';
@@ -23,7 +24,8 @@ export default async function Home() {
 
   return (
     <div className="space-y-12">
-      <HeroSection />
+      {/* <HeroSection /> */}
+      <HeroComp />
       <div className="p-4 space-y-12">
         <FeatureSection />
         <WelcomeSentenceSection />

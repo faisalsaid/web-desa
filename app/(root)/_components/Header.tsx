@@ -31,19 +31,19 @@ const Header = ({
   initialVillage: GetVillageConfigType | null;
   initialHeadOfVillage: HeadOfVillage;
 }) => {
-  const setVillage = useVillageStore((state) => state.setVillage);
-  const setHeadOfVillage = useVillageStore((state) => state.setHeadOfVillage);
+  // const setVillage = useVillageStore((state) => state.setVillage);
+  // const setHeadOfVillage = useVillageStore((state) => state.setHeadOfVillage);
 
-  const village = useVillageStore((state) => state.village);
+  // const village = useVillageStore((state) => state.village);
 
-  useEffect(() => {
-    if (initialVillage) setVillage(initialVillage);
-    if (initialHeadOfVillage) setHeadOfVillage(initialHeadOfVillage);
-  }, [initialVillage, initialHeadOfVillage, setVillage, setHeadOfVillage]);
+  // useEffect(() => {
+  //   if (initialVillage) setVillage(initialVillage);
+  //   if (initialHeadOfVillage) setHeadOfVillage(initialHeadOfVillage);
+  // }, [initialVillage, initialHeadOfVillage, setVillage, setHeadOfVillage]);
 
   return (
     <header className="bg-green-600 sticky z-50 top-0">
-      <div className="container mx-auto flex items-center justify-between p-4  text-white">
+      {/* <div className="container mx-auto flex items-center justify-between p-4  text-white">
         <div className="flex gap-4 items-center justify-center">
           <div>
             <Image
@@ -83,7 +83,7 @@ const Header = ({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </header>
   );
 };

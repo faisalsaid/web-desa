@@ -6,15 +6,12 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import Link from 'next/link';
-
 import { TStaff } from '../_lib/staff.type';
 import ImageWrapper from '@/components/ImageWraper';
-import { FaWhatsapp, FaWhatsappSquare } from 'react-icons/fa';
+import { FaWhatsapp } from 'react-icons/fa';
 
 const StaffDetailsComp = ({ staff }: { staff: TStaff }) => {
   console.log(staff.resident);

@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { getResidentDetails } from '../_lib/residents.actions';
 import ContentCard from '../../_component/ContentCard';
 import ResidentDetails from '../_components/ResidentDetails';
@@ -23,7 +23,9 @@ const ResidentDetailPage = async ({ params }: ResidentDetails) => {
   const residentDetails = await getResidentDetails(residentid);
   const imageUrl = await getImageUrl(residentDetails?.imageKey || null);
 
-  if (!residentDetails) notFound();
+  if (!residentDetails) {
+    redirect('/404');
+  }
   residentDetails.imageUrl = imageUrl;
 
   return (

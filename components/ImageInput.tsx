@@ -1,13 +1,13 @@
 'use client';
 
 import React, {
-  useCallback,
+  // useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
+  // useState,
 } from 'react';
-import { UploadCloud, X, Image as ImageIcon } from 'lucide-react';
+import { UploadCloud, X } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,10 +63,10 @@ export function ImageInput({
     onChange(null);
   };
 
-  const triggerUpload = (e: React.MouseEvent) => {
-    e.preventDefault();
-    inputRef.current?.click();
-  };
+  // const triggerUpload = (e: React.MouseEvent) => {
+  //   e.preventDefault();
+  //   inputRef.current?.click();
+  // };
 
   return (
     <div className={cn('w-full space-y-4', className)}>

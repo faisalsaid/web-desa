@@ -61,8 +61,6 @@ import {
   religionLabels,
 } from '@/lib/enum';
 import { ImageInput } from '@/components/ImageInput';
-import { register } from 'module';
-import { init } from 'next/dist/compiled/webpack/webpack';
 import ImageWrapper from '@/components/ImageWraper';
 import { useState } from 'react';
 

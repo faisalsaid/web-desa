@@ -31,7 +31,6 @@ import { Autocomplete } from '@/components/autocomplete';
 import {
   createStaff,
   searchResidentToStaff,
-  updateStaffAction,
 } from '../_lib/organitatons.action';
 import {
   Popover,
@@ -185,8 +184,8 @@ export function StaffForm({
   const isSubmitting = form.formState.isSubmitting;
   const isSubmitted = form.formState.isSubmitted;
 
-  const onError = (errors: any) => {
-    // console.log('❌ VALIDATION ERRORS:', errors);
+  const onError = (errors: unknown) => {
+    console.log('❌ VALIDATION ERRORS:', errors);
     toast.error('Form tidak valid, silakan cek inputan yang berwarna merah');
   };
 

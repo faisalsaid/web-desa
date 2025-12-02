@@ -10,7 +10,7 @@ import {
 import { getCurrentUser } from '@/app/_lib/root.action';
 import { getResidentDetailQuery, ResidentType } from './residents.type';
 import { Prisma } from '@prisma/client';
-import z, { ZodError } from 'zod';
+import { ZodError } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { b2UploadImage } from '@/lib/b2storage.action';
 
@@ -23,6 +23,7 @@ export async function createResident(
   input: ResidentCreateInput,
   formData: FormData,
 ) {
+  // eslint-disable-next-line
   const { image, ...rest } = input;
 
   const user = await getCurrentUser();
@@ -106,6 +107,7 @@ export async function updateResident(
     throw new Error('Unauthorized');
   }
 
+  // eslint-disable-next-line
   const { image, ...rest } = input;
   const file = formData.get('file') as File | null;
 

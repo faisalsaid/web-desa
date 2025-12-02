@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import StaffDetailsComp from '../_components/StaffDetailsComp';
 import ResidentDetailView from '../../../residents/_components/ResidentDetailView';
 import UpdatePerangkatButton from '../../_components/UpdatePerangkatButton';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getImageUrl } from '@/lib/b2storage.action';
 import { TStaff } from '../_lib/staff.type';
 import { Resident } from '@prisma/client';

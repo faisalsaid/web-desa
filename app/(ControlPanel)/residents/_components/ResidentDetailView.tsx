@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { JSX } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -39,33 +38,58 @@ import {
   religionLabels,
 } from '@/lib/enum';
 
-// Helper Component untuk Item Info
-const InfoItem = ({ icon: Icon, label, value, className }: any) => (
-  <div className={`flex items-start gap-3 ${className}`}>
+// --------------------------------------------------
+// Typed Props for InfoItem (no `any`)
+// icon: an SVG React component (lucide icons fit this signature)
+// value: ReactNode so it can be string, number, element, etc.
+// className: optional string
+// --------------------------------------------------
+interface InfoItemProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  label: string;
+  value?: React.ReactNode;
+  className?: string;
+}
+
+const InfoItem: React.FC<InfoItemProps> = ({
+  icon: Icon,
+  label,
+  value,
+  className,
+}) => (
+  <div className={`flex items-start gap-3 ${className ?? ''}`}>
     <div className="mt-0.5 rounded-lg bg-primary/10 p-2 text-primary">
       <Icon className="h-4 w-4" />
     </div>
     <div>
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className="text-sm font-semibold text-foreground">{value || '-'}</p>
+      <p className="text-sm font-semibold text-foreground">{value ?? '-'}</p>
     </div>
   </div>
 );
 
+// --------------------------------------------------
+// ResidentDetailView props: resident typed from Prisma's Resident
+// Return JSX.Element
+// --------------------------------------------------
 export default function ResidentDetailView({
   resident,
 }: {
   resident: Resident;
-}) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
+}): JSX.Element {
+  const formatDate = (dateInput?: string | Date | null) => {
+    if (!dateInput) return '-';
+    const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+    if (Number.isNaN(d.getTime())) return '-';
+    return d.toLocaleDateString('id-ID', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     });
   };
 
-  console.log(resident.imageUrl);
+  // optional debug — hapus kalau sudah tidak perlu
+  // console.log(resident.imageUrl);
 
   return (
     <div className="min-h-screen bg-slate-50  dark:bg-zinc-950">
@@ -85,20 +109,11 @@ export default function ResidentDetailView({
                       overflow-hidden border-[5px]"
               >
                 <ImageWrapper
-                  src={resident.imageUrl as string}
+                  src={(resident.imageUrl as string) ?? ''}
                   alt={`Foto profil ${resident.fullName}`}
                   objectFit="cover"
                 />
               </div>
-              {/* <Avatar className="h-32 w-32 border-[6px] border-white shadow-xl dark:border-zinc-900">
-                <AvatarImage
-                  src={resident.imageUrl as string}
-                  className="object-cover"
-                />
-                <AvatarFallback className="text-3xl font-bold">
-                  {resident.fullName.charAt(0)}
-                </AvatarFallback>
-              </Avatar> */}
             </div>
 
             {/* Identity Info */}
@@ -239,7 +254,7 @@ export default function ResidentDetailView({
                   icon={Calendar}
                   label="Tempat, Tanggal Lahir"
                   value={`${resident.birthPlace}, ${formatDate(
-                    resident.birthDate?.toString() as string,
+                    resident.birthDate as unknown as string,
                   )}`}
                   className="sm:col-span-2"
                 />

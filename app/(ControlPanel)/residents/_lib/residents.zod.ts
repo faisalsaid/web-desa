@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { ur } from 'zod/v4/locales';
 
 // ENUMS sesuai Prisma model
 export const Gender = z.enum(['MALE', 'FEMALE']);

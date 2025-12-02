@@ -1,7 +1,7 @@
 'use client';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Image from 'next/image';
+
 import { useVillageStore } from '@/store/villageStore';
 import ImageWrapper from '@/components/ImageWraper';
 
@@ -19,13 +19,6 @@ const WelcomeSentenceSection = () => {
             objectFit="cover"
           />
         </div>
-        {/* <Image
-          className=""
-          src={'/img/kepala-desa.png'}
-          alt="Logo Desa Torino"
-          width={200}
-          height={200}
-        /> */}
       </div>
       <div className="space-y-4 md:w-2/3">
         <p className="text-center text-lg font-semibold text-green-600 sm:text-3xl">

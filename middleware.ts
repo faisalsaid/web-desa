@@ -5,12 +5,11 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1. Definisikan Route
-  // const authRoutes = ['/auth/login', '/auth/register'];
-  // const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  // 1. Tentukan Route Auth (Login/Register/Forgot Pass)
+  // Menggunakan startsWith '/auth' agar mencakup sub-path
   const isAuthRoute = pathname.startsWith('/auth');
 
-  // Route yang dilindungi berdasarkan Role
+  // 2. Daftar Route Protected & Role
   const protectedRoutes: Record<string, string[]> = {
     '/dashboard': ['ADMIN', 'OPERATOR', 'EDITOR'],
     '/users': ['ADMIN', 'OPERATOR'],
@@ -23,15 +22,21 @@ export async function middleware(req: NextRequest) {
     '/assets': ['ADMIN', 'OPERATOR', 'EDITOR'],
   };
 
-  // 2. Ambil Token
-  // Secret wajib ada, fallback ke string kosong untuk mencegah crash saat build tapi error runtime jika env missing
-  const secret = process.env.NEXTAUTH_SECRET;
+  // 3. Setup Nama Cookie yang Sesuai Auth.js v5
+  // Auth.js v5 menggunakan 'authjs.session-token', bukan 'next-auth.session-token'
+  const isProduction = process.env.NODE_ENV === 'production';
+  const cookieName = isProduction
+    ? '__Secure-authjs.session-token'
+    : 'authjs.session-token';
 
+  // 4. Ambil Token
   let token = null;
   try {
     token = await getToken({
       req,
-      secret,
+      secret: process.env.NEXTAUTH_SECRET,
+      cookieName: cookieName, // 🔥 PENTING: Paksa getToken cari nama cookie yang benar
+      secureCookie: isProduction,
     });
   } catch (err) {
     console.error('Middleware Token Error:', err);
@@ -39,49 +44,35 @@ export async function middleware(req: NextRequest) {
 
   const isAuthenticated = !!token;
 
-  // 3. Logic untuk Halaman Auth (Login/Register)
+  // 5. Logic Redirection Auth Route
+  // Jika akses /auth/* tapi sudah login, lempar ke dashboard
   if (isAuthRoute) {
-    // Jika user SUDAH login tapi akses halaman login, lempar ke dashboard
     if (isAuthenticated) {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
-    // Jika belum login, biarkan akses halaman login
     return NextResponse.next();
   }
 
-  // 4. Logic Validasi Token (Jika user tidak login atau token invalid)
-  // Cek token.deleted (asumsi flag ini diset di session callback)
+  // 6. Logic Validasi Token (Jika user akses halaman lain tapi token mati)
   if (!isAuthenticated || token?.deleted) {
     const loginUrl = new URL('/auth/login', req.url);
-    loginUrl.searchParams.set('expired', '1'); // Beri tahu user kenapa logout
+    loginUrl.searchParams.set('expired', '1');
 
-    // Redirect ke login
     const res = NextResponse.redirect(loginUrl);
 
-    // HAPUS COOKIES (Dynamic Name Handling)
-    // NextAuth v4 menggunakan prefix __Secure- hanya di HTTPS
-    const isSecure = process.env.NODE_ENV === 'production';
-    const cookiePrefix = isSecure ? '__Secure-' : '';
-
-    // Nama cookie default NextAuth v4
-    res.cookies.delete(`${cookiePrefix}next-auth.session-token`);
-    res.cookies.delete(`${cookiePrefix}next-auth.callback-url`);
-    res.cookies.delete(`${cookiePrefix}next-auth.csrf-token`);
-
-    // Jaga-jaga jika pakai Auth.js v5 (beta) atau nama custom
-    res.cookies.delete('authjs.session-token');
-    res.cookies.delete('__Secure-authjs.session-token');
+    // Hapus Cookie dengan Nama yang Tepat (v5)
+    res.cookies.delete(cookieName);
+    res.cookies.delete('__Host-authjs.csrf-token'); // Hapus CSRF juga biar bersih
 
     return res;
   }
 
-  // 5. Role-Based Access Control (RBAC)
+  // 7. Role-Based Access Control
   const userRole = token?.role as string;
 
   for (const [prefix, allowedRoles] of Object.entries(protectedRoutes)) {
     if (pathname.startsWith(prefix)) {
       if (!allowedRoles.includes(userRole)) {
-        // User login tapi role tidak cukup
         return NextResponse.redirect(new URL('/unauthorized', req.url));
       }
     }
@@ -91,15 +82,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (images, etc)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'],
 };

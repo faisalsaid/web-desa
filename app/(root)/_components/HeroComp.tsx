@@ -1,8 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, MapPin } from 'lucide-react';
+import { useVillageStore } from '@/store/villageStore';
 
 export function HeroComp() {
+  const village = useVillageStore((state) => state.village);
+
   return (
     <section className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden">
       {/* Background Image dengan Overlay */}
@@ -22,7 +27,7 @@ export function HeroComp() {
       <div className="relative z-10 container px-4 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
           <MapPin className="w-4 h-4 text-emerald-400" />
-          <span>Surga Tersembunyi di Bandung Barat</span>
+          <span>Surga Tersembunyi di {village?.regencyName}</span>
         </div>
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight drop-shadow-lg max-w-4xl mx-auto">
@@ -31,8 +36,9 @@ export function HeroComp() {
         </h1>
 
         <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto leading-relaxed">
-          Selamat datang di website resmi Desa Sukamaju. Pusat informasi layanan
-          publik, transparansi anggaran, dan potensi wisata lokal.
+          Selamat datang di website resmi Desa {village?.villageName}. Pusat
+          informasi layanan publik, transparansi anggaran, dan potensi wisata
+          lokal.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

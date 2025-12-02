@@ -5,16 +5,16 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1. Tentukan Route Auth (Login/Register/Forgot Pass)
-  // Menggunakan startsWith '/auth' agar mencakup sub-path
+  // 1. Tentukan Route Auth (Login/Register)
   const isAuthRoute = pathname.startsWith('/auth');
 
-  // 2. Daftar Route Protected & Role
+  // 2. Daftar Route yang WAJIB Login & Role-nya
+  // Halaman Root '/' TIDAK ada di sini, jadi otomatis jadi Public
   const protectedRoutes: Record<string, string[]> = {
     '/dashboard': ['ADMIN', 'OPERATOR', 'EDITOR'],
     '/users': ['ADMIN', 'OPERATOR'],
     '/settings': ['ADMIN'],
-    '/village': ['ADMIN', 'OPERATOR'],
+    '/village': ['ADMIN', 'OPERATOR'], // Edit profil desa
     '/residents': ['ADMIN', 'OPERATOR'],
     '/families': ['ADMIN', 'OPERATOR'],
     '/organitations': ['ADMIN', 'OPERATOR'],
@@ -22,8 +22,12 @@ export async function middleware(req: NextRequest) {
     '/assets': ['ADMIN', 'OPERATOR', 'EDITOR'],
   };
 
-  // 3. Setup Nama Cookie yang Sesuai Auth.js v5
-  // Auth.js v5 menggunakan 'authjs.session-token', bukan 'next-auth.session-token'
+  // Cek apakah user sedang mengakses halaman yang diproteksi
+  const isProtectedRoute = Object.keys(protectedRoutes).some((route) =>
+    pathname.startsWith(route),
+  );
+
+  // 3. Setup Nama Cookie (Auth.js v5 fix)
   const isProduction = process.env.NODE_ENV === 'production';
   const cookieName = isProduction
     ? '__Secure-authjs.session-token'
@@ -31,11 +35,13 @@ export async function middleware(req: NextRequest) {
 
   // 4. Ambil Token
   let token = null;
+  // Kita hanya BUTUH token jika user akses Auth Route atau Protected Route
+  // Tapi kita ambil saja dulu untuk cek status login
   try {
     token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
-      cookieName: cookieName, // 🔥 PENTING: Paksa getToken cari nama cookie yang benar
+      cookieName: cookieName,
       secureCookie: isProduction,
     });
   } catch (err) {
@@ -44,43 +50,58 @@ export async function middleware(req: NextRequest) {
 
   const isAuthenticated = !!token;
 
-  // 5. Logic Redirection Auth Route
-  // Jika akses /auth/* tapi sudah login, lempar ke dashboard
+  // ============================================================
+  // LOGIKA UTAMA
+  // ============================================================
+
+  // A. Handle Route Auth (Login/Register/Forgot-Pass)
   if (isAuthRoute) {
+    // Jika user sudah login tapi mau buka halaman login -> lempar ke dashboard
     if (isAuthenticated) {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
+    // Jika belum login -> izinkan akses
     return NextResponse.next();
   }
 
-  // 6. Logic Validasi Token (Jika user akses halaman lain tapi token mati)
-  if (!isAuthenticated || token?.deleted) {
-    const loginUrl = new URL('/auth/login', req.url);
-    loginUrl.searchParams.set('expired', '1');
+  // B. Handle Route Protected (Dashboard, dll)
+  if (isProtectedRoute) {
+    // 1. Cek Login: Jika tidak ada token -> tendang ke login
+    if (!isAuthenticated || token?.deleted) {
+      const loginUrl = new URL('/auth/login', req.url);
+      loginUrl.searchParams.set('expired', '1');
+      loginUrl.searchParams.set('callbackUrl', pathname); // Biar setelah login balik ke sini
 
-    const res = NextResponse.redirect(loginUrl);
+      const res = NextResponse.redirect(loginUrl);
 
-    // Hapus Cookie dengan Nama yang Tepat (v5)
-    res.cookies.delete(cookieName);
-    res.cookies.delete('__Host-authjs.csrf-token'); // Hapus CSRF juga biar bersih
+      // Bersihkan cookie
+      res.cookies.delete(cookieName);
+      res.cookies.delete('__Host-authjs.csrf-token');
 
-    return res;
-  }
+      return res;
+    }
 
-  // 7. Role-Based Access Control
-  const userRole = token?.role as string;
-
-  for (const [prefix, allowedRoles] of Object.entries(protectedRoutes)) {
-    if (pathname.startsWith(prefix)) {
-      if (!allowedRoles.includes(userRole)) {
-        return NextResponse.redirect(new URL('/unauthorized', req.url));
+    // 2. Cek Role: User login tapi role tidak sesuai
+    const userRole = token?.role as string;
+    // Cari role yang diizinkan untuk path ini
+    // Kita loop lagi karena butuh value array roles-nya
+    for (const [prefix, allowedRoles] of Object.entries(protectedRoutes)) {
+      if (pathname.startsWith(prefix)) {
+        if (!allowedRoles.includes(userRole)) {
+          return NextResponse.redirect(new URL('/unauthorized', req.url));
+        }
+        break; // Stop loop jika match
       }
     }
   }
 
+  // C. Halaman Public (/, /berita, /profil, dll)
+  // Jika kode sampai sini, berarti bukan Auth route dan bukan Protected route.
+  // Otomatis diizinkan (NextResponse.next())
   return NextResponse.next();
 }
 
 export const config = {
+  // Matcher tetap menangkap semua request agar kita bisa filter di dalam function
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'],
 };

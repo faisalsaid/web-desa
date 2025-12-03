@@ -9,6 +9,7 @@ import { TbSpeakerphone } from 'react-icons/tb';
 import { BsBagCheck } from 'react-icons/bs';
 import { PiImages } from 'react-icons/pi';
 import { RiListIndefinite } from 'react-icons/ri';
+import { link } from 'fs';
 
 // --- KONFIGURASI MENU ---
 const menu = [
@@ -16,6 +17,7 @@ const menu = [
     title: 'Profil Desa',
     icon: FaBuildingColumns,
     color: 'from-emerald-500 to-green-600',
+    link: '/profil',
   },
   {
     title: 'Info Grafis',
@@ -90,7 +92,7 @@ const FeatureSection = () => {
               title={item.title}
               icon={item.icon}
               color={item.color}
-              href="#"
+              href={item.link || '#'}
             />
           ))}
         </motion.div>

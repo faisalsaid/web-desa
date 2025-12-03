@@ -115,8 +115,11 @@ export async function updateResident(
     // 1. Validasi Zod (AMAN, pakai schema .partial())
     const parsed = ResidentUpdateSchema.safeParse(rest);
 
+    console.log(parsed);
+
+    let imageKey: string | null = null;
     if (file && file.size > 0) {
-      await b2UploadImage({
+      imageKey = await b2UploadImage({
         file: file,
         folder: `residents/${parsed?.data?.urlId}`,
         customFileName: 'profile.jpg',
@@ -131,12 +134,15 @@ export async function updateResident(
       };
     }
 
-    const data = parsed.data;
+    // const data = parsed.data;
 
     // 2. Update ke Prisma
     const updatedResident = await prisma.resident.update({
       where: { id },
-      data,
+      data: {
+        ...parsed.data,
+        imageKey: imageKey,
+      },
     });
 
     return {

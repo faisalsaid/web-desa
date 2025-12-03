@@ -237,8 +237,19 @@ const ResidentForm = ({ resident }: ResidentDetailsProps) => {
                     <Input
                       className="text-sm appearance-none no-spin"
                       placeholder="e.g. 3273056010900009"
-                      {...field}
-                      type="number"
+                      // {...field}
+                      onChange={(e) => {
+                        // Hapus semua karakter yang BUKAN digit (0-9)
+                        const sanitizedValue = e.target.value.replace(
+                          /[^0-9]/g,
+                          '',
+                        );
+                        field.onChange(sanitizedValue);
+                      }}
+                      type="text"
+                      maxLength={16}
+                      value={field.value}
+                      onBlur={field.onBlur}
                     />
                   </FormControl>
                   <FormDescription className="text-xs italic">

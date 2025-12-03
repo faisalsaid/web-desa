@@ -4,6 +4,10 @@ import './globals.css';
 import { ThemeProvider } from '@/components/themeProvider';
 import { Toaster } from 'sonner';
 import { getVillageConfig } from './(root)/_lib/home.actions';
+import { auth } from '@/auth';
+import { getCurrentUser } from './_lib/actions/users.actions';
+import ClientStoreInitializer from '@/components/ClientStoreInitializer';
+import Providers from '@/components/Providers';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -63,25 +67,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
+  let fullUser = null;
+
+  if (session?.user?.email) {
+    // 1. Ambil email
+    const email = session.user.email;
+
+    // 2. Fetch data pengguna lengkap
+    fullUser = await getCurrentUser(email);
+  }
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-primary-foreground`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster richColors position="top-center" />
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ClientStoreInitializer user={fullUser} />
+            {children}
+            <Toaster richColors position="top-center" />
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

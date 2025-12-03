@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, Phone } from 'lucide-react';
+import { LayoutDashboard, LogIn, Menu, Phone } from 'lucide-react';
 
 // Import komponen Shadcn
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,8 @@ import {
 import { GetVillageConfigType } from '../_lib/home.type';
 import { useVillageStore } from '@/store/villageStore';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { useSession } from 'next-auth/react';
+import { Spinner } from '@/components/ui/spinner';
 
 // Data Menu Navigasi
 const navItems = [
@@ -50,6 +52,10 @@ export function HeaderComp({
   initialVillage: GetVillageConfigType | null;
   initialHeadOfVillage: HeadOfVillage;
 }) {
+  const { data: session, status } = useSession();
+
+  // Tampilkan sesuatu saat sesi sedang dimuat
+
   const [isOpen, setIsOpen] = React.useState(false);
 
   const setVillage = useVillageStore((state) => state.setVillage);
@@ -61,6 +67,20 @@ export function HeaderComp({
     if (initialVillage) setVillage(initialVillage);
     if (initialHeadOfVillage) setHeadOfVillage(initialHeadOfVillage);
   }, [initialVillage, initialHeadOfVillage, setVillage, setHeadOfVillage]);
+
+  const isAuthenticated = status === 'authenticated';
+
+  const linkHref = isAuthenticated ? '/dashboard' : '/auth/login';
+  const buttonText = isAuthenticated ? 'Dashboard' : 'Login';
+  const Icon = isAuthenticated ? LayoutDashboard : LogIn;
+
+  if (status === 'loading') {
+    return (
+      <nav>
+        <Spinner />
+      </nav>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -112,6 +132,12 @@ export function HeaderComp({
         </nav>
         <div className="flex items-center gap-4">
           <ThemeSwitcher />
+          <Link href={linkHref}>
+            <Button className="w-full" variant={'outline'}>
+              <Icon />
+            </Button>
+          </Link>
+
           {/* --- Bagian Kanan: CTA & Mobile Menu --- */}
           <div className="flex items-center gap-4">
             {/* Tombol Kontak (Desktop) */}
@@ -165,10 +191,16 @@ export function HeaderComp({
                       {item.name}
                     </Link>
                   ))}
-                  <div className="mt-6 p-6 border-t">
+                  <div className="mt-6 p-6 border-t space-y-4">
                     <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                       <Phone className="mr-2 h-4 w-4" /> Hubungi Kami
                     </Button>
+                    <Link href={linkHref}>
+                      <Button className="w-full" variant={'outline'}>
+                        <Icon />
+                        {buttonText}
+                      </Button>
+                    </Link>
                   </div>
                 </nav>
               </SheetContent>

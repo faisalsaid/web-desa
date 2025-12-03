@@ -22,6 +22,7 @@ import {
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { VillageProfile } from '../_lib/actions/getConfigVilage';
+import Image from 'next/image';
 
 // --- Utility untuk Tailwind Class ---
 function cn(...inputs: ClassValue[]) {
@@ -104,8 +105,16 @@ export default function VillageProfilePagePublic({
       <section className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
         {/* Background Image / Placeholder */}
         <div className="absolute inset-0 z-0">
+          {/* <div className="w-full h-full relative">
+            <Image
+              src={'/img/kantor-desa.jpeg'}
+              fill
+              alt="kantor desa"
+              className="object-cover"
+            />
+          </div> */}
           {data.officePhotoUrl ? (
-            <img
+            <Image
               src={data.officePhotoUrl}
               alt="Kantor Desa"
               className="h-full w-full object-cover"
@@ -151,7 +160,7 @@ export default function VillageProfilePagePublic({
             </h1>
 
             <p className="max-w-2xl text-xl font-medium text-emerald-100/90 md:text-2xl">
-              "{data.slogan}"
+              {`"${data.slogan}"`}
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4 text-white/80">

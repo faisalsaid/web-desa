@@ -26,7 +26,7 @@ const galleryItems = [
   {
     id: 2,
     // Foto sawah terasering hijau
-    src: 'https://images.unsplash.com/photo-1518182177546-076619f72d86?q=80&w=800',
+    src: 'https://images.unsplash.com/photo-1673183762377-cee7beb1f152?q=80&w=800',
     category: 'Alam',
     title: 'Sawah Terasering',
     size: 'wide',
@@ -34,7 +34,7 @@ const galleryItems = [
   {
     id: 3,
     // Foto festival/tradisi
-    src: 'https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=800',
+    src: 'https://images.unsplash.com/photo-1743918938396-202520b943f4?q=80&w=800',
     category: 'Budaya',
     title: 'Festival Panen',
     size: 'small',
@@ -42,7 +42,7 @@ const galleryItems = [
   {
     id: 4,
     // Foto jalan pedesaan aspal/batu
-    src: 'https://images.unsplash.com/photo-1455243623161-1d9047b856da?q=80&w=800',
+    src: 'https://images.unsplash.com/photo-1748618439948-1fe6d0d4e289?q=80&w=800',
     category: 'Pembangunan',
     title: 'Perbaikan Jalan',
     size: 'tall',
@@ -90,7 +90,7 @@ const galleryItems = [
   {
     id: 10,
     // Foto jembatan kayu/bambu
-    src: 'https://images.unsplash.com/photo-1545622692-296541097265?q=80&w=800',
+    src: 'https://images.unsplash.com/photo-1621082691485-f3664d14e333?q=80&w=800',
     category: 'Pembangunan',
     title: 'Jembatan Desa',
     size: 'wide',

@@ -42,7 +42,7 @@ const dummyPotency = [
     description:
       'Komoditas kopi kualitas ekspor yang ditanam di dataran tinggi desa.',
     image:
-      'https://images.unsplash.com/photo-1511537632536-34a702956264?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1653302800594-7e40cf0767fc?q=80&w=1000&auto=format&fit=crop',
     icon: Sprout,
   },
   {
@@ -52,7 +52,7 @@ const dummyPotency = [
     description:
       'Produk anyaman bambu buatan tangan pengrajin lokal yang mendunia.',
     image:
-      'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1719041160596-bc62775793b9?q=80&w=1000&auto=format&fit=crop',
     icon: ShoppingBag,
   },
   {
@@ -62,7 +62,7 @@ const dummyPotency = [
     description:
       'Melestarikan rumah adat dan tradisi leluhur yang masih terjaga.',
     image:
-      'https://images.unsplash.com/photo-1596401057633-565652f50031?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1764681860091-3a7fdba3f915?q=80&w=1000&auto=format&fit=crop',
     icon: MapPin,
   },
   {
@@ -72,7 +72,7 @@ const dummyPotency = [
     description:
       'Hamparan sawah hijau yang memanjakan mata, spot foto favorit.',
     image:
-      'https://images.unsplash.com/photo-1534234557002-36d73f32cb48?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1673183762170-87a94100f466?q=80&w=1000&auto=format&fit=crop',
     icon: Mountain,
   },
   {
@@ -81,7 +81,7 @@ const dummyPotency = [
     category: 'Kuliner',
     description: 'Cita rasa masakan khas desa dengan rempah pilihan.',
     image:
-      'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=1000&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1707999251954-2a4abc6e1f35?q=80&w=1000&auto=format&fit=crop',
     icon: Utensils,
   },
 ];

@@ -34,7 +34,7 @@ const products = [
     rating: 4.8,
     sold: 230,
     image:
-      'https://images.unsplash.com/photo-1599639668312-38b1f584e2a6?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1762941904142-9d91ca413e66?q=80&w=800&auto=format&fit=crop',
     isPromo: true,
   },
   {
@@ -67,7 +67,7 @@ const products = [
     rating: 4.7,
     sold: 80,
     image:
-      'https://images.unsplash.com/photo-1590874102752-ce22d84d588c?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1563391507496-209fc783d42e?q=80&w=800&auto=format&fit=crop',
     isPromo: true,
   },
   {

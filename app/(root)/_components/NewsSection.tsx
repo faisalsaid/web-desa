@@ -47,9 +47,9 @@ const dummyNews = Array.from({ length: 6 }, (_, i) => ({
       '1611952327309-a739d089f5ad', // crowd/meeting
       '1589802829985-817e51171b92', // nature/village
       '1533900298318-6b8da08a523e', // market/festival
-      '1519389950476-29a4e06f0d98', // working
+      '1522202176988-66273c2fd55f', // working
       '1576091160399-112ba8d25d1d', // health
-      '1464639352494-463212871032', // construction
+      '1504307651254-35680f356dfd', // construction
     ][i]
   }?q=80&w=800&auto=format&fit=crop`,
 }));

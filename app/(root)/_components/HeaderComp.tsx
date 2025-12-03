@@ -52,7 +52,7 @@ export function HeaderComp({
   initialVillage: GetVillageConfigType | null;
   initialHeadOfVillage: HeadOfVillage;
 }) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   // Tampilkan sesuatu saat sesi sedang dimuat
 

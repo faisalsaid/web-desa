@@ -18,17 +18,32 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useUserStore } from '@/store/user.store';
+import { Spinner } from '@/components/ui/spinner';
 
 interface StaffPositionsProps {
   staffPositions: StaffPositionType[];
 }
 
 const StaffPositionsList = ({ staffPositions }: StaffPositionsProps) => {
+  const curentUser = useUserStore((state) => state.user);
+  const isInitialized = useUserStore((state) => state.isInitialized);
+
+  if (!isInitialized) {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-4">
         <p className="font-medium">Nama Jabatan Desa </p>
-        <AddStaffPositionButton staffPositions={staffPositions} />
+
+        {curentUser?.role === 'ADMIN' ? (
+          <AddStaffPositionButton staffPositions={staffPositions} />
+        ) : null}
       </div>
       {/* <Separator /> */}
 
@@ -56,6 +71,16 @@ const ListCard = ({
   position: StaffPositionType;
   staffPositions: StaffPositionType[];
 }) => {
+  const curentUser = useUserStore((state) => state.user);
+  const isInitialized = useUserStore((state) => state.isInitialized);
+
+  if (!isInitialized) {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
   return (
     <div className="flex items-center justify-between gap-2 p-2 border  bg-background rounded-md">
       <div className=" flex items-center gap-1 flex-1">
@@ -104,27 +129,28 @@ const ListCard = ({
             <p>Jumlah perangkat</p>
           </TooltipContent>
         </Tooltip>
-
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="More Options">
-                <MoreHorizontalIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-24" align="center">
-              <DropdownMenuItem asChild>
-                <UpdateStaffPosisitionButton
-                  staffPossition={position}
-                  staffPositionsList={staffPositions}
-                />
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <DeleteStaffPositionButton id={position.id} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        {curentUser?.role === 'ADMIN' ? (
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" aria-label="More Options">
+                  <MoreHorizontalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-24" align="center">
+                <DropdownMenuItem asChild>
+                  <UpdateStaffPosisitionButton
+                    staffPossition={position}
+                    staffPositionsList={staffPositions}
+                  />
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <DeleteStaffPositionButton id={position.id} />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 // store/user.store.ts
 
+import { UserRole } from '@prisma/client';
 import { create } from 'zustand';
 
 // Definisikan tipe data untuk user (sesuai dengan yang diambil dari DB)
@@ -7,7 +8,7 @@ interface UserState {
   id: string | null;
   name: string | null;
   email: string | null;
-  role: string | null;
+  role: UserRole | null;
   // ... field lain
 }
 

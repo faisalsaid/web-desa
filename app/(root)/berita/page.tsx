@@ -30,7 +30,7 @@ const dummyNews = Array.from({ length: 9 }, (_, i) => ({
   author: 'Admin Desa',
   views: 120 + i * 10,
   image: `https://images.unsplash.com/photo-${
-    i % 2 === 0 ? '1494783367193-149034c05e8f' : '1560944527-a4de712f3e61'
+    i % 2 === 0 ? '1494783367193-149034c05e8f' : '1593113598332-cd288d649433'
   }?q=80&w=800&auto=format&fit=crop`,
 }));
 

@@ -10,11 +10,13 @@ import { getImageUrl } from '@/lib/b2storage.action';
 
 import { RevenueCategory, ExpenseSector, FinancingType } from '@prisma/client';
 import { BudgetYearReportResponse } from './bugutYear.type';
+import { revalidatePath } from 'next/cache';
 
 // ✅ Server Action
 export async function getVillageConfig(): Promise<GetVillageConfigType | null> {
   try {
     const village = await prisma.villageConfig.findFirst(GetVillageConfigQuery);
+    revalidatePath('/');
     return village;
   } catch (error) {
     console.error('Failed to fetch village config:', error);
@@ -32,6 +34,8 @@ export async function getHeadOfVillage() {
   if (headOfVillage?.imageKey) {
     signedUlr = await getImageUrl(headOfVillage.imageKey);
   }
+
+  revalidatePath('/');
 
   return {
     ...headOfVillage,
@@ -56,6 +60,7 @@ export async function getAllStaff(): Promise<TStaffForHome[]> {
     }),
   );
 
+  revalidatePath('/');
   return result;
 }
 
@@ -161,6 +166,9 @@ export async function getCurrentBudgetYearSummaryReport(): Promise<BudgetYearRep
     const silpa = surplusDeficitRealized + netFinancing;
 
     // --- RETURN OBJECT (TypeScript akan validasi struktur ini) ---
+
+    revalidatePath('/');
+
     return {
       status: 'success',
       yearInfo: {

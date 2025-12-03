@@ -9,6 +9,7 @@ import {
   updateStaffSchema,
 } from '../../_lib/organitaions.zod';
 import { GetStaffQuery, TStaff } from './staff.type';
+import { revalidatePath } from 'next/cache';
 
 export async function getStaffForEdit(
   id: number,
@@ -95,6 +96,7 @@ export async function updateStaff(input: Partial<UpdateStaffInput>) {
       },
     });
 
+    revalidatePath('/');
     return { success: true, message: 'Berahasil update staf', data: updated };
     // eslint-disable-next-line
   } catch (error) {

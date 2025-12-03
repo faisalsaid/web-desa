@@ -7,6 +7,7 @@ import {
   villageConfigUpdateSchema,
   villageConfigUpdateValues,
 } from './villageConfig.zod';
+import { revalidatePath } from 'next/cache';
 
 export async function getVillageConfig(): Promise<VillageConfigType | null> {
   const user = await getCurrentUser();
@@ -47,6 +48,7 @@ export async function updateVillageConfig(
       data: parsedData,
     });
 
+    revalidatePath('/');
     return updated;
   } catch (err) {
     console.error('updateVillageConfig =>', err);

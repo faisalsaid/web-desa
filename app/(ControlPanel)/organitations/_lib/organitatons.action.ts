@@ -22,6 +22,7 @@ import {
 
 import { v4 as uuidv4 } from 'uuid';
 import { b2UploadImage } from '@/lib/b2storage.action';
+import { revalidatePath } from 'next/cache';
 
 // HANDLE CREAT STAFF POSITIONS =================================================================
 
@@ -319,6 +320,7 @@ export async function createStaff(input: CreateStaffInput) {
     },
   });
 
+  revalidatePath('/');
   return {
     success: true,
     message: 'Perangkatt berhasil ditambahkan.',
@@ -416,6 +418,7 @@ export async function deleteStaff(staffId: number): Promise<DeleteStaffResult> {
     const errorMessage =
       err instanceof Error ? err.message : 'Failed to delete staff';
 
+    revalidatePath('/');
     return {
       success: false,
       message: errorMessage,

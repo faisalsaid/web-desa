@@ -40,7 +40,6 @@ import {
   Globe,
   Calendar,
   FileText,
-  Mountain,
   Compass,
   Ruler,
   Save,
@@ -78,9 +77,7 @@ const VillageConfigForm = ({ data }: { data: VillageConfigType }) => {
           id: toastId,
         });
         router.push('/village'); // Refresh data server component
-        // eslint-disable-next-line
       } catch (err: unknown) {
-        // ✅ Fix: Menggunakan unknown, bukan any
         const errorMessage =
           err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
         toast.error(errorMessage, {

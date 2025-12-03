@@ -4,17 +4,12 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Eye, User, CalendarDays, ArrowRight, Search } from 'lucide-react';
+import { Eye, User, ArrowRight, Search } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 // --- Dummy Data ---
 const dummyNews = Array.from({ length: 9 }, (_, i) => ({

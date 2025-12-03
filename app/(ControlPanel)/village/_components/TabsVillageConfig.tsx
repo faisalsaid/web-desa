@@ -246,7 +246,7 @@ const TabsVillageConfig = ({ data }: { data: VillageConfigType | null }) => {
                     Slogan Desa
                   </h3>
                   <p className="text-lg font-serif italic text-emerald-700 dark:text-emerald-300">
-                    "{data?.slogan || 'Belum ada slogan'}"
+                    {data?.slogan ? `" ${data?.slogan}"` : '"Belum ada slogan"'}
                   </p>
                 </div>
 

@@ -25,7 +25,7 @@ const UserMenu = ({ session }: Props) => {
   return (
     <div className="flex gap-2 items-center">
       <div>
-        <p>{curentUser?.email}</p>
+        <p className="text-sm">{curentUser?.email}</p>
         <p className="text-xs text-muted-foreground">{curentUser?.role}</p>
       </div>
       <DropdownMenu>

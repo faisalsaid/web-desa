@@ -27,6 +27,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { useVillageStore } from '@/store/villageStore';
 
 // --- Types Definition (NO ANY) ---
 
@@ -130,6 +131,7 @@ const scoreVariants = (target: number): Variants => ({
 });
 
 export default function SingleVillageIdm() {
+  const villageInfo = useVillageStore((state) => state.village);
   const [mounted, setMounted] = useState<boolean>(false);
 
   // Prevent hydration mismatch
@@ -168,7 +170,7 @@ export default function SingleVillageIdm() {
               Indeks Desa Membangun
             </h1>
             <p className="text-slate-600 dark:text-slate-400 text-lg">
-              {villageData.villageName}, {villageData.districtName}
+              {villageInfo?.villageName}, {villageInfo?.districtName}
             </p>
           </div>
           <Button className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20">

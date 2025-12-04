@@ -2,7 +2,7 @@
 
 import { Spinner } from '@/components/ui/spinner';
 
-export default function CpLoading() {
+export default function IdmInfoLoading() {
   return (
     <div className="flex items-center justify-center">
       <Spinner />

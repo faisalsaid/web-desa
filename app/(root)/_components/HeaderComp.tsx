@@ -24,6 +24,7 @@ import { Spinner } from '@/components/ui/spinner';
 const navItems = [
   { name: 'Beranda', href: '/' },
   { name: 'Profil', href: '/profil' },
+  { name: 'IDM', href: '/idm-info' },
   { name: 'Layanan', href: '/layanan' },
   { name: 'Berita', href: '/berita' },
   { name: 'Potensi', href: '/potensi' },

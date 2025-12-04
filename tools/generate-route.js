@@ -3,13 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Ambil argumen CLI
-// Format yang diharapkan:
-// npm run gen -cp testing
-// argv = ["-cp", "testing"]
 const argv = process.argv.slice(2);
 
 // Deteksi flag
 const isControlPanel = argv.includes('-cp');
+const isRoot = argv.includes('-r');
 
 // Ambil route = arg pertama yang bukan flag
 const route = argv.find((arg) => !arg.startsWith('-'));
@@ -18,21 +16,36 @@ if (!route) {
   console.log('\nUsage:');
   console.log('  npm run gen <route>');
   console.log('  npm run gen -cp <route>   (generate dalam (ControlPanel))');
+  console.log('  npm run gen -r <route>    (generate dalam (root))');
   console.log();
   process.exit(1);
 }
 
 // Tentukan base folder
 let baseFolder = 'app';
+
 if (isControlPanel) {
   baseFolder = path.join('app', '(ControlPanel)');
+} else if (isRoot) {
+  baseFolder = path.join('app', '(root)');
 }
 
 // Final directory
 const baseDir = path.join(process.cwd(), baseFolder, route);
 
-// Buat folder
+// Tentukan folder tambahan
+const componentsDir = path.join(baseDir, '_components');
+const libDir = path.join(baseDir, '_lib');
+
+// Buat folder utama
 fs.mkdirSync(baseDir, { recursive: true });
+
+// Buat folder tambahan
+fs.mkdirSync(componentsDir, { recursive: true });
+fs.mkdirSync(libDir, { recursive: true });
+
+console.log(`✓ Created folder: ${componentsDir}`);
+console.log(`✓ Created folder: ${libDir}`);
 
 // Nama komponen PascalCase
 const lastSeg = route.split('/').pop();

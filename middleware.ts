@@ -19,6 +19,7 @@ export async function middleware(req: NextRequest) {
     '/families': ['ADMIN', 'OPERATOR'],
     '/organitations': ['ADMIN', 'OPERATOR'],
     '/apbdesa': ['ADMIN', 'OPERATOR'],
+    '/idm': ['ADMIN', 'OPERATOR'],
     '/assets': ['ADMIN', 'OPERATOR', 'EDITOR'],
   };
 

@@ -12,6 +12,7 @@ import {
   CircleDollarSign,
   Wallet2,
   Images,
+  ChartColumnBig,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -105,6 +106,12 @@ const allMenuList: MenuItem[] = [
         icon: Wallet2,
       },
     ],
+  },
+  {
+    title: 'IDM',
+    url: '/idm',
+    icon: ChartColumnBig,
+    roles: ['ADMIN', 'OPERATOR'], // hanya admin & operator
   },
   {
     title: 'Article',

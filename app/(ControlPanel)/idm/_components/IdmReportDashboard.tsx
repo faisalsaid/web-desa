@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import {
-  TrendingUp,
   Users,
   Leaf,
   Coins, // Pengganti DollarSign agar lebih universal
@@ -21,12 +20,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
+
 import { useVillageStore } from '@/store/villageStore';
 
 // --- Types Definition (NO ANY) ---

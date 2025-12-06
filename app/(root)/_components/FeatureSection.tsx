@@ -27,6 +27,7 @@ const menu = [
     title: 'IDM',
     icon: RiListIndefinite,
     color: 'from-orange-500 to-amber-600',
+    link: '/idm-info',
   },
   { title: 'PPID', icon: LuNewspaper, color: 'from-purple-500 to-violet-600' },
   { title: 'Berita', icon: TbSpeakerphone, color: 'from-red-500 to-pink-600' },

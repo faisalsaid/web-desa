@@ -19,6 +19,7 @@ import { useVillageStore } from '@/store/villageStore';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { useSession } from 'next-auth/react';
 import { Spinner } from '@/components/ui/spinner';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Data Menu Navigasi
 const navItems = [
@@ -30,6 +31,45 @@ const navItems = [
   { name: 'Potensi', href: '/potensi' },
   { name: 'Galeri', href: '/galeri' },
 ];
+
+function HeaderSkeleton() {
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <div className="container mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+        {/* Skeleton Bagian Kiri: Logo & Identitas */}
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-10 md:h-12 md:w-12 rounded-full" />
+          <div className="flex flex-col gap-1">
+            <Skeleton className="h-5 w-32 md:w-40" />
+            <Skeleton className="h-4 w-20 md:w-24" />
+          </div>
+        </div>
+
+        {/* Skeleton Bagian Tengah: Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-6">
+          {navItems.map((_, index) => (
+            <Skeleton key={index} className="h-5 w-16" />
+          ))}
+        </div>
+
+        {/* Skeleton Bagian Kanan: CTA & Mobile Menu */}
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-10 w-10 rounded-full" /> {/* ThemeSwitcher */}
+          <Skeleton className="h-10 w-10 md:w-28 rounded-md" />{' '}
+          {/* Login/Dashboard Button */}
+          {/* Kontak Button (Desktop) */}
+          <div className="hidden md:block">
+            <Skeleton className="h-10 w-36 rounded-md" />
+          </div>
+          {/* Mobile Menu (Hamburger) */}
+          <div className="md:hidden">
+            <Skeleton className="h-10 w-10 rounded-md" />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
 
 export type HeadOfVillage = {
   name: string;
@@ -78,7 +118,7 @@ export function HeaderComp({
   if (status === 'loading') {
     return (
       <nav>
-        <Spinner />
+        <HeaderSkeleton />
       </nav>
     );
   }

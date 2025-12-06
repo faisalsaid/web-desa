@@ -4,9 +4,15 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { useVillageStore } from '@/store/villageStore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function HeroComp() {
   const village = useVillageStore((state) => state.village);
+  const isLoading = !village || !village.villageName; // Cek apakah data penting sudah ada
+
+  if (isLoading) {
+    return <HeroSkeleton />;
+  }
 
   return (
     <section className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden">
@@ -55,6 +61,48 @@ export function HeroComp() {
           >
             Layanan Warga <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HeroSkeleton() {
+  return (
+    <section className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden">
+      {/* Background Skeleton yang menyerupai Gambar dengan Overlay */}
+      <div className="absolute inset-0 z-0">
+        {/* Placeholder untuk Image Background (Gunakan warna gelap atau Skeleton penuh) */}
+        <div className="w-full h-full bg-gray-300 dark:bg-gray-800" />
+
+        {/* Placeholder Overlay Gradient untuk konsistensi visual */}
+        {/* Catatan: Untuk skeleton, overlay ini mungkin tidak perlu, tapi kita akan gunakan warna gelap di background skeleton untuk kesan malam/overlay */}
+      </div>
+
+      {/* Konten Skeleton */}
+      <div className="relative z-10 container px-4 text-center">
+        {/* Skeleton Peta/Lokasi */}
+        <div className="flex justify-center mb-6 animate-pulse">
+          <Skeleton className="h-6 w-52 rounded-full bg-gray-200/50 dark:bg-gray-700/50" />
+        </div>
+
+        {/* Skeleton Judul Utama (H1) */}
+        <div className="max-w-4xl mx-auto mb-6 space-y-3">
+          <Skeleton className="h-10 w-3/4 mx-auto bg-gray-200/70 dark:bg-gray-700/70 md:h-12" />
+          <Skeleton className="h-10 w-2/3 mx-auto bg-emerald-400/80 md:h-12" />
+        </div>
+
+        {/* Skeleton Paragraf Deskripsi */}
+        <div className="max-w-2xl mx-auto mb-8 space-y-2">
+          <Skeleton className="h-5 w-full bg-gray-200/50 dark:bg-gray-700/50" />
+          <Skeleton className="h-5 w-11/12 mx-auto bg-gray-200/50 dark:bg-gray-700/50" />
+          <Skeleton className="h-5 w-4/5 mx-auto bg-gray-200/50 dark:bg-gray-700/50" />
+        </div>
+
+        {/* Skeleton Tombol CTA */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Skeleton className="h-12 w-48 bg-emerald-600/70" />
+          <Skeleton className="h-12 w-48 bg-gray-200/20" />
         </div>
       </div>
     </section>

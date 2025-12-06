@@ -2,14 +2,31 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      'images.unsplash.com',
-      'source.unsplash.com',
-      'unsplash.com',
-      'images.unsplash.com',
-      'drive.google.com',
-    ],
+    // ❌ HAPUS SEPENUHNYA: Properti 'domains' ini memicu peringatan.
+    // domains: [ /* ... daftar domain lama ... */ ],
+
     remotePatterns: [
+      // 1. Unsplash (Domain yang dipindahkan dari 'domains')
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'source.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'unsplash.com',
+      },
+
+      // 2. Google Drive (Domain yang dipindahkan dari 'domains')
+      {
+        protocol: 'https',
+        hostname: 'drive.google.com',
+      },
+
+      // 3. Backblaze B2 (Perbaikan format 'hostname')
       {
         protocol: 'https',
         hostname: 's3.ca-east-006.backblazeb2.com',
@@ -18,19 +35,8 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'webdesa.s3.ca-east-006.backblazeb2.com',
       },
-      {
-        protocol: 'https',
-        hostname: 'https://s3.ca-east-006.backblazeb2.com/',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
     ],
   },
-  /* config options here */
 
   allowedDevOrigins: [
     'http://localhost:3000',

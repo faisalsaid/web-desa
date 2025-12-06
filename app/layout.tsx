@@ -19,12 +19,17 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+export const dynamic = 'force-dynamic';
 const villageInfo = await getVillageConfig();
 
 export const metadata: Metadata = {
-  title: `Desa ${
-    villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-  }`,
+  title: {
+    default: `Desa ${
+      villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
+    }`,
+    template: '%s | WEBSITE DESA',
+  },
+
   description: `Website resmi Desa ${
     villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
   } — informasi desa, layanan publik, dan berita terbaru.`,
@@ -43,7 +48,7 @@ export const metadata: Metadata = {
     }`,
     images: [
       {
-        url: '/img/logo-desa.png', // gambar logo / banner desa
+        url: '/img/og-image.jpg', // gambar logo / banner desa
         width: 1200,
         height: 630,
         alt: `Website Desa ${
@@ -63,7 +68,7 @@ export const metadata: Metadata = {
     description: `Website resmi Desa ${
       villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
     }`,
-    images: ['/img/logo-desa.png'],
+    images: ['/img/og-image.jpg'],
   },
 };
 

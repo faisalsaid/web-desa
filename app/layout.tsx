@@ -20,57 +20,49 @@ const geistMono = Geist_Mono({
 });
 
 export const dynamic = 'force-dynamic';
-const villageInfo = await getVillageConfig();
 
-export const metadata: Metadata = {
-  title: {
-    default: `Desa ${
-      villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-    }`,
-    template: '%s | WEBSITE DESA',
-  },
+export async function generateMetadata() {
+  const village = await getVillageConfig();
+  const name = village?.villageName || 'Contoh Desa';
+  // const logo = village?.logoUrl || '/img/logo-desa.jpg';
+  const domain = 'https://web-desa-contoh.vercel.app/';
+  const ogImage = '/img/og-image.jpg';
 
-  description: `Website resmi Desa ${
-    villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-  } — informasi desa, layanan publik, dan berita terbaru.`,
-  metadataBase: new URL('https://web-desa-contoh.vercel.app'),
+  return {
+    metadataBase: new URL(domain),
 
-  openGraph: {
-    title: `Desa ${
-      villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-    }`,
-    description: `Informasi resmi Desa ${
-      villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-    }.`,
-    url: 'https://web-desa-contoh.vercel.app',
-    siteName: `Desa ${
-      villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-    }`,
-    images: [
-      {
-        url: '/img/og-image.jpg', // gambar logo / banner desa
-        width: 1200,
-        height: 630,
-        alt: `Website Desa ${
-          villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-        }`,
-      },
-    ],
-    locale: 'id_ID',
-    type: 'website',
-  },
+    title: {
+      default: `Desa ${name}`,
+      template: '%s | WEBSITE DESA',
+    },
 
-  twitter: {
-    card: 'summary_large_image',
-    title: `Desa ${
-      villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-    }`,
-    description: `Website resmi Desa ${
-      villageInfo?.villageName ? villageInfo.villageName : 'Contoh'
-    }`,
-    images: ['/img/og-image.jpg'],
-  },
-};
+    description: `Website resmi Desa ${name}. Informasi lengkap tentang pemerintahan, layanan publik, dan berita desa.`,
+
+    openGraph: {
+      title: `Desa ${name}`,
+      description: `Website resmi Desa ${name}`,
+      url: domain,
+      siteName: `Desa ${name}`,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `Logo Desa ${name}`,
+        },
+      ],
+      locale: 'id_ID',
+      type: 'website',
+    },
+
+    twitter: {
+      card: 'summary_large_image',
+      title: `Desa ${name}`,
+      description: `Website resmi Desa ${name}`,
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

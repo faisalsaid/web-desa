@@ -3,6 +3,7 @@ import MobileNavigation from './_components/MobileNavigation';
 import Footer from './_components/Footer';
 import { getHeadOfVillage, getVillageConfig } from './_lib/home.actions';
 import { HeaderComp, HeadOfVillage } from './_components/HeaderComp';
+import MaintenanceMode from '@/components/MaintanenceComp';
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -10,6 +11,8 @@ export default async function RootLayout({
 }>) {
   const villageInfo = await getVillageConfig();
   const headOfVIllage = await getHeadOfVillage();
+
+  return <MaintenanceMode />;
   return (
     <div className="relative min-h-screen ">
       <HeaderComp
